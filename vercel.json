@@ -1,9 +1,5 @@
 {
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "https://script.google.com/macros/s/AKfycbzYPMyWY0ChkAEmWmUXCEfqz-TuPTuS4Fc8FbBrbcX3d65pp8XB8PACOFFSVxoeEKKM/exec",
-      "permanent": true
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/proxy" }
   ]
 }
