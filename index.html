@@ -625,15 +625,6 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wider">Keperluan / Kategori</label>
-                            <select id="contactCategory" class="w-full bg-slate-50 border border-slate-200 focus:border-nuGreen-500 rounded-xl px-4 py-3 text-sm focus:outline-none transition text-slate-800">
-                                <option>Layanan Sosial / LazisNU</option>
-                                <option>Permohonan Pengisi Kajian</option>
-                                <option>Pendaftaran Anggota NU</option>
-                                <option>Pertanyaan Umum</option>
-                            </select>
-                        </div>
-                        <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wider">Isi Pesan</label>
                             <textarea id="contactMessage" rows="4" required class="w-full bg-slate-50 border border-slate-200 focus:border-nuGreen-500 rounded-xl px-4 py-3 text-sm focus:outline-none transition text-slate-800"></textarea>
                         </div>
@@ -2706,13 +2697,6 @@
             const mapsLink = document.getElementById('pubKontakMapsUrl');
             if (mapsLink && ks.mapsUrl) mapsLink.href = ks.mapsUrl;
 
-            // Update dropdown kategori
-            const sel = document.getElementById('contactCategory');
-            if (sel && ks.kategoriList && ks.kategoriList.length) {
-                const cats = Array.isArray(ks.kategoriList) ? ks.kategoriList : String(ks.kategoriList).split(',').map(s => s.trim());
-                sel.innerHTML = cats.map(c => `<option>${c}</option>`).join('');
-            }
-
             // Update WA button action
             const form = document.getElementById('contactForm');
             if (form) {
@@ -4400,15 +4384,14 @@
             event.preventDefault();
             const name     = document.getElementById('contactName').value;
             const phone    = document.getElementById('contactPhone').value;
-            const category = document.getElementById('contactCategory').value;
             const message  = document.getElementById('contactMessage').value;
 
-            const newMsg = { id: Date.now(), sender: name, phone, category, message };
+            const newMsg = { id: Date.now(), sender: name, phone, message };
             AppState.messages.unshift(newMsg);
             if (AppState.isAdminLoggedIn) renderInbox();
 
             if (GAS) {
-                const inboxPayload = { nama: name, wa: phone, pesan: category + ': ' + message };
+                const inboxPayload = { nama: name, wa: phone, pesan: message };
                 google.script.run
                     .withFailureHandler(function(e){ console.warn('addInbox GAS:', e); })
                     .addInbox(JSON.stringify(inboxPayload));
@@ -4417,7 +4400,7 @@
             // Gunakan nomor WA dari AppState.kontakSettings
             const waNum  = (AppState.kontakSettings && AppState.kontakSettings.waNumber) || '6282327603545';
             const waText = encodeURIComponent(
-                `Assalamualaikum Pengurus NU Baleharjo,\n\nMasyarakat mengirim pesan melalui website:\nNama: ${name}\nHP: ${phone}\nKeperluan: ${category}\nPesan: ${message}`
+                `Assalamualaikum Pengurus NU Baleharjo,\n\nMasyarakat mengirim pesan melalui website:\nNama: ${name}\nHP: ${phone}\nPesan: ${message}`
             );
             window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${waText}`, '_blank');
 
