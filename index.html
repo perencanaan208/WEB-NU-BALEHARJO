@@ -1966,20 +1966,25 @@
             function makeRunner() {
                 var successHandler = function () {};
                 var failureHandler = function (e) { console.warn('GAS error:', e); };
+                // FIX: withSuccessHandler & withFailureHandler harus return PROXY
+                // bukan plain runner, agar chaining .loadAllData() dll tetap
+                // ditangkap oleh Proxy get trap
+                var proxy;
                 var runner = {
-                    withSuccessHandler: function (fn) { successHandler = fn; return runner; },
-                    withFailureHandler: function (fn) { failureHandler = fn; return runner; }
+                    withSuccessHandler: function (fn) { successHandler = fn; return proxy; },
+                    withFailureHandler: function (fn) { failureHandler = fn; return proxy; }
                 };
-                return new Proxy(runner, {
+                proxy = new Proxy(runner, {
                     get: function (target, prop) {
                         if (prop in target) return target[prop];
                         return function () {
                             var args = Array.prototype.slice.call(arguments);
                             callBackend(prop, args, successHandler, failureHandler);
-                            return runner;
+                            return proxy;
                         };
                     }
                 });
+                return proxy;
             }
 
             window.google = window.google || {};
