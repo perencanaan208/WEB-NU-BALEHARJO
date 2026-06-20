@@ -232,9 +232,7 @@
             position: fixed; inset: 0; z-index: 9999;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(14px) saturate(1.4);
-            -webkit-backdrop-filter: blur(14px) saturate(1.4);
+            background: linear-gradient(135deg, #052e16 0%, #14532d 45%, #166534 100%);
             transition: opacity 0.6s ease, visibility 0.6s ease;
         }
         #splashScreen.hiding { opacity: 0; visibility: hidden; }
@@ -285,9 +283,11 @@
     ══════════════════════════════════════════════ -->
     <div id="splashScreen">
         <!-- Background foto profil — diupdate JS setelah data dimuat -->
-        <div id="splashBg" style="position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=60&w=1200') center/cover no-repeat;filter:blur(8px) brightness(0.35);z-index:-1;transition:background-image 0.5s ease;"></div>
 
         <!-- Konten tengah -->
+        <!-- Ornamen bintang sudut -->
+        <div style="position:absolute;top:24px;left:24px;opacity:0.12;"><svg width="48" height="48" viewBox="0 0 80 80" fill="none"><polygon points="40,4 44,28 68,20 50,38 68,56 44,48 40,72 36,48 12,56 30,38 12,20 36,28" stroke="#fbbf24" stroke-width="2"/></svg></div>
+        <div style="position:absolute;bottom:24px;right:24px;opacity:0.12;"><svg width="48" height="48" viewBox="0 0 80 80" fill="none"><polygon points="40,4 44,28 68,20 50,38 68,56 44,48 40,72 36,48 12,56 30,38 12,20 36,28" stroke="#fbbf24" stroke-width="2"/></svg></div>
         <div class="splash-logo-ring">
             <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" width="44" height="44">
                 <circle cx="12" cy="12" r="10"/>
