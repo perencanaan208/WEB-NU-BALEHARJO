@@ -87,6 +87,8 @@
         .bs-track { display:flex; transition:transform .45s cubic-bezier(.22,1,.36,1); }
         .bs-slide { flex-shrink:0; width:calc(100%/3); padding:0 .4rem; box-sizing:border-box; }
         @media(max-width:767px){ .bs-slide{ width:88%; } }
+        /* Slide dalam hero (1 kartu full width) */
+        .bs-slide-hero { flex-shrink:0; width:100%; box-sizing:border-box; }
         .bs-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:10;
             background:rgba(255,255,255,.92); border:1px solid #e2e8f0; border-radius:50%;
             width:30px; height:30px; display:flex; align-items:center; justify-content:center;
@@ -157,8 +159,7 @@
         .page-section { display: none !important; }
         .page-section.active-page { display: block !important; }
         /* Section berita beranda ikut tampil saat halaman Beranda aktif */
-        #beranda:not(.active-page) ~ #beranda-slider { display: none !important; }
-        #beranda.active-page ~ #beranda-slider { display: block !important; }
+
 
         /* ── Navbar Active State ── */
         .nav-link-item {
@@ -455,133 +456,76 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center z-10 w-full">
-            <div class="lg:col-span-7 flex flex-col justify-center space-y-6 text-center lg:text-left">
-                <div class="hero-up hero-d1 inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-4 py-1.5 self-center lg:self-start">
-                    <span class="w-2.5 h-2.5 rounded-full bg-nuGold-400 animate-pulse"></span>
-                    <span class="text-xs font-semibold tracking-wider text-emerald-300 uppercase">Official Website Ranting NU</span>
+        <div class="relative max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch z-10 w-full">
+
+            <!-- ── Kolom 1: Teks Hero ── -->
+            <div class="flex flex-col justify-center space-y-4 text-center lg:text-left">
+                <div class="hero-up hero-d1 inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-3 py-1 self-center lg:self-start">
+                    <span class="w-2 h-2 rounded-full bg-nuGold-400 animate-pulse"></span>
+                    <span class="text-[10px] font-semibold tracking-wider text-emerald-300 uppercase">Official Website Ranting NU</span>
                 </div>
-                
-                <h1 id="pubHeroTitle" class="hero-up hero-d2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight">
+                <h1 id="pubHeroTitle" class="hero-up hero-d2 text-2xl sm:text-3xl lg:text-4xl font-serif font-bold leading-tight">
                     Merawat Jagat <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow">Membangun Peradaban</span> <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow">Membangun Peradaban</span><br>
                     di Bumi Baleharjo
                 </h1>
-                
-                <p id="pubHeroSubtitle" class="hero-up hero-d3 text-slate-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                <p id="pubHeroSubtitle" class="hero-up hero-d3 text-slate-300 text-xs sm:text-sm leading-relaxed line-clamp-3">
                     Meneguhkan Aqidah Islam Ahlussunnah wal Jama'ah An-Nahdliyah, mengokohkan ukhuwah islamiyah, wathaniyah, dan basyariyah di wilayah Baleharjo, Sukodono, Sragen.
                 </p>
-
-                <div class="hero-up hero-d4 flex flex-wrap gap-4 justify-center lg:justify-start pt-2">
-                    <a href="#" onclick="showPage('profil'); return false;" class="bg-gradient-to-r from-nuGreen-800 to-emerald-700 border border-emerald-600 text-white px-6 py-3.5 rounded-xl font-semibold shadow-lg shadow-emerald-950/50 hover:shadow-xl hover:translate-y-[-2px] transition duration-300">
-                        Kenal Lebih Dekat
-                    </a>
-                    <button id="heroDonationBtn" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-3.5 rounded-xl font-semibold backdrop-blur-sm transition duration-300 flex items-center gap-2 text-sm">
-                        <i class="fas fa-hand-holding-heart text-nuGold-400"></i>
-                        <span>Infaq / Koin NU</span>
+                <div class="hero-up hero-d4 flex flex-wrap gap-2 justify-center lg:justify-start">
+                    <a href="#" onclick="showPage('profil'); return false;" class="bg-gradient-to-r from-nuGreen-800 to-emerald-700 border border-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-lg hover:translate-y-[-1px] transition duration-300">Kenal Lebih Dekat</a>
+                    <button id="heroDonationBtn" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg text-xs font-semibold backdrop-blur-sm transition flex items-center gap-1.5">
+                        <i class="fas fa-hand-holding-heart text-nuGold-400 text-[10px]"></i> Infaq / Koin NU
                     </button>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 flex flex-col items-center">
-                <div class="hero-right w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-nuGold-400/10 rounded-full blur-2xl"></div>
-                    
-                    <h3 class="text-lg font-bold text-nuGold-400 mb-4 border-b border-white/10 pb-2 flex items-center justify-between">
-                        <span><i class="fas fa-clock mr-2"></i>Waktu Shalat</span>
-                        <span class="text-[10px] text-white/60 font-semibold bg-emerald-900/50 px-2 py-0.5 rounded-full"><i class="fas fa-magic mr-1"></i>Otomatis Sragen</span>
+            <!-- ── Kolom 2: Waktu Sholat (kompak) ── -->
+            <div class="hero-right flex flex-col">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
+                    <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center justify-between">
+                        <span><i class="fas fa-clock mr-1.5"></i>Waktu Shalat</span>
+                        <span class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full"><i class="fas fa-magic mr-0.5"></i>Sragen</span>
                     </h3>
-                    
-                    <div class="grid grid-cols-5 gap-2 text-center text-[10px] sm:text-xs mb-4 font-semibold">
-                        <div class="bg-emerald-900/40 p-2 rounded-lg border border-emerald-800/50">
-                            <span class="block text-white/60 mb-1">Subuh</span>
-                            <span class="block font-bold text-white text-xs sm:text-sm" id="shubuh">--:--</span>
-                        </div>
-                        <div class="bg-emerald-900/40 p-2 rounded-lg border border-emerald-800/50">
-                            <span class="block text-white/60 mb-1">Dzuhur</span>
-                            <span class="block font-bold text-white text-xs sm:text-sm" id="dzuhur">--:--</span>
-                        </div>
-                        <div class="bg-emerald-900/40 p-2 rounded-lg border border-emerald-800/50">
-                            <span class="block text-white/60 mb-1">Ashar</span>
-                            <span class="block font-bold text-white text-xs sm:text-sm" id="ashar">--:--</span>
-                        </div>
-                        <div class="bg-emerald-900/40 p-2 rounded-lg border border-emerald-800/50">
-                            <span class="block text-white/60 mb-1">Maghrib</span>
-                            <span class="block font-bold text-amber-300 text-xs sm:text-sm" id="maghrib">--:--</span>
-                        </div>
-                        <div class="bg-emerald-900/40 p-2 rounded-lg border border-emerald-800/50">
-                            <span class="block text-white/60 mb-1">Isya'</span>
-                            <span class="block font-bold text-white text-xs sm:text-sm" id="isya">--:--</span>
+                    <div class="grid grid-cols-5 gap-1.5 text-center text-[9px] font-semibold">
+                        <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Subuh</span><span class="block font-bold text-white text-[11px]" id="shubuh">--:--</span></div>
+                        <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Dzuhur</span><span class="block font-bold text-white text-[11px]" id="dzuhur">--:--</span></div>
+                        <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Ashar</span><span class="block font-bold text-white text-[11px]" id="ashar">--:--</span></div>
+                        <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Maghrib</span><span class="block font-bold text-amber-300 text-[11px]" id="maghrib">--:--</span></div>
+                        <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Isya'</span><span class="block font-bold text-white text-[11px]" id="isya">--:--</span></div>
+                    </div>
+                    <div id="prayerCountdownBox" class="rounded-lg border border-nuGold-400/30 bg-nuGold-400/10 px-3 py-2 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-nuGold-400 animate-pulse"></span><span class="text-[10px] font-semibold text-nuGold-300">Menuju <span id="nextPrayerName">---</span></span></div>
+                        <span id="nextPrayerCountdown" class="text-sm font-bold text-nuGold-400 tabular-nums">--:--:--</span>
+                    </div>
+                    <div class="flex-1">
+                        <span class="text-[9px] uppercase font-bold text-nuGold-400 tracking-widest">Agenda Terdekat</span>
+                        <div class="mt-1.5 bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-900/60 flex items-start gap-2">
+                            <div class="bg-nuGold-500 text-nuGreen-950 font-bold rounded-md p-1 text-center min-w-[36px]"><span class="block text-xs leading-none" id="pubAgendaDay">21</span><span class="block text-[8px] uppercase" id="pubAgendaMonth">Jun</span></div>
+                            <div><h4 class="text-xs font-semibold text-white line-clamp-1" id="pubAgendaTitle">Rutinan Lailatul Ijtima'</h4><p class="text-[10px] text-white/60 mt-0.5 line-clamp-1"><i class="fas fa-map-marker-alt mr-1"></i><span id="pubAgendaLocation">Masjid Jami' Al-Ikhlas</span></p></div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Countdown sholat berikutnya -->
-                    <div id="prayerCountdownBox" class="mb-3 rounded-xl border border-nuGold-400/30 bg-nuGold-400/10 px-4 py-2.5 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-nuGold-400 animate-pulse inline-block"></span>
-                            <span class="text-[11px] font-semibold text-nuGold-300">Menuju <span id="nextPrayerName">---</span></span>
-                        </div>
-                        <span id="nextPrayerCountdown" class="text-base font-bold text-nuGold-400 tabular-nums tracking-wider">--:--:--</span>
+            <!-- ── Kolom 3: Berita Terbaru ── -->
+            <div class="flex flex-col">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                        <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5"><i class="fas fa-newspaper text-xs"></i>Berita Terbaru</h3>
+                        <a href="#" onclick="showPage('berita');return false;" class="text-[9px] text-white/50 hover:text-nuGold-300 flex items-center gap-1 transition">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></a>
                     </div>
-
-                    <div class="space-y-3 pt-2">
-                        <span class="text-xs uppercase font-semibold text-nuGold-400 tracking-wider">Agenda Terdekat</span>
-                        <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-900/60 flex items-start gap-3">
-                            <div class="bg-nuGold-500 text-nuGreen-950 font-bold rounded-lg p-1.5 text-center min-w-[45px]">
-                                <span class="block text-sm leading-none" id="pubAgendaDay">21</span>
-                                <span class="block text-[9px] uppercase" id="pubAgendaMonth">Jun</span>
+                    <div class="relative flex-1">
+                        <div class="bs-track-wrap h-full">
+                            <div id="beritaTrack" class="bs-track h-full">
+                                <div class="bs-slide-hero"><div class="text-white/40 text-xs italic text-center pt-8">Memuat berita...</div></div>
                             </div>
-                            <div>
-                                <h4 class="text-sm font-semibold text-white line-clamp-1" id="pubAgendaTitle">Rutinan Lailatul Ijtima' PRNU</h4>
-                                <p class="text-xs text-white/70 mt-0.5"><i class="fas fa-map-marker-alt mr-1"></i> <span id="pubAgendaLocation">Masjid Jami' Al-Ikhlas</span></p>
-                            </div>
+                            <button class="bs-arrow left" onclick="bsMove('berita',-1)" style="top:40%"><i class="fas fa-chevron-left"></i></button>
+                            <button class="bs-arrow right" onclick="bsMove('berita',1)" style="top:40%"><i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
+                    <div id="beritaDots" class="flex justify-center gap-1"></div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ====================================================
-         SECTION: BERITA TERBARU DI BERANDA
-         Otomatis tampil 3 berita terbaru dari spreadsheet
-    ==================================================== -->
-    <!-- BERANDA SLIDER: Berita + Galeri dalam 1 panel tab -->
-    <section id="beranda-slider" class="page-section bg-white border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 py-4 md:py-5">
-
-            <!-- Tab header -->
-            <div class="flex items-center justify-between border-b border-slate-200 mb-4">
-                <div class="flex gap-1">
-                    <button class="bs-tab-btn active" onclick="switchBerandaTab('berita',this)">
-                        <i class="fas fa-newspaper mr-1.5 text-nuGreen-700"></i>Berita Terbaru
-                    </button>
-                    <button class="bs-tab-btn" onclick="switchBerandaTab('galeri',this)">
-                        <i class="fas fa-images mr-1.5 text-nuGreen-700"></i>Galeri Foto
-                    </button>
-                </div>
-                <div id="bsLihatSemua">
-                    <a href="#" id="bsLihatBerita" onclick="showPage('berita');return false;" class="text-xs font-semibold text-nuGreen-700 hover:text-nuGreen-900 flex items-center gap-1">Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i></a>
-                    <a href="#" id="bsLihatGaleri" onclick="showPage('galeri');return false;" class="text-xs font-semibold text-nuGreen-700 hover:text-nuGreen-900 hidden items-center gap-1">Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i></a>
-                </div>
-            </div>
-
-            <!-- Panel: Berita -->
-            <div id="bsBerita" class="bs-panel active">
-                <div class="bs-track-wrap px-8">
-                    <div id="beritaTrack" class="bs-track">
-                        <div class="bs-slide"><div class="text-slate-400 text-sm italic text-center py-8">Memuat berita...</div></div>
-                    </div>
-                    <button class="bs-arrow left" onclick="bsMove('berita',-1)"><i class="fas fa-chevron-left"></i></button>
-                    <button class="bs-arrow right" onclick="bsMove('berita',1)"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div id="beritaDots" class="flex justify-center gap-1 mt-3"></div>
-            </div>
-
-            <!-- Panel: Galeri -->
-            <div id="bsGaleri" class="bs-panel">
-                <div id="berandaGaleriGrid" class="galeri-grid-6">Memuat galeri...</div>
-                <div id="galeriDots" class="flex justify-center gap-1 mt-3"></div>
             </div>
 
         </div>
@@ -2900,9 +2844,9 @@
         };
 
         function bsApplyBerita(idx) {
-            var perView = window.innerWidth >= 768 ? 3 : 1;
+            var perView = 1;
             var track = document.getElementById('beritaTrack');
-            if (track) track.style.transform = 'translateX(-' + (idx * (100/perView)) + '%)';
+            if (track) track.style.transform = 'translateX(-' + (idx * 100) + '%)';
             document.querySelectorAll('#beritaDots .bs-dot').forEach(function(d,i){
                 d.classList.toggle('active', i === idx);
             });
@@ -2939,17 +2883,17 @@
                 var img = item.img || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400';
                 var dateStr = '';
                 try { var d = new Date(item.date); if(!isNaN(d)) dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); } catch(e){}
-                return '<div class="bs-slide">' +
-                    '<div class="group cursor-pointer rounded-xl overflow-hidden border border-slate-200/60 hover:shadow-lg transition bg-white h-full flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
+                return '<div class="bs-slide-hero">' +
+                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 h-full flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
                         '<div class="relative overflow-hidden" style="aspect-ratio:16/7">' +
                             '<img src="' + img + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">' +
-                            (item.category ? '<span class="absolute top-2 left-2 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ' + cat + '">' + item.category + '</span>' : '') +
+                            (item.category ? '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-nuGold-400 text-nuGreen-950">' + item.category + '</span>' : '') +
                         '</div>' +
-                        '<div class="p-3 flex flex-col flex-1">' +
-                            '<p class="text-[10px] text-slate-400 mb-1">' + (dateStr||item.date) + '</p>' +
-                            '<h3 class="font-bold text-slate-900 text-xs leading-snug mb-1.5 line-clamp-2 group-hover:text-nuGreen-800">' + item.title + '</h3>' +
-                            '<p class="text-[11px] text-slate-500 line-clamp-2 flex-1">' + item.summary + '</p>' +
-                            '<span class="mt-2 text-[10px] font-semibold text-nuGreen-700 flex items-center gap-1">Baca <i class="fas fa-arrow-right text-[9px]"></i></span>' +
+                        '<div class="p-2.5 flex flex-col flex-1">' +
+                            '<p class="text-[9px] text-white/50 mb-1">' + (dateStr||item.date) + '</p>' +
+                            '<h3 class="font-bold text-white text-[11px] leading-snug mb-1 line-clamp-2 group-hover:text-nuGold-300">' + item.title + '</h3>' +
+                            '<p class="text-[10px] text-white/60 line-clamp-2 flex-1">' + item.summary + '</p>' +
+                            '<span class="mt-1.5 text-[9px] font-semibold text-nuGold-400 flex items-center gap-1">Baca <i class="fas fa-arrow-right text-[8px]"></i></span>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
