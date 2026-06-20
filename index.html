@@ -72,6 +72,12 @@
         .hero-right { opacity:0; animation: heroRight 0.80s cubic-bezier(.22,1,.36,1) 0.55s forwards; }
         .hero-ornament { animation: heroFloat 6s ease-in-out infinite; }
         .hero-glow-pulse { animation: heroGlow 4s ease-in-out infinite; }
+        .prayer-active {
+            background: rgba(251,191,36,0.18) !important;
+            border-color: rgba(251,191,36,0.5) !important;
+            box-shadow: 0 0 0 1px rgba(251,191,36,0.3);
+        }
+        .prayer-active span { color: #fbbf24 !important; }
         .animate-fade-in {
             animation: heroUp 0.4s ease-out forwards;
         }
@@ -429,6 +435,15 @@
                             <span class="block text-white/60 mb-1">Isya'</span>
                             <span class="block font-bold text-white text-xs sm:text-sm" id="isya">--:--</span>
                         </div>
+                    </div>
+
+                    <!-- Countdown sholat berikutnya -->
+                    <div id="prayerCountdownBox" class="mb-3 rounded-xl border border-nuGold-400/30 bg-nuGold-400/10 px-4 py-2.5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-nuGold-400 animate-pulse inline-block"></span>
+                            <span class="text-[11px] font-semibold text-nuGold-300">Menuju <span id="nextPrayerName">---</span></span>
+                        </div>
+                        <span id="nextPrayerCountdown" class="text-base font-bold text-nuGold-400 tabular-nums tracking-wider">--:--:--</span>
                     </div>
 
                     <div class="space-y-3 pt-2">
@@ -2336,6 +2351,9 @@
             document.getElementById('maghrib').innerText = calculated.maghrib;
             document.getElementById('isya').innerText = calculated.isya;
 
+            // Mulai countdown real-time ke sholat berikutnya
+            try { startPrayerCountdown(); } catch(e) {}
+
             // Update in Admin Panel Shalat tab if exists
             const admSubuh = document.getElementById('adm-shubuh');
             if (admSubuh) {
@@ -2345,6 +2363,82 @@
                 document.getElementById('adm-maghrib').innerText = calculated.maghrib;
                 document.getElementById('adm-isya').innerText = calculated.isya;
             }
+        }
+
+        // ── COUNTDOWN SHOLAT BERIKUTNYA ──
+        var _prayerCountdownInterval = null;
+
+        function startPrayerCountdown() {
+            if (_prayerCountdownInterval) clearInterval(_prayerCountdownInterval);
+            _prayerCountdownInterval = setInterval(updatePrayerCountdown, 1000);
+            updatePrayerCountdown(); // langsung update tanpa menunggu 1 detik
+        }
+
+        function updatePrayerCountdown() {
+            var names   = ['Subuh','Dzuhur','Ashar','Maghrib','Isya\''];
+            var ids     = ['shubuh','dzuhur','ashar','maghrib','isya'];
+            var cellIds = ['shubuh','dzuhur','ashar','maghrib','isya'];
+
+            // Ambil waktu sholat dari DOM
+            var times = ids.map(function(id) {
+                var el = document.getElementById(id);
+                return el ? el.innerText.trim() : '--:--';
+            });
+
+            var now   = new Date();
+            var nowMs = now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000;
+
+            // Cari sholat berikutnya
+            var nextIdx   = -1;
+            var nextMs    = Infinity;
+            var tomorrowSubuh = false;
+
+            for (var i = 0; i < times.length; i++) {
+                var parts = times[i].split(':');
+                if (parts.length < 2 || isNaN(parts[0])) continue;
+                var pMs = parseInt(parts[0]) * 3600000 + parseInt(parts[1]) * 60000;
+                if (pMs > nowMs && pMs < nextMs) {
+                    nextMs  = pMs;
+                    nextIdx = i;
+                }
+            }
+
+            // Jika sudah lewat Isya, hitung mundur ke Subuh esok
+            if (nextIdx === -1) {
+                nextIdx = 0;
+                tomorrowSubuh = true;
+                var parts = times[0].split(':');
+                if (parts.length >= 2 && !isNaN(parts[0])) {
+                    nextMs = parseInt(parts[0]) * 3600000 + parseInt(parts[1]) * 60000 + 86400000;
+                }
+            }
+
+            // Highlight sel aktif
+            cellIds.forEach(function(cid, idx) {
+                var cell = document.getElementById(cid);
+                if (!cell) return;
+                var parent = cell.parentElement;
+                if (idx === nextIdx) parent.classList.add('prayer-active');
+                else parent.classList.remove('prayer-active');
+            });
+
+            // Update label
+            var nameEl = document.getElementById('nextPrayerName');
+            var cdEl   = document.getElementById('nextPrayerCountdown');
+            if (!nameEl || !cdEl) return;
+
+            nameEl.innerText = names[nextIdx] + (tomorrowSubuh ? ' (Esok)' : '');
+
+            // Hitung sisa waktu
+            var diff = nextMs - nowMs;
+            if (diff < 0) diff = 0;
+            var hh   = Math.floor(diff / 3600000);
+            var mm   = Math.floor((diff % 3600000) / 60000);
+            var ss   = Math.floor((diff % 60000) / 1000);
+            cdEl.innerText =
+                String(hh).padStart(2,'0') + ':' +
+                String(mm).padStart(2,'0') + ':' +
+                String(ss).padStart(2,'0');
         }
 
         function getHijriDate() {
