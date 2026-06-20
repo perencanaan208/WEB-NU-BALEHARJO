@@ -78,8 +78,49 @@
             box-shadow: 0 0 0 1px rgba(251,191,36,0.3);
         }
         .prayer-active span { color: #fbbf24 !important; }
+        /* ── Slider Beranda (Berita + Galeri Tab) ── */
+        .bs-tab-btn { transition:all .25s; border-bottom:2px solid transparent; padding:.45rem 1.1rem; font-size:.8rem; font-weight:600; color:#64748b; cursor:pointer; background:none; }
+        .bs-tab-btn.active { color:#166534; border-bottom-color:#166534; }
+        .bs-panel { display:none; }
+        .bs-panel.active { display:block; }
+        .bs-track-wrap { overflow:hidden; position:relative; }
+        .bs-track { display:flex; transition:transform .45s cubic-bezier(.22,1,.36,1); }
+        .bs-slide { flex-shrink:0; width:calc(100%/3); padding:0 .4rem; box-sizing:border-box; }
+        @media(max-width:767px){ .bs-slide{ width:88%; } }
+        .bs-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+            background:rgba(255,255,255,.92); border:1px solid #e2e8f0; border-radius:50%;
+            width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+            font-size:12px; color:#166534; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.1); transition:all .2s; }
+        .bs-arrow:hover { background:#166534; color:#fff; }
+        .bs-dot { width:6px; height:6px; border-radius:50%; background:#cbd5e1; transition:all .3s; cursor:pointer; display:inline-block; margin:0 2px; }
+        .bs-dot.active { background:#166534; width:16px; border-radius:3px; }
+        .galeri-grid-6 { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,120px); gap:.5rem; }
+        @media(max-width:767px){ .galeri-grid-6 { grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,80px); } }
 
-        /* ── Galeri Beranda Hover ── */
+
+        /* ── Slider Beranda ── */
+/* ── Slider Beranda ── */
+        .bs-tab-btn { transition:all .25s; border-bottom:2px solid transparent; padding:.45rem 1.1rem; font-size:.8rem; font-weight:600; color:#64748b; }
+        .bs-tab-btn.active { color:#166534; border-bottom-color:#166534; }
+        .bs-panel { display:none; }
+        .bs-panel.active { display:block; }
+        /* Berita slider */
+        .bs-track-wrap { overflow:hidden; position:relative; }
+        .bs-track { display:flex; transition:transform .45s cubic-bezier(.22,1,.36,1); }
+        .bs-slide { min-width:calc(100%/3); padding:0 .5rem; box-sizing:border-box; }
+        @media(max-width:767px){ .bs-slide{ min-width:85%; } }
+        .bs-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+            background:rgba(255,255,255,.9); border:1px solid #e2e8f0; border-radius:50%;
+            width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+            font-size:13px; color:#166534; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.08);
+            transition:all .2s; }
+        .bs-arrow:hover { background:#166534; color:#fff; }
+        .bs-arrow.left { left:0; }
+        .bs-arrow.right { right:0; }
+        .bs-dot { width:6px; height:6px; border-radius:50%; background:#cbd5e1; transition:background .3s; cursor:pointer; display:inline-block; }
+        .bs-dot.active { background:#166534; width:18px; border-radius:3px; }
+        /* Galeri hover (override) */
+
         .galeri-card { position:relative; overflow:hidden; border-radius:1rem; background:#0f4c29; }
         .galeri-card img { width:100%; height:100%; object-fit:cover; transition:transform 0.45s cubic-bezier(.22,1,.36,1), filter 0.45s ease; display:block; }
         .galeri-card:hover img { transform:scale(1.08); filter:brightness(0.72); }
@@ -116,10 +157,8 @@
         .page-section { display: none !important; }
         .page-section.active-page { display: block !important; }
         /* Section berita beranda ikut tampil saat halaman Beranda aktif */
-        #beranda:not(.active-page) ~ #beranda-berita { display: none !important; }
-        #beranda.active-page ~ #beranda-berita { display: block !important; }
-        #beranda:not(.active-page) ~ #beranda-galeri { display: none !important; }
-        #beranda.active-page ~ #beranda-galeri { display: block !important; }
+        #beranda:not(.active-page) ~ #beranda-slider { display: none !important; }
+        #beranda.active-page ~ #beranda-slider { display: block !important; }
 
         /* ── Navbar Active State ── */
         .nav-link-item {
@@ -387,7 +426,7 @@
         </div>
     </header>
 
-    <section id="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden min-h-[85vh] flex items-center">
+    <section id="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden flex items-center">
         <div class="absolute inset-0 islamic-pattern opacity-[0.13]"></div>
         <div class="absolute inset-0 bg-gradient-to-tr from-nuGreen-950 via-nuGreen-900/90 to-transparent"></div>
         <div class="hero-glow-pulse absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style="background:radial-gradient(ellipse,rgba(251,191,36,0.07) 0%,transparent 70%);"></div>
@@ -405,7 +444,7 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 w-full">
+        <div class="relative max-w-7xl mx-auto px-4 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center z-10 w-full">
             <div class="lg:col-span-7 flex flex-col justify-center space-y-6 text-center lg:text-left">
                 <div class="hero-up hero-d1 inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-4 py-1.5 self-center lg:self-start">
                     <span class="w-2.5 h-2.5 rounded-full bg-nuGold-400 animate-pulse"></span>
@@ -496,63 +535,44 @@
          SECTION: BERITA TERBARU DI BERANDA
          Otomatis tampil 3 berita terbaru dari spreadsheet
     ==================================================== -->
-    <section id="beranda-berita" class="page-section py-14 bg-white border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-end justify-between mb-8">
-                <div>
-                    <span class="text-nuGreen-700 font-bold tracking-widest text-xs uppercase">Kabar Terkini</span>
-                    <h2 class="text-2xl font-serif font-bold text-slate-900 mt-1">Berita &amp; Informasi Terbaru</h2>
+    <!-- BERANDA SLIDER: Berita + Galeri dalam 1 panel tab -->
+    <section id="beranda-slider" class="page-section bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 py-4 md:py-5">
+
+            <!-- Tab header -->
+            <div class="flex items-center justify-between border-b border-slate-200 mb-4">
+                <div class="flex gap-1">
+                    <button class="bs-tab-btn active" onclick="switchBerandaTab('berita',this)">
+                        <i class="fas fa-newspaper mr-1.5 text-nuGreen-700"></i>Berita Terbaru
+                    </button>
+                    <button class="bs-tab-btn" onclick="switchBerandaTab('galeri',this)">
+                        <i class="fas fa-images mr-1.5 text-nuGreen-700"></i>Galeri Foto
+                    </button>
                 </div>
-                <a href="#" onclick="showPage('berita'); return false;"
-                   class="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-nuGreen-700 hover:text-nuGreen-900 transition">
-                    Lihat Semua <i class="fas fa-arrow-right text-xs"></i>
-                </a>
-            </div>
-
-            <!-- Grid 3 kartu horizontal -->
-            <div id="berandaBeritaGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- diisi oleh renderBerandaBerita() -->
-                <div class="md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Memuat berita...</div>
-            </div>
-
-            <!-- Tombol lihat semua (mobile) -->
-            <div class="mt-8 text-center sm:hidden">
-                <a href="#" onclick="showPage('berita'); return false;"
-                   class="inline-flex items-center gap-2 bg-nuGreen-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-nuGreen-900 transition">
-                    Lihat Semua Berita <i class="fas fa-arrow-right text-xs"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ====================================================
-         SECTION: GALERI PREVIEW DI BERANDA
-    ==================================================== -->
-    <section id="beranda-galeri" class="page-section py-14 bg-slate-50 border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-end justify-between mb-8">
-                <div>
-                    <span class="text-nuGreen-700 font-bold tracking-widest text-xs uppercase">Galeri Foto</span>
-                    <h2 class="text-2xl font-serif font-bold text-slate-900 mt-1">Momen &amp; Kegiatan</h2>
+                <div id="bsLihatSemua">
+                    <a href="#" id="bsLihatBerita" onclick="showPage('berita');return false;" class="text-xs font-semibold text-nuGreen-700 hover:text-nuGreen-900 flex items-center gap-1">Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i></a>
+                    <a href="#" id="bsLihatGaleri" onclick="showPage('galeri');return false;" class="text-xs font-semibold text-nuGreen-700 hover:text-nuGreen-900 hidden items-center gap-1">Lihat Semua <i class="fas fa-arrow-right text-[10px]"></i></a>
                 </div>
-                <a href="#" onclick="showPage('galeri'); return false;"
-                   class="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-nuGreen-700 hover:text-nuGreen-900 transition">
-                    Lihat Semua <i class="fas fa-arrow-right text-xs"></i>
-                </a>
             </div>
 
-            <!-- Grid 6 foto: 1 besar kiri + 5 kecil kanan -->
-            <div id="berandaGaleriGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                <div class="col-span-2 md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Memuat galeri...</div>
+            <!-- Panel: Berita -->
+            <div id="bsBerita" class="bs-panel active">
+                <div class="bs-track-wrap px-8">
+                    <div id="beritaTrack" class="bs-track">
+                        <div class="bs-slide"><div class="text-slate-400 text-sm italic text-center py-8">Memuat berita...</div></div>
+                    </div>
+                    <button class="bs-arrow left" onclick="bsMove('berita',-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="bs-arrow right" onclick="bsMove('berita',1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div id="beritaDots" class="flex justify-center gap-1 mt-3"></div>
             </div>
 
-            <!-- Tombol lihat semua (mobile) -->
-            <div class="mt-6 text-center sm:hidden">
-                <a href="#" onclick="showPage('galeri'); return false;"
-                   class="inline-flex items-center gap-2 bg-nuGreen-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-nuGreen-900 transition">
-                    Lihat Semua Foto <i class="fas fa-arrow-right text-xs"></i>
-                </a>
+            <!-- Panel: Galeri -->
+            <div id="bsGaleri" class="bs-panel">
+                <div id="berandaGaleriGrid" class="galeri-grid-6">Memuat galeri...</div>
+                <div id="galeriDots" class="flex justify-center gap-1 mt-3"></div>
             </div>
+
         </div>
     </section>
 
@@ -2843,104 +2863,120 @@
             });
         }
 
+        // ═══════════════════════════════════════════════
+        // BERANDA SLIDER: Berita + Galeri Tab + Auto-slide
+        // ═══════════════════════════════════════════════
+        var _bsState = { berita: { idx: 0, total: 0, timer: null }, galeri: { page: 0 } };
+
+        window.switchBerandaTab = function(tab, btn) {
+            document.querySelectorAll('.bs-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById('bsBerita').classList.toggle('active', tab === 'berita');
+            document.getElementById('bsGaleri').classList.toggle('active', tab === 'galeri');
+            document.getElementById('bsLihatBerita').classList.toggle('hidden', tab !== 'berita');
+            document.getElementById('bsLihatBerita').classList.toggle('flex', tab === 'berita');
+            document.getElementById('bsLihatGaleri').classList.toggle('hidden', tab !== 'galeri');
+            document.getElementById('bsLihatGaleri').classList.toggle('flex', tab === 'galeri');
+        };
+
+        window.bsMove = function(type, dir) {
+            if (type === 'berita') {
+                var s = _bsState.berita;
+                s.idx = (s.idx + dir + s.total) % s.total;
+                bsApplyBerita(s.idx);
+                bsResetTimer();
+            }
+        };
+
+        function bsApplyBerita(idx) {
+            var perView = window.innerWidth >= 768 ? 3 : 1;
+            var track = document.getElementById('beritaTrack');
+            if (track) track.style.transform = 'translateX(-' + (idx * (100/perView)) + '%)';
+            document.querySelectorAll('#beritaDots .bs-dot').forEach(function(d,i){
+                d.classList.toggle('active', i === idx);
+            });
+            _bsState.berita.idx = idx;
+        }
+
+        function bsResetTimer() {
+            if (_bsState.berita.timer) clearInterval(_bsState.berita.timer);
+            _bsState.berita.timer = setInterval(function(){
+                var s = _bsState.berita;
+                bsApplyBerita((s.idx + 1) % s.total);
+            }, 5000);
+        }
+
+        window.renderBerandaBerita = function() {
+            var track = document.getElementById('beritaTrack');
+            var dots  = document.getElementById('beritaDots');
+            if (!track) return;
+
+            var items = (AppState.news || []).slice(0, 6);
+            if (items.length === 0) {
+                track.innerHTML = '<div class="bs-slide"><p class="text-slate-400 text-sm italic text-center py-6">Belum ada berita.</p></div>';
+                return;
+            }
+
+            var catColor = {
+                kegiatan: 'bg-emerald-100 text-emerald-800',
+                dakwah:   'bg-amber-100 text-amber-800',
+                sosial:   'bg-blue-100 text-blue-800',
+            };
+
+            track.innerHTML = items.map(function(item) {
+                var cat = catColor[item.category] || 'bg-slate-100 text-slate-700';
+                var img = item.img || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400';
+                var dateStr = '';
+                try { var d = new Date(item.date); if(!isNaN(d)) dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); } catch(e){}
+                return '<div class="bs-slide">' +
+                    '<div class="group cursor-pointer rounded-xl overflow-hidden border border-slate-200/60 hover:shadow-lg transition bg-white h-full flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
+                        '<div class="relative overflow-hidden" style="aspect-ratio:16/7">' +
+                            '<img src="' + img + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">' +
+                            (item.category ? '<span class="absolute top-2 left-2 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ' + cat + '">' + item.category + '</span>' : '') +
+                        '</div>' +
+                        '<div class="p-3 flex flex-col flex-1">' +
+                            '<p class="text-[10px] text-slate-400 mb-1">' + (dateStr||item.date) + '</p>' +
+                            '<h3 class="font-bold text-slate-900 text-xs leading-snug mb-1.5 line-clamp-2 group-hover:text-nuGreen-800">' + item.title + '</h3>' +
+                            '<p class="text-[11px] text-slate-500 line-clamp-2 flex-1">' + item.summary + '</p>' +
+                            '<span class="mt-2 text-[10px] font-semibold text-nuGreen-700 flex items-center gap-1">Baca <i class="fas fa-arrow-right text-[9px]"></i></span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            // Dots
+            _bsState.berita.total = items.length;
+            if (dots) {
+                dots.innerHTML = items.map(function(_,i){
+                    return '<span class="bs-dot' + (i===0?' active':'') + '" onclick="bsApplyBerita('+i+');bsResetTimer();"></span>';
+                }).join('');
+            }
+
+            bsApplyBerita(0);
+            bsResetTimer();
+        };
+
         window.renderBerandaGaleri = function() {
             var grid = document.getElementById('berandaGaleriGrid');
             if (!grid) return;
 
             var items = (AppState.galeri || []).slice(0, 6);
             if (items.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Belum ada foto di galeri.</div>';
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#94a3b8;font-size:.8rem;font-style:italic;">Belum ada foto.</div>';
                 return;
             }
 
-            // Layout: foto ke-0 = besar (row-span-2 col-span-1), sisanya normal
-            // Grid 3 kolom: kolom kiri = 1 foto tinggi, kolom tengah+kanan = 2x2
-            var html = '';
-            items.forEach(function(item, idx) {
-                var isBig = (idx === 0 && items.length >= 3); // foto pertama besar jika ada ≥3
-                var caption = item.caption
-                    ? '<div class="galeri-overlay"><span class="galeri-overlay-caption">' + item.caption + '</span></div>'
-                    : '<div class="galeri-overlay"></div>';
-                var aspectClass = isBig
-                    ? 'row-span-2' // foto besar: tinggi 2 baris
-                    : '';
-                var heightStyle = isBig
-                    ? 'style="height:100%; min-height:280px;"'
-                    : 'style="aspect-ratio:4/3;"';
-                html += '<div class="galeri-card ' + aspectClass + '" ' + heightStyle + ' onclick="openGaleriModal(\'' + idx + '\')">' +
-                    '<img src="' + item.img + '" alt="' + (item.caption || 'Foto galeri') + '" loading="lazy">' +
-                    caption +
-                    '<button class="galeri-zoom-btn" title="Lihat foto"><i class="fas fa-expand"></i></button>' +
+            grid.innerHTML = items.map(function(item) {
+                return '<div class="galeri-card" style="height:100%;min-height:80px;" onclick="showPage(\'galeri\')">' +
+                    '<img src="' + item.img + '" alt="' + (item.caption||'Foto') + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;">' +
+                    '<div class="galeri-overlay">' +
+                        (item.caption ? '<span class="galeri-overlay-caption">' + item.caption + '</span>' : '') +
+                    '</div>' +
+                    '<button class="galeri-zoom-btn"><i class="fas fa-expand"></i></button>' +
                 '</div>';
-            });
-            grid.innerHTML = html;
-
-            // Terapkan grid CSS langsung agar row-span bekerja
-            grid.style.gridTemplateRows = 'auto';
-            grid.style.gridAutoRows = '180px';
-        };
-
-        // Buka modal galeri dari preview beranda
-        window.openGaleriModal = function(idxStr) {
-            showPage('galeri');
-        };
-
-        window.renderBerandaBerita = function() {
-            var grid = document.getElementById('berandaBeritaGrid');
-            if (!grid) return;
-
-            var items = (AppState.news || []).slice(0, 3);
-            if (items.length === 0) {
-                grid.innerHTML = '<div class="md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Belum ada berita.</div>';
-                return;
-            }
-
-            var catColor = {
-                kegiatan: { bg: 'bg-emerald-100', text: 'text-emerald-800', label: 'Kegiatan' },
-                dakwah:   { bg: 'bg-amber-100',   text: 'text-amber-800',   label: 'Dakwah'   },
-                sosial:   { bg: 'bg-blue-100',     text: 'text-blue-800',    label: 'Sosial'   },
-                default:  { bg: 'bg-slate-100',    text: 'text-slate-700',   label: 'Umum'     }
-            };
-
-            grid.innerHTML = items.map(function(item, idx) {
-                var cat = catColor[item.category] || catColor['default'];
-                var imgSrc = item.img || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600';
-                var dateStr = '';
-                try {
-                    var d = new Date(item.date);
-                    if (!isNaN(d)) dateStr = d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
-                } catch(e) {}
-
-                var isMain = (idx === 0);
-                if (isMain) {
-                    return '<div class="md:col-span-1 group cursor-pointer rounded-2xl overflow-hidden border border-slate-200/60 hover:shadow-xl transition duration-300 bg-white flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
-                        '<div class="relative overflow-hidden" style="aspect-ratio:16/9">' +
-                            '<img src="' + imgSrc + '" alt="' + item.title + '" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">' +
-                            '<span class="absolute top-3 left-3 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ' + cat.bg + ' ' + cat.text + '">' + cat.label + '</span>' +
-                        '</div>' +
-                        '<div class="p-4 flex flex-col flex-1">' +
-                            '<p class="text-[11px] text-slate-400 mb-1.5">' + (dateStr || item.date) + '</p>' +
-                            '<h3 class="font-bold text-slate-900 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-nuGreen-800 transition">' + item.title + '</h3>' +
-                            '<p class="text-xs text-slate-500 leading-relaxed line-clamp-3 flex-1">' + item.summary + '</p>' +
-                            '<span class="mt-3 text-xs font-semibold text-nuGreen-700 flex items-center gap-1 group-hover:gap-2 transition-all">Baca Selengkapnya <i class="fas fa-arrow-right text-[10px]"></i></span>' +
-                        '</div>' +
-                    '</div>';
-                } else {
-                    return '<div class="group cursor-pointer rounded-2xl overflow-hidden border border-slate-200/60 hover:shadow-xl transition duration-300 bg-white flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
-                        '<div class="relative overflow-hidden" style="aspect-ratio:16/9">' +
-                            '<img src="' + imgSrc + '" alt="' + item.title + '" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">' +
-                            '<span class="absolute top-3 left-3 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ' + cat.bg + ' ' + cat.text + '">' + cat.label + '</span>' +
-                        '</div>' +
-                        '<div class="p-4 flex flex-col flex-1">' +
-                            '<p class="text-[11px] text-slate-400 mb-1.5">' + (dateStr || item.date) + '</p>' +
-                            '<h3 class="font-bold text-slate-900 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-nuGreen-800 transition">' + item.title + '</h3>' +
-                            '<p class="text-xs text-slate-500 leading-relaxed line-clamp-2 flex-1">' + item.summary + '</p>' +
-                            '<span class="mt-3 text-xs font-semibold text-nuGreen-700 flex items-center gap-1 group-hover:gap-2 transition-all">Baca Selengkapnya <i class="fas fa-arrow-right text-[10px]"></i></span>' +
-                        '</div>' +
-                    '</div>';
-                }
             }).join('');
         };
+
 
         function renderAllPublicComponents() {
             try { renderSiteSettings(); } catch(e) {}
