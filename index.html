@@ -274,6 +274,20 @@
             image-rendering: auto;
         }
     </style>
+    <!-- Cache logo dari localStorage untuk splash screen -->
+    <script>
+        (function(){
+            try {
+                var cached = localStorage.getItem("prnu_site_logo");
+                if (cached && cached.length > 10) {
+                    document.addEventListener("DOMContentLoaded", function(){
+                        var el = document.getElementById("splashLogoImg");
+                        if (el) el.src = cached;
+                    });
+                }
+            } catch(e) {}
+        })();
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden">
 
@@ -4947,6 +4961,8 @@
                 // Update logo di splash juga
                 const splashLogo = document.getElementById('splashLogoImg');
                 if (splashLogo) splashLogo.src = ss.logoImg;
+                // Cache ke localStorage agar muncul langsung di kunjungan berikutnya
+                try { localStorage.setItem("prnu_site_logo", ss.logoImg); } catch(e) {}
             } else {
                 if (logoImg) logoImg.classList.add('hidden');
                 if (logoSvg) logoSvg.classList.remove('hidden');
@@ -5081,6 +5097,7 @@
 
         window.resetLogoToDefault = function() {
             AppState.siteSettings.logoImg = '';
+                try { localStorage.removeItem('prnu_site_logo'); } catch(e) {}
             const prev = document.getElementById('adminLogoPreviewImg');
             const prevSvg = document.getElementById('adminLogoPreviewSvg');
             if (prev) prev.classList.add('hidden');
