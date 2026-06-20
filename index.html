@@ -41,16 +41,39 @@
     </script>
     <style>
         .islamic-pattern {
-            background-color: #14532d;
-            background-image: radial-gradient(rgba(251, 191, 36, 0.15) 1px, transparent 0), radial-gradient(rgba(251, 191, 36, 0.15) 1px, transparent 0);
-            background-size: 24px 24px;
-            background-position: 0 0, 12px 12px;
+            background-color: transparent;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='none' stroke='rgba(251,191,36,0.28)' stroke-width='0.9'%3E%3Cpolygon points='36,10 39,26 54,18 44,31 60,36 44,41 54,54 39,46 36,62 33,46 18,54 28,41 12,36 28,31 18,18 33,26'/%3E%3Ccircle cx='36' cy='36' r='7' stroke-width='0.6' stroke='rgba(251,191,36,0.15)'/%3E%3Crect x='32' y='32' width='8' height='8' transform='rotate(45 36 36)' stroke-width='0.6' stroke='rgba(251,191,36,0.2)'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 72px 72px;
         }
         .text-glow {
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         }
+        @keyframes heroUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+        @keyframes heroRight {
+            from { opacity: 0; transform: translateX(32px); }
+            to   { opacity: 1; transform: translateX(0);    }
+        }
+        @keyframes heroFloat {
+            0%,100% { transform: translateY(0px) rotate(0deg); }
+            50%      { transform: translateY(-10px) rotate(3deg); }
+        }
+        @keyframes heroGlow {
+            0%,100% { opacity: 0.18; }
+            50%      { opacity: 0.32; }
+        }
+        .hero-up    { opacity:0; animation: heroUp    0.75s cubic-bezier(.22,1,.36,1) forwards; }
+        .hero-d1    { animation-delay: 0.10s; }
+        .hero-d2    { animation-delay: 0.28s; }
+        .hero-d3    { animation-delay: 0.46s; }
+        .hero-d4    { animation-delay: 0.64s; }
+        .hero-right { opacity:0; animation: heroRight 0.80s cubic-bezier(.22,1,.36,1) 0.55s forwards; }
+        .hero-ornament { animation: heroFloat 6s ease-in-out infinite; }
+        .hero-glow-pulse { animation: heroGlow 4s ease-in-out infinite; }
         .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
+            animation: heroUp 0.4s ease-out forwards;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
@@ -331,27 +354,41 @@
     </header>
 
     <section id="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden min-h-[85vh] flex items-center">
-        <div class="absolute inset-0 islamic-pattern opacity-10"></div>
+        <div class="absolute inset-0 islamic-pattern opacity-[0.13]"></div>
         <div class="absolute inset-0 bg-gradient-to-tr from-nuGreen-950 via-nuGreen-900/90 to-transparent"></div>
+        <div class="hero-glow-pulse absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style="background:radial-gradient(ellipse,rgba(251,191,36,0.07) 0%,transparent 70%);"></div>
+        <div class="hero-ornament absolute -top-16 -right-16 w-72 h-72 pointer-events-none opacity-[0.06]">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <polygon points="100,10 112,62 162,38 128,80 178,100 128,120 162,162 112,138 100,190 88,138 38,162 72,120 22,100 72,80 38,38 88,62" stroke="#fbbf24" stroke-width="2.5"/>
+                <polygon points="100,40 107,72 138,58 116,84 148,100 116,116 138,142 107,128 100,160 93,128 62,142 84,116 52,100 84,84 62,58 93,72" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+                <circle cx="100" cy="100" r="22" stroke="#fbbf24" stroke-width="1.5" opacity="0.5"/>
+            </svg>
+        </div>
+        <div class="absolute bottom-6 left-6 pointer-events-none opacity-[0.07]">
+            <svg width="72" height="72" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="40,4 44,28 68,20 50,38 68,56 44,48 40,72 36,48 12,56 30,38 12,20 36,28" stroke="#fbbf24" stroke-width="1.8"/>
+                <rect x="34" y="34" width="12" height="12" transform="rotate(45 40 40)" stroke="#fbbf24" stroke-width="1.5"/>
+            </svg>
+        </div>
 
         <div class="relative max-w-7xl mx-auto px-4 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 w-full">
             <div class="lg:col-span-7 flex flex-col justify-center space-y-6 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-4 py-1.5 self-center lg:self-start">
+                <div class="hero-up hero-d1 inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-4 py-1.5 self-center lg:self-start">
                     <span class="w-2.5 h-2.5 rounded-full bg-nuGold-400 animate-pulse"></span>
                     <span class="text-xs font-semibold tracking-wider text-emerald-300 uppercase">Official Website Ranting NU</span>
                 </div>
                 
-                <h1 id="pubHeroTitle" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight">
+                <h1 id="pubHeroTitle" class="hero-up hero-d2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight">
                     Merawat Jagat <br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow">Membangun Peradaban</span> <br>
                     di Bumi Baleharjo
                 </h1>
                 
-                <p id="pubHeroSubtitle" class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                <p id="pubHeroSubtitle" class="hero-up hero-d3 text-slate-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     Meneguhkan Aqidah Islam Ahlussunnah wal Jama'ah An-Nahdliyah, mengokohkan ukhuwah islamiyah, wathaniyah, dan basyariyah di wilayah Baleharjo, Sukodono, Sragen.
                 </p>
 
-                <div class="flex flex-wrap gap-4 justify-center lg:justify-start pt-2">
+                <div class="hero-up hero-d4 flex flex-wrap gap-4 justify-center lg:justify-start pt-2">
                     <a href="#" onclick="showPage('profil'); return false;" class="bg-gradient-to-r from-nuGreen-800 to-emerald-700 border border-emerald-600 text-white px-6 py-3.5 rounded-xl font-semibold shadow-lg shadow-emerald-950/50 hover:shadow-xl hover:translate-y-[-2px] transition duration-300">
                         Kenal Lebih Dekat
                     </a>
@@ -363,7 +400,7 @@
             </div>
 
             <div class="lg:col-span-5 flex flex-col items-center">
-                <div class="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
+                <div class="hero-right w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-nuGold-400/10 rounded-full blur-2xl"></div>
                     
                     <h3 class="text-lg font-bold text-nuGold-400 mb-4 border-b border-white/10 pb-2 flex items-center justify-between">
