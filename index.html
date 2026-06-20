@@ -292,6 +292,17 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans overflow-x-hidden">
 
+    <!-- Lightbox Foto Pentasyarufan -->
+    <div id="pentaLightbox" class="fixed inset-0 z-[60] hidden items-center justify-center" style="background:rgba(0,0,0,0.92);">
+        <button onclick="closePentaLightbox()" class="absolute top-4 right-4 text-white text-2xl z-10"><i class="fas fa-times"></i></button>
+        <button onclick="movePentaLightbox(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-2xl z-10 bg-black/40 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="movePentaLightbox(1)" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-2xl z-10 bg-black/40 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-chevron-right"></i></button>
+        <img id="pentaLightboxImg" src="" class="max-w-[90vw] max-h-[85vh] object-contain rounded-xl shadow-2xl">
+        <div class="absolute bottom-4 left-0 right-0 text-center">
+            <span id="pentaLightboxCaption" class="text-white/80 text-sm bg-black/50 px-4 py-1.5 rounded-full"></span>
+        </div>
+    </div>
+
     <!-- ══════════════════════════════════════════════
          SPLASH SCREEN — tampil saat web pertama dibuka
          Background: foto profil PRNU (dari Spreadsheet)
@@ -807,58 +818,48 @@
         </div>
     </footer>
 
-    <div id="donationModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" id="closeDonationBackdrop"></div>
-        <div class="relative bg-white rounded-3xl w-full max-w-2xl p-6 md:p-8 m-4 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300" id="donationModalBody">
-            <button id="closeDonationModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
-                <i class="fas fa-times"></i>
+    <div id="donationModal" class="fixed inset-0 z-50 flex flex-col hidden" style="background:rgba(5,46,22,0.97);backdrop-filter:blur(8px);">
+        <!-- Header modal -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-nuGold-500 rounded-lg flex items-center justify-center"><i class="fas fa-hand-holding-heart text-nuGreen-950 text-sm"></i></div>
+                <div>
+                    <h2 class="text-white font-bold text-sm">UPZISNU Baleharjo</h2>
+                    <p class="text-white/50 text-[10px]">Zakat · Infaq · Shadaqah · Koin NU</p>
+                </div>
+            </div>
+            <button id="closeDonationModalBtn" class="text-white/60 hover:text-white text-xl transition"><i class="fas fa-times"></i></button>
+        </div>
+        <!-- Tab -->
+        <div class="flex border-b border-white/10 shrink-0 px-6">
+            <button id="tab-don-transparansi" class="py-3 px-4 text-xs font-bold text-nuGold-400 border-b-2 border-nuGold-400 mr-2 transition">
+                <i class="fas fa-images mr-1.5"></i>Foto Pentasyarufan
             </button>
+            <button id="tab-don-salurkan" class="py-3 px-4 text-xs font-bold text-white/50 border-b-2 border-transparent hover:text-white transition">
+                <i class="fas fa-hand-holding-heart mr-1.5"></i>Salurkan Koin NU
+            </button>
+        </div>
+        <!-- Konten modal (scroll) -->
+        <div class="flex-1 overflow-y-auto">
+        <div id="donationModalBody" class="max-w-5xl mx-auto p-6">
 
-            <div class="flex border-b border-slate-200 mb-6">
-                <button id="tab-don-transparansi" class="flex-1 py-3 text-sm font-bold text-nuGreen-800 border-b-2 border-nuGreen-800 transition">
-                    <i class="fas fa-chart-line mr-2"></i>Laporan Keuangan UPZISNU
-                </button>
-                <button id="tab-don-salurkan" class="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-nuGreen-800 border-b-2 border-transparent transition">
-                    <i class="fas fa-hand-holding-heart mr-2"></i>Salurkan Koin NU
-                </button>
-            </div>
-
-            <div id="don-content-transparansi" class="space-y-6">
-                <div class="text-center space-y-2">
-                    <h3 class="font-serif font-bold text-2xl text-slate-900">Transparansi Laporan UPZISNU</h3>
-                    <p class="text-xs text-slate-500 max-w-md mx-auto">Informasi real-time arus kas masuk dan keluar yang dikelola oleh UPZISNU Ranting Baleharjo.</p>
+            <div id="don-content-transparansi">
+                <div class="text-center mb-6">
+                    <h3 class="font-serif font-bold text-2xl text-white">Foto Kegiatan Pentasyarufan</h3>
+                    <p class="text-white/50 text-xs mt-1">Dokumentasi nyata penyaluran dana UPZISNU kepada yang berhak</p>
                 </div>
-
-                <div class="grid grid-cols-3 gap-3 text-center">
-                    <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100">
-                        <span class="block text-[10px] uppercase tracking-wider font-bold text-emerald-800">Total Masuk</span>
-                        <span id="donTotalIncome" class="block font-bold text-xs sm:text-sm text-emerald-900 mt-1">Rp 0</span>
-                    </div>
-                    <div class="bg-rose-50 p-3 rounded-2xl border border-rose-100">
-                        <span class="block text-[10px] uppercase tracking-wider font-bold text-rose-800">Total Keluar</span>
-                        <span id="donTotalExpense" class="block font-bold text-xs sm:text-sm text-rose-900 mt-1">Rp 0</span>
-                    </div>
-                    <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
-                        <span class="block text-[10px] uppercase tracking-wider font-bold text-amber-800">Saldo Sisa</span>
-                        <span id="donTotalBalance" class="block font-bold text-xs sm:text-sm text-amber-900 mt-1">Rp 0</span>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Arus Kas Bulanan Terbaru</span>
-                    <div id="donReportsContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                        <!-- Loaded dynamically -->
-                    </div>
+                <div id="pentasyarufanGaleri" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                    <div class="col-span-full text-center py-10 text-white/30 text-sm italic">Memuat data...</div>
                 </div>
             </div>
 
-            <div id="don-content-salurkan" class="space-y-4 hidden">
+            <div id="don-content-salurkan" class="space-y-4 hidden" style="color:white">
                 <div class="text-center space-y-3 mb-6">
                     <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-nuGold-500 text-xl mx-auto">
                         <i class="fas fa-hand-holding-heart"></i>
                     </div>
-                    <h3 class="font-serif font-bold text-xl text-slate-900">Salurkan Koin NU</h3>
-                    <p class="text-xs text-slate-500 max-w-sm mx-auto">Mari berpartisipasi menjaga kemandirian umat melalui Zakat, Infaq, dan Shadaqah ke UPZISNU Baleharjo.</p>
+                    <h3 class="font-serif font-bold text-xl text-white">Salurkan Koin NU</h3>
+                    <p class="text-xs text-white/60 max-w-sm mx-auto">Mari berpartisipasi menjaga kemandirian umat melalui Zakat, Infaq, dan Shadaqah ke UPZISNU Baleharjo.</p>
                 </div>
 
                 <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 flex flex-col items-center">
@@ -884,7 +885,7 @@
                 </div>
 
                 <div class="space-y-2">
-                    <p class="text-xs font-semibold text-slate-600">Transfer Rekening Bank:</p>
+                    <p class="text-xs font-semibold text-white/80">Transfer Rekening Bank:</p>
                     <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-100 text-xs">
                         <div>
                             <span class="block font-bold text-nuGreen-950">Bank Syariah Indonesia (BSI)</span>
@@ -944,6 +945,7 @@
                     <span>Masuk ke Dashboard</span>
                 </button>
             </form>
+        </div>
         </div>
     </div>
 
@@ -1523,61 +1525,44 @@
                         </div>
                     </div>
 
-                    <!-- TAB: Keuangan UPZISNU -->
+                    <!-- TAB: Keuangan UPZISNU → Kelola Pentasyarufan -->
                     <div id="admin-tab-keuangan" class="admin-panel-content space-y-6 hidden">
                         <div class="flex justify-between items-center border-b pb-2">
-                            <h4 class="text-lg font-serif font-bold text-slate-900">Manajemen Keuangan UPZISNU</h4>
-                            <button id="btnFinanceToggle" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition">
-                                + Input Kas/Laporan Keuangan
+                            <h4 class="text-lg font-serif font-bold text-slate-900">Foto Kegiatan Pentasyarufan</h4>
+                            <button id="btnPentaToggle" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition">
+                                + Tambah Kegiatan
                             </button>
                         </div>
 
-                        <form id="addFinanceForm" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200/60 space-y-4">
-                            <h5 class="text-sm font-bold text-slate-800">Tambahkan Laporan Laba/Rugi & Unggah Berkas</h5>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Periode Laporan</label>
-                                    <input type="text" id="newFinancePeriod" placeholder="Contoh: Juni 2026" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 font-sans">
+                        <!-- Form tambah pentasyarufan -->
+                        <div id="addPentaForm" class="hidden bg-slate-50 p-5 rounded-2xl border border-slate-200/60 space-y-4">
+                            <h5 class="text-sm font-bold text-slate-800">Tambah Kegiatan Pentasyarufan Baru</h5>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Kegiatan</label>
+                                <input type="text" id="newPentaJudul" placeholder="Contoh: Santunan Yatim Muharram 2026"
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-nuGreen-500 text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Upload Foto Kegiatan <span class="text-slate-400">(maks 10 foto, JPG/PNG)</span></label>
+                                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="pentaFotoSlots">
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Penerimaan (Rp)</label>
-                                    <input type="number" id="newFinanceIncome" placeholder="Contoh: 4500000" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Pengeluaran (Rp)</label>
-                                    <input type="number" id="newFinanceExpense" placeholder="Contoh: 3000000" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Unggah Dokumen Laporan (PDF/Doc/Gambar)</label>
-                                    <input type="file" id="newFinanceFile" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-nuGreen-800 hover:file:bg-emerald-100 transition">
-                                </div>
-                                <div class="sm:col-span-2">
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Keterangan Penyaluran / Deskripsi Singkat</label>
-                                    <textarea id="newFinanceDesc" placeholder="Jelaskan alokasi dana secara singkat..." rows="2" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800"></textarea>
-                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1"><i class="fas fa-info-circle mr-1"></i>Foto akan diunggah ke Google Drive otomatis</p>
+                            </div>
+                            <div id="pentaUploadProgress" class="hidden">
+                                <div class="w-full bg-slate-200 rounded-full h-2"><div id="pentaProgressBar" class="bg-nuGreen-600 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                                <p id="pentaProgressText" class="text-xs text-slate-500 mt-1 text-center">Mengunggah foto...</p>
                             </div>
                             <div class="flex gap-2 justify-end">
-                                <button type="button" id="btnCancelAddFinance" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Batal</button>
-                                <button type="submit" class="bg-nuGreen-800 text-white px-4 py-2 rounded-xl text-xs font-bold">Simpan Laporan Keuangan</button>
+                                <button type="button" id="btnCancelPenta" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Batal</button>
+                                <button type="button" id="btnSavePenta" class="bg-nuGreen-800 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                                    <i class="fas fa-save"></i> Simpan Kegiatan
+                                </button>
                             </div>
-                        </form>
+                        </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-                                        <th class="p-3">Periode</th>
-                                        <th class="p-3">Penerimaan</th>
-                                        <th class="p-3">Pengeluaran</th>
-                                        <th class="p-3">Saldo</th>
-                                        <th class="p-3">File Terunggah</th>
-                                        <th class="p-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="adminFinanceTableBody">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
+                        <!-- Daftar kegiatan pentasyarufan -->
+                        <div id="adminPentaList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="col-span-full text-center py-8 text-slate-400 text-sm italic">Belum ada kegiatan pentasyarufan.</div>
                         </div>
                     </div>
 
@@ -2711,6 +2696,11 @@
                 });
             }
 
+            // Pentasyarufan UPZISNU
+            if (data.pentasyarufan !== undefined) {
+                try { AppState.pentasyarufan = typeof data.pentasyarufan === "string" ? JSON.parse(data.pentasyarufan) : data.pentasyarufan; } catch(e) { AppState.pentasyarufan = []; }
+            }
+
             // Galeri dari sheet GaleriPhotos (bukan dari settings)
             if (data.galeri !== undefined) {
                 AppState.galeri = (data.galeri || []).map(function(r) {
@@ -2933,10 +2923,214 @@
         };
 
 
+        // ══════════════════════════════════════════════════════
+        // PENTASYARUFAN UPZISNU — Render & Admin CRUD
+        // ══════════════════════════════════════════════════════
+        var _pentaLightbox = { items:[], idx:0 };
+
+        window.renderPentasyarufanGaleri = function() {
+            var grid = document.getElementById('pentasyarufanGaleri');
+            if (!grid) return;
+            var items = AppState.pentasyarufan || [];
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-16 text-white/30 text-sm italic">Belum ada dokumentasi kegiatan.<br>Tambahkan melalui panel Admin → Keuangan UPZISNU.</div>';
+                return;
+            }
+            grid.innerHTML = items.map(function(item, i) {
+                var fotos = Array.isArray(item.fotos) ? item.fotos : [];
+                var cover = fotos[0] || 'https://via.placeholder.com/400x280/052e16/fbbf24?text=No+Photo';
+                return '<div class="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 hover:border-nuGold-400/50 transition" onclick="openPentaAlbum(' + i + ')">' +
+                    '<div class="relative" style="aspect-ratio:4/3">' +
+                        '<img src="' + cover + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' +
+                        '<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>' +
+                        (fotos.length > 1 ? '<span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full"><i class="fas fa-images mr-1"></i>' + fotos.length + ' foto</span>' : '') +
+                    '</div>' +
+                    '<div class="p-3 bg-white/5">' +
+                        '<h3 class="text-white font-bold text-sm leading-snug line-clamp-2">' + item.judul + '</h3>' +
+                        '<p class="text-white/40 text-[10px] mt-1">' + (item.timestamp || '') + '</p>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        };
+
+        window.openPentaAlbum = function(idx) {
+            var item = (AppState.pentasyarufan || [])[idx];
+            if (!item) return;
+            var fotos = Array.isArray(item.fotos) ? item.fotos : [];
+            if (!fotos.length) return;
+            _pentaLightbox.items = fotos.map(function(f) { return { src: f, caption: item.judul }; });
+            _pentaLightbox.idx = 0;
+            applyPentaLightbox();
+            document.getElementById('pentaLightbox').classList.remove('hidden');
+            document.getElementById('pentaLightbox').classList.add('flex');
+        };
+
+        window.closePentaLightbox = function() {
+            document.getElementById('pentaLightbox').classList.add('hidden');
+            document.getElementById('pentaLightbox').classList.remove('flex');
+        };
+
+        window.movePentaLightbox = function(dir) {
+            var n = _pentaLightbox.items.length;
+            _pentaLightbox.idx = (_pentaLightbox.idx + dir + n) % n;
+            applyPentaLightbox();
+        };
+
+        function applyPentaLightbox() {
+            var item = _pentaLightbox.items[_pentaLightbox.idx];
+            document.getElementById('pentaLightboxImg').src = item.src;
+            document.getElementById('pentaLightboxCaption').textContent =
+                item.caption + ' (' + (_pentaLightbox.idx+1) + '/' + _pentaLightbox.items.length + ')';
+        }
+
+        // ── Admin: render daftar pentasyarufan ──
+        window.renderAdminPentaList = function() {
+            var list = document.getElementById('adminPentaList');
+            if (!list) return;
+            var items = AppState.pentasyarufan || [];
+            if (!items.length) {
+                list.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-sm italic">Belum ada kegiatan pentasyarufan.</div>';
+                return;
+            }
+            list.innerHTML = items.map(function(item) {
+                var fotos = Array.isArray(item.fotos) ? item.fotos : [];
+                var cover = fotos[0] || '';
+                return '<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">' +
+                    (cover ? '<img src="' + cover + '" class="w-full h-32 object-cover">' : '<div class="w-full h-32 bg-slate-100 flex items-center justify-center text-slate-300"><i class="fas fa-image text-3xl"></i></div>') +
+                    '<div class="p-3">' +
+                        '<h4 class="font-bold text-slate-900 text-sm leading-snug">' + item.judul + '</h4>' +
+                        '<p class="text-[10px] text-slate-400 mt-0.5">' + fotos.length + ' foto · ' + (item.timestamp||'') + '</p>' +
+                        '<button onclick="adminDeletePenta(\'' + item.id + '\')" class="mt-2 text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1"><i class="fas fa-trash"></i> Hapus</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        };
+
+        window.adminDeletePenta = function(id) {
+            if (!confirm('Hapus kegiatan ini beserta semua fotonya?')) return;
+            google.script.run
+                .withSuccessHandler(function() {
+                    AppState.pentasyarufan = (AppState.pentasyarufan||[]).filter(function(p){ return String(p.id) !== String(id); });
+                    renderAdminPentaList();
+                    renderPentasyarufanGaleri();
+                    showToast('Kegiatan dihapus.');
+                })
+                .withFailureHandler(function(e){ showToast('Gagal: '+e,'error'); })
+                .deletePentasyarufan(id);
+        };
+
+        // ── Init slot foto upload ──
+        function initPentaFotoSlots() {
+            var container = document.getElementById('pentaFotoSlots');
+            if (!container) return;
+            container.innerHTML = '';
+            for (var i = 0; i < 10; i++) {
+                var idx = i;
+                var slot = document.createElement('div');
+                slot.className = 'relative border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center cursor-pointer hover:border-nuGreen-400 transition';
+                slot.style.aspectRatio = '1';
+                slot.innerHTML = '<input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" data-slot="' + idx + '">' +
+                    '<div class="penta-slot-inner text-center pointer-events-none"><i class="fas fa-plus text-slate-300 text-lg"></i><p class="text-[9px] text-slate-400 mt-1">Foto ' + (idx+1) + '</p></div>';
+                slot.querySelector('input').addEventListener('change', function(e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var slotEl = e.target.parentElement;
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        slotEl.querySelector('.penta-slot-inner').innerHTML = '<img src="' + ev.target.result + '" class="w-full h-full object-cover rounded-lg">';
+                        e.target._preview = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+                container.appendChild(slot);
+            }
+        }
+
+        // ── Simpan pentasyarufan ──
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnToggle = document.getElementById('btnPentaToggle');
+            var formDiv   = document.getElementById('addPentaForm');
+            var btnCancel = document.getElementById('btnCancelPenta');
+            var btnSave   = document.getElementById('btnSavePenta');
+
+            if (btnToggle) btnToggle.addEventListener('click', function() {
+                formDiv.classList.toggle('hidden');
+                if (!formDiv.classList.contains('hidden')) initPentaFotoSlots();
+            });
+            if (btnCancel) btnCancel.addEventListener('click', function() {
+                formDiv.classList.add('hidden');
+            });
+            if (btnSave) btnSave.addEventListener('click', async function() {
+                var judul = (document.getElementById('newPentaJudul')||{}).value.trim();
+                if (!judul) { showToast('Isi judul kegiatan dulu.','error'); return; }
+
+                var slots = document.querySelectorAll('#pentaFotoSlots input[type=file]');
+                var previews = [];
+                slots.forEach(function(inp) { if (inp._preview) previews.push(inp._preview); });
+
+                if (previews.length === 0) { showToast('Upload minimal 1 foto.','error'); return; }
+
+                // Upload semua foto ke Drive
+                var progressDiv = document.getElementById('pentaUploadProgress');
+                var progressBar = document.getElementById('pentaProgressBar');
+                var progressTxt = document.getElementById('pentaProgressText');
+                progressDiv.classList.remove('hidden');
+                btnSave.disabled = true;
+
+                var driveUrls = [];
+                for (var j = 0; j < previews.length; j++) {
+                    progressBar.style.width = Math.round((j / previews.length) * 80) + '%';
+                    progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
+                    try {
+                        var url = await new Promise(function(resolve, reject) {
+                            google.script.run
+                                .withSuccessHandler(resolve)
+                                .withFailureHandler(reject)
+                                .savePhotoToDrive(previews[j], 'penta_' + Date.now() + '_' + j + '.jpg');
+                        });
+                        driveUrls.push(url);
+                    } catch(e) { console.warn('Gagal upload foto '+j, e); }
+                }
+
+                progressBar.style.width = '90%';
+                progressTxt.textContent = 'Menyimpan data...';
+
+                var payload = JSON.stringify({ judul: judul, fotos: driveUrls });
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        progressBar.style.width = '100%';
+                        progressTxt.textContent = 'Selesai!';
+                        setTimeout(function() {
+                            progressDiv.classList.add('hidden');
+                            formDiv.classList.add('hidden');
+                            btnSave.disabled = false;
+                            document.getElementById('newPentaJudul').value = '';
+                        }, 800);
+                        // Reload data
+                        google.script.run
+                            .withSuccessHandler(function(data) {
+                                try { AppState.pentasyarufan = JSON.parse(data); } catch(e){}
+                                renderAdminPentaList();
+                                renderPentasyarufanGaleri();
+                            })
+                            .getPentasyarufan();
+                        showToast('Kegiatan berhasil disimpan!');
+                    })
+                    .withFailureHandler(function(e) {
+                        progressDiv.classList.add('hidden');
+                        btnSave.disabled = false;
+                        showToast('Gagal menyimpan: '+e,'error');
+                    })
+                    .addPentasyarufan(payload);
+            });
+        });
+
         function renderAllPublicComponents() {
             try { renderSiteSettings(); } catch(e) {}
             try { renderBerandaBerita(); } catch(e) {}
             try { renderBerandaGaleri(); } catch(e) {}
+            try { renderPentasyarufanGaleri(); } catch(e) {}
+            try { renderAdminPentaList(); } catch(e) {}
             try { renderPublicGaleri(); } catch(e) {}
             try { renderHomepageContent(); } catch(e) {}
             try { renderProfileContent(); } catch(e) {}
