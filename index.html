@@ -78,6 +78,32 @@
             box-shadow: 0 0 0 1px rgba(251,191,36,0.3);
         }
         .prayer-active span { color: #fbbf24 !important; }
+
+        /* ── Galeri Beranda Hover ── */
+        .galeri-card { position:relative; overflow:hidden; border-radius:1rem; background:#0f4c29; }
+        .galeri-card img { width:100%; height:100%; object-fit:cover; transition:transform 0.45s cubic-bezier(.22,1,.36,1), filter 0.45s ease; display:block; }
+        .galeri-card:hover img { transform:scale(1.08); filter:brightness(0.72); }
+        .galeri-overlay {
+            position:absolute; inset:0;
+            background:linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+            opacity:0; transition:opacity 0.35s ease;
+            display:flex; align-items:flex-end; padding:1rem;
+        }
+        .galeri-card:hover .galeri-overlay { opacity:1; }
+        .galeri-overlay-caption {
+            color:#fff; font-size:12px; font-weight:600; line-height:1.4;
+            transform:translateY(8px); transition:transform 0.35s ease;
+        }
+        .galeri-card:hover .galeri-overlay-caption { transform:translateY(0); }
+        .galeri-zoom-btn {
+            position:absolute; top:10px; right:10px;
+            background:rgba(255,255,255,0.18); backdrop-filter:blur(4px);
+            color:#fff; border:none; border-radius:50%; width:32px; height:32px;
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; transform:scale(0.7); transition:opacity 0.3s, transform 0.3s;
+            cursor:pointer; font-size:13px;
+        }
+        .galeri-card:hover .galeri-zoom-btn { opacity:1; transform:scale(1); }
         .animate-fade-in {
             animation: heroUp 0.4s ease-out forwards;
         }
@@ -92,6 +118,8 @@
         /* Section berita beranda ikut tampil saat halaman Beranda aktif */
         #beranda:not(.active-page) ~ #beranda-berita { display: none !important; }
         #beranda.active-page ~ #beranda-berita { display: block !important; }
+        #beranda:not(.active-page) ~ #beranda-galeri { display: none !important; }
+        #beranda.active-page ~ #beranda-galeri { display: block !important; }
 
         /* ── Navbar Active State ── */
         .nav-link-item {
@@ -492,6 +520,37 @@
                 <a href="#" onclick="showPage('berita'); return false;"
                    class="inline-flex items-center gap-2 bg-nuGreen-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-nuGreen-900 transition">
                     Lihat Semua Berita <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+         SECTION: GALERI PREVIEW DI BERANDA
+    ==================================================== -->
+    <section id="beranda-galeri" class="page-section py-14 bg-slate-50 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-end justify-between mb-8">
+                <div>
+                    <span class="text-nuGreen-700 font-bold tracking-widest text-xs uppercase">Galeri Foto</span>
+                    <h2 class="text-2xl font-serif font-bold text-slate-900 mt-1">Momen &amp; Kegiatan</h2>
+                </div>
+                <a href="#" onclick="showPage('galeri'); return false;"
+                   class="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-nuGreen-700 hover:text-nuGreen-900 transition">
+                    Lihat Semua <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <!-- Grid 6 foto: 1 besar kiri + 5 kecil kanan -->
+            <div id="berandaGaleriGrid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                <div class="col-span-2 md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Memuat galeri...</div>
+            </div>
+
+            <!-- Tombol lihat semua (mobile) -->
+            <div class="mt-6 text-center sm:hidden">
+                <a href="#" onclick="showPage('galeri'); return false;"
+                   class="inline-flex items-center gap-2 bg-nuGreen-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-nuGreen-900 transition">
+                    Lihat Semua Foto <i class="fas fa-arrow-right text-xs"></i>
                 </a>
             </div>
         </div>
@@ -2784,6 +2843,48 @@
             });
         }
 
+        window.renderBerandaGaleri = function() {
+            var grid = document.getElementById('berandaGaleriGrid');
+            if (!grid) return;
+
+            var items = (AppState.galeri || []).slice(0, 6);
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="col-span-2 md:col-span-3 text-center py-10 text-slate-400 text-sm italic">Belum ada foto di galeri.</div>';
+                return;
+            }
+
+            // Layout: foto ke-0 = besar (row-span-2 col-span-1), sisanya normal
+            // Grid 3 kolom: kolom kiri = 1 foto tinggi, kolom tengah+kanan = 2x2
+            var html = '';
+            items.forEach(function(item, idx) {
+                var isBig = (idx === 0 && items.length >= 3); // foto pertama besar jika ada ≥3
+                var caption = item.caption
+                    ? '<div class="galeri-overlay"><span class="galeri-overlay-caption">' + item.caption + '</span></div>'
+                    : '<div class="galeri-overlay"></div>';
+                var aspectClass = isBig
+                    ? 'row-span-2' // foto besar: tinggi 2 baris
+                    : '';
+                var heightStyle = isBig
+                    ? 'style="height:100%; min-height:280px;"'
+                    : 'style="aspect-ratio:4/3;"';
+                html += '<div class="galeri-card ' + aspectClass + '" ' + heightStyle + ' onclick="openGaleriModal(\'' + idx + '\')">' +
+                    '<img src="' + item.img + '" alt="' + (item.caption || 'Foto galeri') + '" loading="lazy">' +
+                    caption +
+                    '<button class="galeri-zoom-btn" title="Lihat foto"><i class="fas fa-expand"></i></button>' +
+                '</div>';
+            });
+            grid.innerHTML = html;
+
+            // Terapkan grid CSS langsung agar row-span bekerja
+            grid.style.gridTemplateRows = 'auto';
+            grid.style.gridAutoRows = '180px';
+        };
+
+        // Buka modal galeri dari preview beranda
+        window.openGaleriModal = function(idxStr) {
+            showPage('galeri');
+        };
+
         window.renderBerandaBerita = function() {
             var grid = document.getElementById('berandaBeritaGrid');
             if (!grid) return;
@@ -2844,6 +2945,7 @@
         function renderAllPublicComponents() {
             try { renderSiteSettings(); } catch(e) {}
             try { renderBerandaBerita(); } catch(e) {}
+            try { renderBerandaGaleri(); } catch(e) {}
             try { renderPublicGaleri(); } catch(e) {}
             try { renderHomepageContent(); } catch(e) {}
             try { renderProfileContent(); } catch(e) {}
