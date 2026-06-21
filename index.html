@@ -78,6 +78,10 @@
             box-shadow: 0 0 0 1px rgba(251,191,36,0.3);
         }
         .prayer-active span { color: #fbbf24 !important; }
+        @keyframes slideInRight {
+            from { opacity:0; transform:translateX(60px); }
+            to   { opacity:1; transform:translateX(0); }
+        }
         /* ── Slider Beranda (Berita + Galeri Tab) ── */
         .bs-tab-btn { transition:all .25s; border-bottom:2px solid transparent; padding:.45rem 1.1rem; font-size:.8rem; font-weight:600; color:#64748b; cursor:pointer; background:none; }
         .bs-tab-btn.active { color:#166534; border-bottom-color:#166534; }
@@ -2879,6 +2883,27 @@
         // Helper: tampilkan foto (base64 atau URL) — kembalikan apa adanya
         function driveFoto(src) { return (src && !src.startsWith("error") && !src.startsWith("penta_")) ? src : ""; }
 
+        // Notifikasi melayang untuk aksi admin
+        function showFloatingNotif(msg, type) {
+            var notif = document.createElement("div");
+            var bg = type === "success" ? "#14532d" : type === "error" ? "#7f1d1d" : "#1e3a5f";
+            var icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
+            notif.style.cssText = [
+                "position:fixed;top:20px;right:20px;z-index:99999",
+                "background:"+bg+";color:#fff;padding:14px 20px;border-radius:14px",
+                "box-shadow:0 8px 30px rgba(0,0,0,0.25);font-size:13px;font-weight:600",
+                "display:flex;align-items:center;gap:10px;max-width:320px",
+                "animation:slideInRight .35s ease;border:1px solid rgba(255,255,255,0.15)"
+            ].join(";");
+            notif.innerHTML = '<span style="font-size:18px">' + icon + '</span><span>' + msg + '</span>';
+            document.body.appendChild(notif);
+            setTimeout(function() {
+                notif.style.opacity = "0"; notif.style.transform = "translateX(100px)";
+                notif.style.transition = "all .4s ease";
+                setTimeout(function(){ if(notif.parentNode) notif.parentNode.removeChild(notif); }, 400);
+            }, 3500);
+        }
+
         // Kompres gambar sebelum disimpan (max lebar, kualitas JPEG)
         function compressImage(base64, maxW, quality) {
             return new Promise(function(resolve) {
@@ -3017,6 +3042,7 @@
                     renderAdminPentaList();
                     renderPentasyarufanGaleri();
                     showToast('Kegiatan dihapus.');
+                    showFloatingNotif('🗑️ Kegiatan berhasil dihapus', 'error');
                 })
                 .withFailureHandler(function(e){ showToast('Gagal: '+e,'error'); })
                 .deletePentasyarufan(id);
@@ -3107,22 +3133,29 @@
                 google.script.run
                     .withSuccessHandler(function(res) {
                         progressBar.style.width = '100%';
-                        progressTxt.textContent = 'Selesai!';
+                        progressTxt.textContent = '✅ Berhasil disimpan!';
+                        // Notif melayang
+                        showFloatingNotif("📸 Foto kegiatan berhasil disimpan!", "success");
                         setTimeout(function() {
                             progressDiv.classList.add('hidden');
                             formDiv.classList.add('hidden');
                             btnSave.disabled = false;
                             document.getElementById('newPentaJudul').value = '';
                         }, 800);
-                        // Reload data
+                        // Reload data dari backend
                         google.script.run
-                            .withSuccessHandler(function(data) {
-                                try { AppState.pentasyarufan = JSON.parse(data); } catch(e){}
-                                renderAdminPentaList();
-                                renderPentasyarufanGaleri();
+                            .withSuccessHandler(function(rawData) {
+                                try {
+                                    var parsed = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+                                    AppState.pentasyarufan = parsed;
+                                } catch(e){ AppState.pentasyarufan = []; }
+                                preloadPentaFotos().then(function(){
+                                    renderAdminPentaList();
+                                    renderPentasyarufanGaleri();
+                                });
                             })
+                            .withFailureHandler(function(e){ console.warn("Gagal reload:", e); })
                             .getPentasyarufan();
-                        showToast('Kegiatan berhasil disimpan!');
                     })
                     .withFailureHandler(function(e) {
                         progressDiv.classList.add('hidden');
