@@ -2876,21 +2876,60 @@
         };
 
 
-        // Helper: konversi URL Google Drive ke format thumbnail yang lebih andal
-        function driveFoto(url) {
-            if (!url || typeof url !== "string") return "";
-            if (url.startsWith("error")) return "";
-            // Ambil file ID dari berbagai format Drive URL
-            var m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-            if (!m) m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (m) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w800";
-            return url; // bukan URL Drive, kembalikan apa adanya
+        // Helper: tampilkan foto (base64 atau URL) — kembalikan apa adanya
+        function driveFoto(src) { return (src && !src.startsWith("error") && !src.startsWith("penta_")) ? src : ""; }
+
+        // Kompres gambar sebelum disimpan (max lebar, kualitas JPEG)
+        function compressImage(base64, maxW, quality) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    var ratio = Math.min(1, maxW / img.width);
+                    var canvas = document.createElement("canvas");
+                    canvas.width  = Math.round(img.width  * ratio);
+                    canvas.height = Math.round(img.height * ratio);
+                    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL("image/jpeg", quality || 0.7));
+                };
+                img.onerror = function() { resolve(base64); };
+                img.src = base64;
+            });
         }
 
         // ══════════════════════════════════════════════════════
         // PENTASYARUFAN UPZISNU — Render & Admin CRUD
         // ══════════════════════════════════════════════════════
         var _pentaLightbox = { items:[], idx:0 };
+
+        // Cache foto pentasyarufan yang sudah direkonstruksi dari chunks
+        window._pentaFotoCache = {};
+
+        function resolvePentaFoto(keyOrSrc) {
+            if (!keyOrSrc) return "";
+            // Jika sudah base64 atau URL biasa, kembalikan langsung
+            if (keyOrSrc.startsWith("data:") || keyOrSrc.startsWith("http")) return keyOrSrc;
+            // Jika key (penta_...), cek cache dulu
+            if (window._pentaFotoCache[keyOrSrc]) return window._pentaFotoCache[keyOrSrc];
+            return ""; // belum tersedia, akan di-load async
+        }
+
+        // Preload semua foto pentasyarufan dari AppState ke cache
+        window.preloadPentaFotos = async function() {
+            var items = AppState.pentasyarufan || [];
+            for (var i = 0; i < items.length; i++) {
+                var fotos = Array.isArray(items[i].fotos) ? items[i].fotos : [];
+                for (var j = 0; j < fotos.length; j++) {
+                    var key = fotos[j];
+                    if (key && key.startsWith("penta_") && !window._pentaFotoCache[key]) {
+                        // Foto sudah direkonstruksi oleh backend dan ada di fotos[] sebagai base64
+                        // Jika masih berupa key, kemungkinan backend belum merekonstruksi
+                    }
+                    if (key && (key.startsWith("data:") || key.startsWith("http"))) {
+                        window._pentaFotoCache[key] = key;
+                    }
+                }
+            }
+        };
 
         window.renderPentasyarufanGaleri = function() {
             var grid = document.getElementById('pentasyarufanGaleri');
@@ -2902,7 +2941,7 @@
             }
             grid.innerHTML = items.map(function(item, i) {
                 var fotos = Array.isArray(item.fotos) ? item.fotos : [];
-                var cover = driveFoto(fotos[0]) || 'https://via.placeholder.com/400x280/052e16/fbbf24?text=No+Photo';
+                var cover = resolvePentaFoto(fotos[0]) || 'https://via.placeholder.com/400x280/052e16/fbbf24?text=Foto+Kegiatan';
                 return '<div class="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 hover:border-nuGold-400/50 transition" onclick="openPentaAlbum(' + i + ')">' +
                     '<div class="relative" style="aspect-ratio:4/3">' +
                         '<img src="' + cover + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' +
@@ -2922,7 +2961,7 @@
             if (!item) return;
             var fotos = Array.isArray(item.fotos) ? item.fotos : [];
             if (!fotos.length) return;
-            _pentaLightbox.items = fotos.map(function(f) { return { src: driveFoto(f) || f, caption: item.judul }; });
+            _pentaLightbox.items = fotos.map(function(f) { return { src: resolvePentaFoto(f) || f, caption: item.judul }; });
             _pentaLightbox.idx = 0;
             applyPentaLightbox();
             document.getElementById('pentaLightbox').classList.remove('hidden');
@@ -2958,7 +2997,7 @@
             }
             list.innerHTML = items.map(function(item) {
                 var fotos = Array.isArray(item.fotos) ? item.fotos : [];
-                var cover = driveFoto(fotos[0]) || '';
+                var cover = resolvePentaFoto(fotos[0]) || '';
                 return '<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">' +
                     (cover ? '<img src="' + cover + '" class="w-full h-32 object-cover">' : '<div class="w-full h-32 bg-slate-100 flex items-center justify-center text-slate-300"><i class="fas fa-image text-3xl"></i></div>') +
                     '<div class="p-3">' +
@@ -3041,25 +3080,30 @@
                 progressDiv.classList.remove('hidden');
                 btnSave.disabled = true;
 
+                var albumId = String(Date.now());
                 var driveUrls = [];
                 for (var j = 0; j < previews.length; j++) {
                     progressBar.style.width = Math.round((j / previews.length) * 80) + '%';
                     progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
                     try {
-                        var url = await new Promise(function(resolve, reject) {
+                        // Kompres foto ke max 800px sebelum simpan
+                        var compressed = await compressImage(previews[j], 800, 0.6);
+                        var photoKey = 'penta_' + albumId + '_' + j;
+                        var res = await new Promise(function(resolve, reject) {
                             google.script.run
                                 .withSuccessHandler(resolve)
                                 .withFailureHandler(reject)
-                                .savePhotoToDrive(previews[j], 'penta_' + Date.now() + '_' + j + '.jpg');
+                                .savePhoto(compressed, photoKey);
                         });
-                        driveUrls.push(url);
+                        if (res === "success") driveUrls.push(photoKey);
+                        else console.warn('Gagal simpan foto '+j+':', res);
                     } catch(e) { console.warn('Gagal upload foto '+j, e); }
                 }
 
                 progressBar.style.width = '90%';
                 progressTxt.textContent = 'Menyimpan data...';
 
-                var payload = JSON.stringify({ judul: judul, fotos: driveUrls });
+                var payload = JSON.stringify({ judul: judul, albumId: albumId, photoKeys: driveUrls });
                 google.script.run
                     .withSuccessHandler(function(res) {
                         progressBar.style.width = '100%';
@@ -3093,7 +3137,7 @@
             try { renderSiteSettings(); } catch(e) {}
             try { renderBerandaBerita(); } catch(e) {}
             try { renderBerandaGaleri(); } catch(e) {}
-            try { renderPentasyarufanGaleri(); } catch(e) {}
+            try { preloadPentaFotos().then(function(){ renderPentasyarufanGaleri(); renderAdminPentaList(); }); } catch(e) {}
             try { renderAdminPentaList(); } catch(e) {}
             try { renderPublicGaleri(); } catch(e) {}
             try { renderHomepageContent(); } catch(e) {}
