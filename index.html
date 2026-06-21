@@ -4876,23 +4876,17 @@
 
         window.openDonationModal = function() {
             const modal = document.getElementById('donationModal');
-            const body = document.getElementById('donationModalBody');
-            switchDonationTab('transparansi');
+            if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                body.classList.remove('scale-95', 'opacity-0');
-                body.classList.add('scale-100', 'opacity-100');
-            }, 50);
+            document.body.style.overflow = 'hidden';
+            try { renderPentasyarufanGaleri(); } catch(e) {}
         }
 
         window.closeDonationModal = function() {
             const modal = document.getElementById('donationModal');
-            const body = document.getElementById('donationModalBody');
-            body.classList.remove('scale-100', 'opacity-100');
-            body.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
         }
 
         window.copyToClipboard = function(text) {
@@ -4906,17 +4900,10 @@
         }
 
         window.switchDonationTab = function(tab) {
-            const transTab = document.getElementById('tab-don-transparansi');
-            const salTab = document.getElementById('tab-don-salurkan');
-            const transContent = document.getElementById('don-content-transparansi');
-            const salContent = document.getElementById('don-content-salurkan');
-            
-            if (tab === 'transparansi') {
-                transTab.className = "flex-1 py-3 text-sm font-bold text-nuGreen-800 border-b-2 border-nuGreen-800 transition";
-                salTab.className = "flex-1 py-3 text-sm font-bold text-slate-500 hover:text-nuGreen-800 border-b-2 border-transparent transition";
-                transContent.classList.remove('hidden');
-                salContent.classList.add('hidden');
-            } else {
+            // Tab salurkan sudah dihapus — hanya foto pentasyarufan
+            var transContent = document.getElementById('don-content-transparansi');
+            if (transContent) transContent.classList.remove('hidden');
+            if (tab !== 'transparansi') {
                 salTab.className = "flex-1 py-3 text-sm font-bold text-nuGreen-800 border-b-2 border-nuGreen-800 transition";
                 transTab.className = "flex-1 py-3 text-sm font-bold text-slate-500 hover:text-nuGreen-800 border-b-2 border-transparent transition";
                 salContent.classList.remove('hidden');
