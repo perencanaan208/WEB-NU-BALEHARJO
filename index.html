@@ -491,7 +491,7 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch z-10 w-full">
+        <div class="relative max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch z-10 w-full">
 
             <!-- ── Kolom 1: Teks Hero ── -->
             <div class="flex flex-col justify-center space-y-4 text-center lg:text-left">
@@ -515,8 +515,8 @@
                 </div>
             </div>
 
-            <!-- ── Kolom 2: Waktu Sholat (kompak) ── -->
-            <div class="hero-right flex flex-col">
+            <!-- ── Kolom 2: Waktu Sholat + Berita (ditumpuk) ── -->
+            <div class="hero-right flex flex-col gap-4">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center justify-between">
                         <span><i class="fas fa-clock mr-1.5"></i>Waktu Shalat</span>
@@ -543,8 +543,8 @@
                 </div>
             </div>
 
-            <!-- ── Kolom 3: Berita Terbaru ── -->
-            <div class="flex flex-col">
+            <!-- ── Berita Terbaru (di bawah Waktu Sholat) ── -->
+            <div class="flex flex-col flex-1">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <div class="flex items-center justify-between border-b border-white/10 pb-2">
                         <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5"><i class="fas fa-newspaper text-xs"></i>Berita Terbaru</h3>
@@ -3028,6 +3028,11 @@
 
         // Helper: tampilkan foto (base64 atau URL) — kembalikan apa adanya
         function driveFoto(src) { return (src && !src.startsWith("error") && !src.startsWith("penta_")) ? src : ""; }
+
+        // Alias showNewsDetail → openNewsDetail (dipanggil dari slider beranda)
+        window.showNewsDetail = function(id) {
+            if (window.openNewsDetail) window.openNewsDetail(id);
+        };
 
         // ── Rich Text Editor Functions ──
         function rteCmd(cmd, val) {
