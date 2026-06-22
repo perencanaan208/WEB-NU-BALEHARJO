@@ -1640,19 +1640,64 @@
                                         class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-xl px-3 py-2.5 text-sm focus:outline-none transition text-slate-800">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Masa Khidmat</label>
-                                    <input type="text" id="editMasaKhidmat" placeholder="2026 - 2031"
-                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-xl px-3 py-2.5 text-sm focus:outline-none transition text-slate-800 font-semibold">
-                                </div>
-                                <div>
                                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Judul Halaman</label>
                                     <input type="text" id="editPengurusJudul" placeholder="Pimpinan Ranting & Badan Otonom"
                                         class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-xl px-3 py-2.5 text-sm focus:outline-none transition text-slate-800">
                                 </div>
-                                <div>
+                                <div class="sm:col-span-2">
                                     <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Sub Judul / Keterangan</label>
                                     <input type="text" id="editPengurusSub" placeholder="Daftar pimpinan khidmah tingkat Desa Baleharjo..."
                                         class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-xl px-3 py-2.5 text-sm focus:outline-none transition text-slate-800">
+                                </div>
+                            </div>
+
+                            <!-- Masa Khidmat Per Banom -->
+                            <div class="mt-4 pt-4 border-t border-nuGreen-200">
+                                <label class="block text-xs font-bold text-nuGreen-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-calendar-alt"></i> Masa Khidmat Per Banom/Kelompok
+                                    <span class="text-[10px] text-slate-400 font-normal">(akan tampil otomatis saat tab diklik)</span>
+                                </label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Pengurus NU</label>
+                                    <input type="text" id="editMasaKhidmat_Pengurus_NU" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Muslimat</label>
+                                    <input type="text" id="editMasaKhidmat_Muslimat" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Fatayat</label>
+                                    <input type="text" id="editMasaKhidmat_Fatayat" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Ansor</label>
+                                    <input type="text" id="editMasaKhidmat_Ansor" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">IPNU</label>
+                                    <input type="text" id="editMasaKhidmat_IPNU" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">IPPNU</label>
+                                    <input type="text" id="editMasaKhidmat_IPPNU" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">UPZISNU</label>
+                                    <input type="text" id="editMasaKhidmat_UPZISNU" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Pagar Nusa</label>
+                                    <input type="text" id="editMasaKhidmat_Pagar_Nusa" placeholder="2026 - 2031"
+                                        class="w-full bg-white border border-slate-200 focus:border-nuGreen-500 rounded-lg px-3 py-2 text-xs focus:outline-none transition text-slate-800 font-semibold">
+                                </div>
                                 </div>
                             </div>
                             <button onclick="window.savePengurusHeader()" class="mt-4 bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-sm">
@@ -2177,7 +2222,15 @@
                 tag:        'Struktur Kepengurusan',
                 judul:      'Pimpinan Ranting & Badan Otonom',
                 subjudul:   'Daftar pimpinan khidmah tingkat Desa Baleharjo Sragen, Masa Khidmat 2026–2031',
-                masaKhidmat:'2026 - 2031'
+                masaKhidmat:'2026 - 2031',
+                'masaKhidmat_Pengurus_NU':'',
+                'masaKhidmat_Muslimat':'',
+                'masaKhidmat_Fatayat':'',
+                'masaKhidmat_Ansor':'',
+                'masaKhidmat_IPNU':'',
+                'masaKhidmat_IPPNU':'',
+                'masaKhidmat_UPZISNU':'',
+                'masaKhidmat_Pagar_Nusa':''
             },
             kontakSettings: {                judulForm:      "Hubungi Kami",
                 deskripsiForm:  "Punya pertanyaan seputar keanggotaan, permohonan kajian, atau layanan sosial? Kirimkan pesan Anda.",
@@ -3322,17 +3375,31 @@
             const ps = AppState.pengurusSettings || {};
             const sv = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
             sv('editPengurusTag',   ps.tag);
-            sv('editMasaKhidmat',   ps.masaKhidmat);
             sv('editPengurusJudul', ps.judul);
             sv('editPengurusSub',   ps.subjudul);
+            sv('editMasaKhidmat_Pengurus_NU', ps['masaKhidmat_Pengurus_NU']);
+            sv('editMasaKhidmat_Muslimat', ps['masaKhidmat_Muslimat']);
+            sv('editMasaKhidmat_Fatayat', ps['masaKhidmat_Fatayat']);
+            sv('editMasaKhidmat_Ansor', ps['masaKhidmat_Ansor']);
+            sv('editMasaKhidmat_IPNU', ps['masaKhidmat_IPNU']);
+            sv('editMasaKhidmat_IPPNU', ps['masaKhidmat_IPPNU']);
+            sv('editMasaKhidmat_UPZISNU', ps['masaKhidmat_UPZISNU']);
+            sv('editMasaKhidmat_Pagar_Nusa', ps['masaKhidmat_Pagar_Nusa']);
         }
 
         window.savePengurusHeader = function() {
             const ps = AppState.pengurusSettings;
-            ps.tag        = document.getElementById('editPengurusTag').value.trim()   || ps.tag;
-            ps.masaKhidmat= document.getElementById('editMasaKhidmat').value.trim()  || ps.masaKhidmat;
-            ps.judul      = document.getElementById('editPengurusJudul').value.trim() || ps.judul;
-            ps.subjudul   = document.getElementById('editPengurusSub').value.trim()   || ps.subjudul;
+            ps.tag      = document.getElementById('editPengurusTag').value.trim()   || ps.tag;
+            ps.judul    = document.getElementById('editPengurusJudul').value.trim() || ps.judul;
+            ps.subjudul = document.getElementById('editPengurusSub').value.trim()   || ps.subjudul;
+            ps['masaKhidmat_Pengurus_NU'] = (document.getElementById('editMasaKhidmat_Pengurus_NU') || {}).value || ps['masaKhidmat_Pengurus_NU'] || '';
+            ps['masaKhidmat_Muslimat'] = (document.getElementById('editMasaKhidmat_Muslimat') || {}).value || ps['masaKhidmat_Muslimat'] || '';
+            ps['masaKhidmat_Fatayat'] = (document.getElementById('editMasaKhidmat_Fatayat') || {}).value || ps['masaKhidmat_Fatayat'] || '';
+            ps['masaKhidmat_Ansor'] = (document.getElementById('editMasaKhidmat_Ansor') || {}).value || ps['masaKhidmat_Ansor'] || '';
+            ps['masaKhidmat_IPNU'] = (document.getElementById('editMasaKhidmat_IPNU') || {}).value || ps['masaKhidmat_IPNU'] || '';
+            ps['masaKhidmat_IPPNU'] = (document.getElementById('editMasaKhidmat_IPPNU') || {}).value || ps['masaKhidmat_IPPNU'] || '';
+            ps['masaKhidmat_UPZISNU'] = (document.getElementById('editMasaKhidmat_UPZISNU') || {}).value || ps['masaKhidmat_UPZISNU'] || '';
+            ps['masaKhidmat_Pagar_Nusa'] = (document.getElementById('editMasaKhidmat_Pagar_Nusa') || {}).value || ps['masaKhidmat_Pagar_Nusa'] || '';
 
             renderPengurusHeader();
             syncStateToBackend();
@@ -3341,9 +3408,16 @@
 
             var batch = {
                 'pengurus_hdr.tag':        ps.tag,
-                'pengurus_hdr.masaKhidmat':ps.masaKhidmat,
                 'pengurus_hdr.judul':      ps.judul,
-                'pengurus_hdr.subjudul':   ps.subjudul
+                'pengurus_hdr.subjudul':   ps.subjudul,
+                'pengurus_hdr.masaKhidmat_Pengurus_NU': ps['masaKhidmat_Pengurus_NU'] || '',
+                'pengurus_hdr.masaKhidmat_Muslimat': ps['masaKhidmat_Muslimat'] || '',
+                'pengurus_hdr.masaKhidmat_Fatayat': ps['masaKhidmat_Fatayat'] || '',
+                'pengurus_hdr.masaKhidmat_Ansor': ps['masaKhidmat_Ansor'] || '',
+                'pengurus_hdr.masaKhidmat_IPNU': ps['masaKhidmat_IPNU'] || '',
+                'pengurus_hdr.masaKhidmat_IPPNU': ps['masaKhidmat_IPPNU'] || '',
+                'pengurus_hdr.masaKhidmat_UPZISNU': ps['masaKhidmat_UPZISNU'] || '',
+                'pengurus_hdr.masaKhidmat_Pagar_Nusa': ps['masaKhidmat_Pagar_Nusa'] || '',
             };
             google.script.run
                 .withSuccessHandler(function(r){
@@ -3861,6 +3935,21 @@
             if (activeBtn) {
                 activeBtn.className = "pub-pengurus-filter-btn px-4 py-1.5 text-xs rounded-xl font-semibold bg-nuGreen-800 text-white transition";
             }
+
+            // Update masa khidmat sesuai banom aktif
+            var ps = AppState.pengurusSettings || {};
+            var masaKey = "masaKhidmat_" + group.replace(/\s+/g, "_");
+            var masa = (ps[masaKey] && ps[masaKey].trim()) || ps.masaKhidmat || "";
+            var subEl = document.getElementById("pubPengurusSub");
+            if (subEl && masa) {
+                // Simpan teks subjudul asli (tanpa masa khidmat) sebagai data attr
+                if (!subEl.dataset.baseText) subEl.dataset.baseText = subEl.textContent.replace(/,?\s*Masa Khidmat[^$]*/i, "").trim();
+                subEl.textContent = subEl.dataset.baseText + ", Masa Khidmat " + masa;
+            }
+            // Update tag/label atas sesuai banom
+            var tagKey = "tag_" + group.replace(/\s+/g, "_");
+            var tagEl  = document.getElementById("pubPengurusTag");
+            if (tagEl) tagEl.textContent = (ps[tagKey] && ps[tagKey].trim()) || ps.tag || "Struktur Kepengurusan";
         };
 
         window.handleAdminBtnClick = function() {
