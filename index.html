@@ -4957,8 +4957,12 @@
             form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        var _pengurusSubmitting = false;
         window.handleAddNewPengurus = function(event) {
             event.preventDefault();
+            if (_pengurusSubmitting) return;
+            _pengurusSubmitting = true;
+            setTimeout(function(){ _pengurusSubmitting = false; }, 3000);
             const name  = document.getElementById('newPengurusName').value.trim();
             const role  = document.getElementById('newPengurusRole').value.trim();
             const group = document.getElementById('newPengurusGroup').value.trim();
@@ -5056,8 +5060,11 @@
                                     }
                                     kirimPengurusKeGAS(driveUrl);
                                 } else {
-                                    // Drive gagal → simpan via savePhoto (chunking, tidak kena limit 50K)
-                                    var chunkKey = 'pengurus_photo_' + frozenId;
+                                    // Drive gagal → simpan via savePhoto (chunking)
+                                    // PENTING: frozenId bisa null (mode tambah baru)
+                                    var realId = frozenId !== null ? frozenId
+                                        : (AppState.pengurus.length > 0 ? AppState.pengurus[0].id : Date.now());
+                                    var chunkKey = 'pengurus_photo_' + realId;
                                     google.script.run
                                         .withSuccessHandler(function(r2){
                                             // URL foto adalah referensi ke chunk key
