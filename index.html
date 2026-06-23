@@ -1610,15 +1610,33 @@
                                 <input type="text" id="newPentaJudul" placeholder="Contoh: Santunan Yatim Muharram 2026"
                                     class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-nuGreen-500 text-slate-800">
                             </div>
+                            <!-- Drop Zone -->
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Upload Foto Kegiatan <span class="text-slate-400">(maks 10 foto, JPG/PNG)</span></label>
-                                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="pentaFotoSlots">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                                    Upload Foto Kegiatan
+                                    <span class="text-nuGreen-700 font-normal" id="pentaFotoCount"> (0 foto dipilih, maks 10)</span>
+                                </label>
+                                <div id="pentaDropZone"
+                                     class="relative border-2 border-dashed border-slate-300 hover:border-nuGreen-500 rounded-2xl p-6 text-center cursor-pointer transition bg-white"
+                                     onclick="document.getElementById('pentaFileInput').click()"
+                                     ondragover="event.preventDefault();this.classList.add('border-nuGreen-500','bg-nuGreen-50')"
+                                     ondragleave="this.classList.remove('border-nuGreen-500','bg-nuGreen-50')"
+                                     ondrop="pentaHandleDrop(event)">
+                                    <input type="file" id="pentaFileInput" accept="image/*" multiple class="hidden"
+                                           onchange="pentaHandleFiles(this.files)">
+                                    <div id="pentaDropHint">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-slate-300 mb-2"></i>
+                                        <p class="text-sm text-slate-500 font-medium">Klik atau seret foto ke sini</p>
+                                        <p class="text-xs text-slate-400 mt-1">JPG, PNG, WEBP — Maks 10 foto sekaligus</p>
+                                    </div>
+                                    <!-- Preview grid -->
+                                    <div id="pentaPreviewGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-3 hidden"></div>
                                 </div>
-                                <p class="text-[10px] text-slate-400 mt-1"><i class="fas fa-info-circle mr-1"></i>Foto akan diunggah ke Google Drive otomatis</p>
                             </div>
+                            <!-- Progress bar -->
                             <div id="pentaUploadProgress" class="hidden">
-                                <div class="w-full bg-slate-200 rounded-full h-2"><div id="pentaProgressBar" class="bg-nuGreen-600 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
-                                <p id="pentaProgressText" class="text-xs text-slate-500 mt-1 text-center">Mengunggah foto...</p>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5"><div id="pentaProgressBar" class="bg-nuGreen-600 h-2.5 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                                <p id="pentaProgressText" class="text-xs text-slate-500 mt-1.5 text-center">Mengunggah foto...</p>
                             </div>
                             <div class="flex gap-2 justify-end">
                                 <button type="button" id="btnCancelPenta" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Batal</button>
@@ -3260,52 +3278,103 @@
                     '<div class="p-3">' +
                         '<h4 class="font-bold text-slate-900 text-sm leading-snug">' + item.judul + '</h4>' +
                         '<p class="text-[10px] text-slate-400 mt-0.5">' + fotos.length + ' foto · ' + (item.timestamp||'') + '</p>' +
-                        '<button onclick="adminDeletePenta(\'' + item.id + '\')" class="mt-2 text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1"><i class="fas fa-trash"></i> Hapus</button>' +
+                        '<button onclick="adminDeletePenta(\'' + item.id + '\',\'' + (item.judul||'').replace(/'/g,'') + '\')" class="mt-2 text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1"><i class="fas fa-trash"></i> Hapus</button>' +
                     '</div>' +
                 '</div>';
             }).join('');
         };
 
-        window.adminDeletePenta = function(id) {
-            if (!confirm('Hapus kegiatan ini beserta semua fotonya?')) return;
-            google.script.run
-                .withSuccessHandler(function() {
-                    AppState.pentasyarufan = (AppState.pentasyarufan||[]).filter(function(p){ return String(p.id) !== String(id); });
-                    renderAdminPentaList();
-                    renderPentasyarufanGaleri();
-                    showToast('Kegiatan dihapus.');
-                    showFloatingNotif('🗑️ Kegiatan berhasil dihapus', 'error');
-                })
-                .withFailureHandler(function(e){ showToast('Gagal: '+e,'error'); })
-                .deletePentasyarufan(id);
+        window.adminDeletePenta = function(id, judul) {
+            showDeleteConfirm(
+                'Hapus kegiatan <b>"' + (judul||'ini') + '"</b>?<br>'
+                + '<span class="text-rose-500 text-xs">Semua foto dalam kegiatan ini akan dihapus permanen.</span>',
+                function() {
+                google.script.run
+                    .withSuccessHandler(function() {
+                        AppState.pentasyarufan = (AppState.pentasyarufan||[]).filter(function(p){ return String(p.id) !== String(id); });
+                        renderAdminPentaList();
+                        renderPentasyarufanGaleri();
+                        showFloatingNotif('🗑️ Kegiatan berhasil dihapus', 'error');
+                    })
+                    .withFailureHandler(function(e){ showFloatingNotif('Gagal hapus: '+e, 'error'); })
+                    .deletePentasyarufan(id);
+            }
+            );
         };
 
         // ── Init slot foto upload ──
+        // Simpan file yang dipilih
+        var _pentaFiles = [];
+
         function initPentaFotoSlots() {
-            var container = document.getElementById('pentaFotoSlots');
-            if (!container) return;
-            container.innerHTML = '';
-            for (var i = 0; i < 10; i++) {
-                var idx = i;
-                var slot = document.createElement('div');
-                slot.className = 'relative border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center cursor-pointer hover:border-nuGreen-400 transition';
-                slot.style.aspectRatio = '1';
-                slot.innerHTML = '<input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" data-slot="' + idx + '">' +
-                    '<div class="penta-slot-inner text-center pointer-events-none"><i class="fas fa-plus text-slate-300 text-lg"></i><p class="text-[9px] text-slate-400 mt-1">Foto ' + (idx+1) + '</p></div>';
-                slot.querySelector('input').addEventListener('change', function(e) {
-                    var file = e.target.files[0];
-                    if (!file) return;
-                    var slotEl = e.target.parentElement;
-                    var reader = new FileReader();
-                    reader.onload = function(ev) {
-                        slotEl.querySelector('.penta-slot-inner').innerHTML = '<img src="' + ev.target.result + '" class="w-full h-full object-cover rounded-lg">';
-                        e.target._preview = ev.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                });
-                container.appendChild(slot);
-            }
+            // Reset state
+            _pentaFiles = [];
+            var preview = document.getElementById('pentaPreviewGrid');
+            var hint    = document.getElementById('pentaDropHint');
+            var counter = document.getElementById('pentaFotoCount');
+            if (preview) { preview.innerHTML = ''; preview.classList.add('hidden'); }
+            if (hint)    hint.classList.remove('hidden');
+            if (counter) counter.textContent = ' (0 foto dipilih, maks 10)';
         }
+
+        window.pentaHandleDrop = function(e) {
+            e.preventDefault();
+            var zone = document.getElementById('pentaDropZone');
+            if (zone) zone.classList.remove('border-nuGreen-500','bg-nuGreen-50');
+            var files = e.dataTransfer.files;
+            pentaHandleFiles(files);
+        };
+
+        window.pentaHandleFiles = function(files) {
+            var remaining = 10 - _pentaFiles.length;
+            var added = 0;
+            for (var i = 0; i < files.length && added < remaining; i++) {
+                if (!files[i].type.startsWith('image/')) continue;
+                _pentaFiles.push(files[i]);
+                added++;
+            }
+            pentaUpdatePreview();
+        };
+
+        function pentaUpdatePreview() {
+            var preview = document.getElementById('pentaPreviewGrid');
+            var hint    = document.getElementById('pentaDropHint');
+            var counter = document.getElementById('pentaFotoCount');
+            if (!preview) return;
+
+            if (_pentaFiles.length === 0) {
+                preview.classList.add('hidden');
+                if (hint) hint.classList.remove('hidden');
+                if (counter) counter.textContent = ' (0 foto dipilih, maks 10)';
+                return;
+            }
+
+            if (hint) hint.classList.add('hidden');
+            preview.classList.remove('hidden');
+            if (counter) counter.textContent = ' (' + _pentaFiles.length + ' foto dipilih, maks 10)';
+
+            preview.innerHTML = _pentaFiles.map(function(f, i) {
+                return '<div class="relative rounded-lg overflow-hidden" style="aspect-ratio:1">' +
+                    '<img id="pentaPrev_'+i+'" class="w-full h-full object-cover">' +
+                    '<button type="button" onclick="pentaRemoveFile('+i+')" class="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] z-10">✕</button>' +
+                '</div>';
+            }).join('');
+
+            // Load preview async
+            _pentaFiles.forEach(function(file, i) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var img = document.getElementById('pentaPrev_'+i);
+                    if (img) img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.pentaRemoveFile = function(idx) {
+            _pentaFiles.splice(idx, 1);
+            pentaUpdatePreview();
+        };
 
         // ── Simpan pentasyarufan ──
         document.addEventListener('DOMContentLoaded', function() {
@@ -3325,9 +3394,17 @@
                 var judul = (document.getElementById('newPentaJudul')||{}).value.trim();
                 if (!judul) { showToast('Isi judul kegiatan dulu.','error'); return; }
 
-                var slots = document.querySelectorAll('#pentaFotoSlots input[type=file]');
+                // Baca semua file dari _pentaFiles dengan FileReader (async)
                 var previews = [];
-                slots.forEach(function(inp) { if (inp._preview) previews.push(inp._preview); });
+                var readPromises = _pentaFiles.map(function(file) {
+                    return new Promise(function(resolve) {
+                        var reader = new FileReader();
+                        reader.onload = function(ev) { resolve(ev.target.result); };
+                        reader.onerror = function() { resolve(null); };
+                        reader.readAsDataURL(file);
+                    });
+                });
+                previews = (await Promise.all(readPromises)).filter(function(d){ return d && d.startsWith("data:image"); });
 
                 if (previews.length === 0) { showToast('Upload minimal 1 foto.','error'); return; }
 
@@ -3373,6 +3450,8 @@
                             formDiv.classList.add('hidden');
                             btnSave.disabled = false;
                             document.getElementById('newPentaJudul').value = '';
+                            _pentaFiles = [];
+                            initPentaFotoSlots();
                         }, 800);
                         // Reload data dari backend
                         google.script.run
