@@ -3143,8 +3143,11 @@
             albums.forEach(function(album, albumIdx) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
                 fotos.forEach(function(f, photoIdx) {
-                    var src = resolvePentaFoto(f) || f;
-                    if (src && src.length > 10) {
+                    var rawSrc = resolvePentaFoto(f) || f;
+                    // Hanya tampilkan foto yang valid (base64 atau http URL)
+                    var isValid = rawSrc && (rawSrc.startsWith('data:image') || rawSrc.startsWith('http'));
+                    var src = isValid ? rawSrc : '';
+                    if (src && src.length > 100) {
                         allPhotos.push({
                             src:       src,
                             caption:   album.judul,
@@ -3155,6 +3158,7 @@
                 });
             });
 
+            // Hapus foto invalid dari lightbox items
             if (allPhotos.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-16 text-white/30 text-sm italic">Belum ada foto dokumentasi.<br>Tambahkan melalui panel Admin → Keuangan UPZISNU.</div>';
                 return;
@@ -3164,9 +3168,11 @@
             _pentaLightbox.allPhotos = allPhotos;
 
             grid.innerHTML = allPhotos.map(function(photo, i) {
-                return '<div class="group cursor-pointer rounded-xl overflow-hidden border border-white/10 hover:border-nuGold-400/60 transition duration-300" onclick="openPentaPhoto(' + i + ')">' +
+                return '<div class="penta-photo-card group cursor-pointer rounded-xl overflow-hidden border border-white/10 hover:border-nuGold-400/60 transition duration-300" onclick="openPentaPhoto(' + i + ')">' +
                     '<div class="relative overflow-hidden" style="aspect-ratio:4/3">' +
-                        '<img src="' + photo.src + '" alt="' + photo.caption + '" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">' +
+                        '<img src="' + photo.src + '" alt="' + photo.caption + '"' +
+                             ' class="w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"' +
+                             ' onerror="this.closest(\'.penta-photo-card\').style.display=\'none\'">' +
                         '<div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>' +
                         '<div class="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition duration-300">' +
                             '<p class="text-white text-[11px] font-semibold line-clamp-2 leading-snug">' + photo.caption + '</p>' +
