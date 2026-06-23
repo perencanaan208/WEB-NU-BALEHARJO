@@ -2656,7 +2656,10 @@
         // Fungsi-fungsi untuk baca/tulis data ke Google Spreadsheet
         // ============================================================
 
-        const GAS = typeof google !== 'undefined' && google.script && google.script.run;
+        // GAS = true selalu karena shim google.script.run sudah dipasang via fetch
+        // (tidak bergantung pada typeof google karena shim inject window.google)
+        const GAS = !!(window.GAS_API_URL && window.GAS_API_URL.indexOf('PASTE_URL') === -1
+                        && window.google && window.google.script && window.google.script.run);
 
         function gasRun(fnName, args, onSuccess, onFail) {
             if (!GAS) { if (onFail) onFail('Tidak terhubung ke GAS'); return; }
@@ -2708,8 +2711,16 @@
                     }
                 })
                 .withFailureHandler(function(e) {
-                    console.warn('loadAllData gagal:', e);
-                    callback(null);
+                    console.warn('loadAllData gagal, retry dalam 2 detik:', e);
+                    // Retry sekali setelah 2 detik
+                    setTimeout(function() {
+                        google.script.run
+                            .withSuccessHandler(function(result) {
+                                try { callback(result ? JSON.parse(result) : null); } catch(ex) { callback(null); }
+                            })
+                            .withFailureHandler(function() { callback(null); })
+                            .loadAllData();
+                    }, 2000);
                 })
                 .loadAllData();
         }
@@ -2886,11 +2897,21 @@
             renderAllPublicComponents();
 
             // Timeout fallback: jika GAS tidak respond dalam 8 detik, tutup splash tetap
-            var splashTimeout = setTimeout(function() { hideSplash('Siap'); }, 8000);
+            var splashTimeout = setTimeout(function() { hideSplash('Timeout — Cek koneksi'); }, 15000);
 
             if (GAS) {
                 var statusEl2 = document.getElementById('splashStatusText');
-                if (statusEl2) statusEl2.textContent = 'Menyinkronkan data…';
+                if (statusEl2) statusEl2.textContent = 'Menyinkronkan data dari server…';
+                // Update dots animasi saat loading
+                var dotInterval = setInterval(function() {
+                    var el = document.getElementById('splashStatusText');
+                    if (!el || el.textContent.indexOf('Menerapkan') !== -1 || el.textContent.indexOf('Selesai') !== -1) {
+                        clearInterval(dotInterval); return;
+                    }
+                    var base = 'Menyinkronkan data';
+                    var dots = (el.textContent.match(/\.+/) || [''])[0].length;
+                    el.textContent = base + '.'.repeat((dots % 3) + 1);
+                }, 600);
 
                 loadFromSpreadsheet(function(data) {
                     clearTimeout(splashTimeout);
@@ -2899,6 +2920,8 @@
                             document.getElementById('splashStatusText').textContent = 'Menerapkan data…';
                         applySpreadsheetData(data);
                         AppState.isAdminLoggedIn = false;
+                        if (document.getElementById('splashStatusText'))
+                            document.getElementById('splashStatusText').textContent = 'Menerapkan data…';
                         renderAllPublicComponents();
                         // ── Update splash background dengan foto profil ──
                         var fotoProfilSrc = AppState.profileSettings && AppState.profileSettings.profilImg;
@@ -2906,7 +2929,8 @@
                             updateSplashBg(fotoProfilSrc);
                         }
                     }
-                    hideSplash('Selesai ✓');
+                    // Beri sedikit jeda agar render selesai sebelum splash hilang
+                    setTimeout(function() { hideSplash('Data tersinkron ✓'); }, 300);
                 });
             } else {
                 // Tidak ada GAS (preview lokal) — tutup splash setelah 1.5 detik
