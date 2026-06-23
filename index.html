@@ -78,6 +78,24 @@
             box-shadow: 0 0 0 1px rgba(251,191,36,0.3);
         }
         .prayer-active span { color: #fbbf24 !important; }
+        /* Konten berita HTML styling */
+        #newsModalDesc b, #newsModalDesc strong { font-weight: 700; }
+        #newsModalDesc i, #newsModalDesc em { font-style: italic; }
+        #newsModalDesc u { text-decoration: underline; }
+        #newsModalDesc s { text-decoration: line-through; }
+        #newsModalDesc h1 { font-size: 1.6em; font-weight: 700; margin: .6em 0 .3em; }
+        #newsModalDesc h2 { font-size: 1.35em; font-weight: 700; margin: .6em 0 .3em; }
+        #newsModalDesc h3 { font-size: 1.15em; font-weight: 700; margin: .5em 0 .3em; }
+        #newsModalDesc p  { margin: .4em 0; }
+        #newsModalDesc ul { list-style: disc; padding-left: 1.4em; margin: .4em 0; }
+        #newsModalDesc ol { list-style: decimal; padding-left: 1.4em; margin: .4em 0; }
+        #newsModalDesc li { margin: .15em 0; }
+        #newsModalDesc blockquote { border-left: 3px solid #166534; padding-left: .8em; color: #6b7280; font-style: italic; margin: .5em 0; }
+        #newsModalDesc a { color: #166534; text-decoration: underline; }
+        #newsModalDesc pre { background: #f1f5f9; padding: .5em .8em; border-radius: .5em; font-family: monospace; font-size: .88em; overflow-x: auto; }
+        #newsModalDesc [style*="text-align: center"], #newsModalDesc center { text-align: center; }
+        #newsModalDesc [style*="text-align: right"] { text-align: right; }
+        #newsModalDesc [style*="text-align: justify"] { text-align: justify; }
         /* Rich Text Editor */
         .rte-btn {
             min-width:26px; height:24px; padding:0 5px;
@@ -3765,7 +3783,7 @@
 
             // ── Isi teks ──
             document.getElementById('newsModalTitle').textContent    = article.title  || '';
-            document.getElementById('newsModalDesc').textContent     = article.content || article.summary || '';
+            document.getElementById('newsModalDesc').innerHTML      = article.content || article.summary || '';
 
             // ── Metadata ──
             const cat  = article.category || '';
