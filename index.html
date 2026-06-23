@@ -1647,7 +1647,7 @@
                         </div>
 
                         <!-- Daftar kegiatan pentasyarufan -->
-                        <div id="adminPentaList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div id="adminPentaList" class="grid grid-cols-1 gap-4">
                             <div class="col-span-full text-center py-8 text-slate-400 text-sm italic">Belum ada kegiatan pentasyarufan.</div>
                         </div>
                     </div>
@@ -3294,18 +3294,64 @@
                 list.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 text-sm italic">Belum ada kegiatan pentasyarufan.</div>';
                 return;
             }
-            list.innerHTML = items.map(function(item) {
-                var fotos = Array.isArray(item.fotos) ? item.fotos : [];
-                var cover = resolvePentaFoto(fotos[0]) || '';
-                return '<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">' +
-                    (cover ? '<img src="' + cover + '" class="w-full h-32 object-cover">' : '<div class="w-full h-32 bg-slate-100 flex items-center justify-center text-slate-300"><i class="fas fa-image text-3xl"></i></div>') +
-                    '<div class="p-3">' +
-                        '<h4 class="font-bold text-slate-900 text-sm leading-snug">' + item.judul + '</h4>' +
-                        '<p class="text-[10px] text-slate-400 mt-0.5">' + fotos.length + ' foto · ' + (item.timestamp||'') + '</p>' +
-                        '<button onclick="adminDeletePenta(\'' + item.id + '\',\'' + (item.judul||'').replace(/'/g,'') + '\')" class="mt-2 text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1"><i class="fas fa-trash"></i> Hapus</button>' +
+
+            // Tampilkan per kegiatan: judul + grid foto (hapus per foto atau hapus album)
+            list.innerHTML = items.map(function(album) {
+                var fotos = Array.isArray(album.fotos) ? album.fotos : [];
+                var fotoHtml = fotos.map(function(f, fi) {
+                    var src = resolvePentaFoto(f) || f;
+                    if (!src || src.length < 10) return '';
+                    return '<div class="relative group rounded-xl overflow-hidden border border-slate-200" style="aspect-ratio:4/3">' +
+                        '<img src="' + src + '" class="w-full h-full object-cover" onerror="this.closest(\'.relative\').style.display=\'none\'">' +
+                        '<div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">' +
+                            '<button onclick="adminDeletePentaFoto(\'' + album.id + '\',' + fi + ')" ' +
+                                'class="opacity-0 group-hover:opacity-100 transition bg-rose-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow-lg" ' +
+                                'title="Hapus foto ini"><i class="fas fa-trash"></i></button>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+
+                return '<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm col-span-full">' +
+                    '<div class="flex items-center justify-between px-4 pt-3 pb-2 border-b border-slate-100">' +
+                        '<div>' +
+                            '<h4 class="font-bold text-slate-900 text-sm">' + album.judul + '</h4>' +
+                            '<p class="text-[10px] text-slate-400">' + fotos.length + ' foto · ' + (album.timestamp||'') + '</p>' +
+                        '</div>' +
+                        '<button onclick="adminDeletePenta(\'' + album.id + '\',\'' + (album.judul||'').replace(/'/g,'') + '\')" ' +
+                            'class="text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1 border border-rose-200 hover:border-rose-400 px-2.5 py-1 rounded-lg transition">' +
+                            '<i class="fas fa-trash mr-1"></i>Hapus Album' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="p-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">' +
+                        (fotoHtml || '<p class="col-span-full text-center text-xs text-slate-400 py-4 italic">Tidak ada foto valid</p>') +
                     '</div>' +
                 '</div>';
             }).join('');
+        };
+
+        // Hapus 1 foto dari album (update fotos di spreadsheet)
+        window.adminDeletePentaFoto = function(albumId, fotoIdx) {
+            showDeleteConfirm(
+                'Hapus foto ini dari kegiatan?',
+                function() {
+                    // Update AppState dulu
+                    var album = (AppState.pentasyarufan||[]).find(function(a){ return String(a.id) === String(albumId); });
+                    if (!album) return;
+                    var newFotos = album.fotos.filter(function(_,i){ return i !== fotoIdx; });
+                    album.fotos = newFotos;
+
+                    // Simpan ke backend: hapus album lama, tambah ulang dengan fotos baru
+                    var payload = JSON.stringify({ judul: album.judul, albumId: albumId, photoKeys: newFotos });
+                    google.script.run
+                        .withSuccessHandler(function() {
+                            renderAdminPentaList();
+                            renderPentasyarufanGaleri();
+                            showFloatingNotif('✅ Foto berhasil dihapus', 'success');
+                        })
+                        .withFailureHandler(function(e){ showFloatingNotif('Gagal: '+e, 'error'); })
+                        .updatePentasyarufan(albumId, payload);
+                }
+            );
         };
 
         window.adminDeletePenta = function(id, judul) {
