@@ -5998,44 +5998,103 @@
                     cap.innerHTML = '<p class="text-white text-xs font-semibold truncate">' + item.caption + '</p>';
                     wrap.appendChild(cap);
                 }
-                wrap.addEventListener('click', function() {
-                    openGaleriLightbox(item.img || item, item.caption || '');
-                });
+                (function(capturedIdx) {
+                    wrap.addEventListener('click', function() {
+                        openGaleriLightbox(capturedIdx);
+                    });
+                })(idx);
                 grid.appendChild(wrap);
             });
         }
 
-        function openGaleriLightbox(imgSrc, caption) {
+        // State lightbox galeri publik (navigasi ← →)
+        var _galeriLightbox = { idx: 0 };
+
+        function applyGaleriLightbox() {
+            var photos = AppState.galeri || [];
+            var item = photos[_galeriLightbox.idx];
+            if (!item) return;
+            var src = item.img || item;
+            var cap = item.caption || '';
+            var imgEl = document.getElementById('galeriLbImg');
+            var capEl = document.getElementById('galeriLbCaption');
+            if (imgEl) { imgEl.src = src; imgEl.alt = cap; }
+            if (capEl) capEl.textContent = cap ? cap + ' (' + (_galeriLightbox.idx + 1) + '/' + photos.length + ')' : (_galeriLightbox.idx + 1) + '/' + photos.length;
+        }
+
+        function openGaleriLightbox(startIdx) {
+            var photos = AppState.galeri || [];
+            if (!photos.length) return;
+            _galeriLightbox.idx = startIdx || 0;
+
             var old = document.getElementById('galeriLightbox');
             if (old) old.remove();
+
             var lb = document.createElement('div');
             lb.id = 'galeriLightbox';
-            lb.className = 'fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4';
+            lb.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:16px;';
             lb.addEventListener('click', function(e) { if (e.target === lb) lb.remove(); });
 
-            var inner = document.createElement('div');
-            inner.className = 'relative max-w-4xl w-full';
-
+            // Tombol tutup
             var closeBtn = document.createElement('button');
-            closeBtn.className = 'absolute -top-10 right-0 text-white/70 hover:text-white text-2xl';
+            closeBtn.style.cssText = 'position:absolute;top:16px;right:20px;color:rgba(255,255,255,0.7);font-size:1.5rem;background:none;border:none;cursor:pointer;z-index:10;';
             closeBtn.innerHTML = '<i class="fas fa-times"></i>';
             closeBtn.addEventListener('click', function() { lb.remove(); });
+            lb.appendChild(closeBtn);
+
+            // Tombol kiri
+            var prevBtn = document.createElement('button');
+            prevBtn.style.cssText = 'position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.6rem;width:48px;height:48px;border-radius:50%;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .2s;';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.addEventListener('mouseenter', function(){ this.style.background='rgba(255,255,255,0.3)'; });
+            prevBtn.addEventListener('mouseleave', function(){ this.style.background='rgba(255,255,255,0.15)'; });
+            prevBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                _galeriLightbox.idx = (_galeriLightbox.idx - 1 + photos.length) % photos.length;
+                applyGaleriLightbox();
+            });
+            lb.appendChild(prevBtn);
+
+            // Tombol kanan
+            var nextBtn = document.createElement('button');
+            nextBtn.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.6rem;width:48px;height:48px;border-radius:50%;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .2s;';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.addEventListener('mouseenter', function(){ this.style.background='rgba(255,255,255,0.3)'; });
+            nextBtn.addEventListener('mouseleave', function(){ this.style.background='rgba(255,255,255,0.15)'; });
+            nextBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                _galeriLightbox.idx = (_galeriLightbox.idx + 1) % photos.length;
+                applyGaleriLightbox();
+            });
+            lb.appendChild(nextBtn);
+
+            // Kontainer gambar + caption
+            var inner = document.createElement('div');
+            inner.style.cssText = 'position:relative;max-width:860px;width:100%;text-align:center;';
 
             var img = document.createElement('img');
-            img.src = imgSrc;
-            img.alt = caption;
-            img.className = 'w-full max-h-[80vh] object-contain rounded-xl shadow-2xl';
+            img.id = 'galeriLbImg';
+            img.style.cssText = 'max-height:80vh;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 25px 60px rgba(0,0,0,0.5);';
 
-            inner.appendChild(closeBtn);
+            var capEl = document.createElement('p');
+            capEl.id = 'galeriLbCaption';
+            capEl.style.cssText = 'color:rgba(255,255,255,0.65);font-size:0.8rem;margin-top:12px;text-align:center;';
+
             inner.appendChild(img);
-            if (caption) {
-                var capEl = document.createElement('p');
-                capEl.className = 'text-white/70 text-sm text-center mt-3';
-                capEl.textContent = caption;
-                inner.appendChild(capEl);
-            }
+            inner.appendChild(capEl);
             lb.appendChild(inner);
             document.body.appendChild(lb);
+
+            // Navigasi keyboard
+            lb._keyHandler = function(e) {
+                if (e.key === 'ArrowLeft')  { _galeriLightbox.idx = (_galeriLightbox.idx - 1 + photos.length) % photos.length; applyGaleriLightbox(); }
+                if (e.key === 'ArrowRight') { _galeriLightbox.idx = (_galeriLightbox.idx + 1) % photos.length; applyGaleriLightbox(); }
+                if (e.key === 'Escape')     { lb.remove(); document.removeEventListener('keydown', lb._keyHandler); }
+            };
+            document.addEventListener('keydown', lb._keyHandler);
+            lb.addEventListener('remove', function() { document.removeEventListener('keydown', lb._keyHandler); });
+
+            applyGaleriLightbox();
         }
         window.openGaleriLightbox = openGaleriLightbox;
 
