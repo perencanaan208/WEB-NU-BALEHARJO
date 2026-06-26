@@ -3218,6 +3218,22 @@
             }
         };
 
+        // Update badge counter setelah gambar benar-benar load/error
+        // Sehingga angka "N foto" selalu akurat sesuai yang tampil
+        window.pentaBadgeTick = function(badgeId, success) {
+            var el = document.getElementById(badgeId);
+            if (!el) return;
+            var done  = parseInt(el.getAttribute('data-done')  || '0', 10) + 1;
+            var ok    = parseInt(el.getAttribute('data-ok')    || '0', 10) + (success ? 1 : 0);
+            var total = parseInt(el.getAttribute('data-total') || '0', 10);
+            el.setAttribute('data-done', done);
+            el.setAttribute('data-ok',   ok);
+            // Update teks badge saat semua foto sudah dicoba load
+            if (done >= total) {
+                el.textContent = ok + ' foto' + (ok < total ? ' (' + (total - ok) + ' gagal dimuat)' : '');
+            }
+        };
+
         window.renderPentasyarufanGaleri = function() {
             var container = document.getElementById('pentasyarufanGaleri');
             if (!container) return;
@@ -3272,11 +3288,14 @@
 
                 if (photoItems.length === 0) return; // skip album tanpa foto valid
 
+                var badgeId = 'penta-badge-' + album.id;
+
                 var fotoCards = photoItems.map(function(p) {
                     return '<div class="relative group rounded-2xl overflow-hidden shadow-sm aspect-square cursor-pointer gallery-item" onclick="openPentaPhoto(' + p.globalIdx + ')">' +
                         '<img src="' + p.src + '" alt="' + album.judul + '"' +
                              ' class="w-full h-full object-cover transition duration-300 group-hover:scale-110" loading="lazy"' +
-                             ' onerror="this.parentElement.style.display=\'none\'">' +
+                             ' onload="window.pentaBadgeTick && pentaBadgeTick(\''+badgeId+'\',true)"' +
+                             ' onerror="this.parentElement.style.display=\'none\';window.pentaBadgeTick && pentaBadgeTick(\''+badgeId+'\',false)">' +
                         '<div class="absolute inset-0 bg-nuGreen-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-300">' +
                             '<i class="fas fa-search-plus text-white text-2xl"></i>' +
                         '</div>' +
@@ -3291,7 +3310,7 @@
                         '<div class="flex items-center gap-3 mb-4">' +
                             '<div class="w-1 h-6 bg-nuGold-500 rounded-full"></div>' +
                             '<h4 class="font-serif font-bold text-lg text-slate-800">' + album.judul + '</h4>' +
-                            '<span class="text-xs text-slate-400 ml-1">' + validCount + ' foto</span>' +
+                            '<span id="' + badgeId + '" class="text-xs text-slate-400 ml-1" data-total="' + photoItems.length + '" data-ok="0" data-done="0">' + photoItems.length + ' foto</span>' +
                         '</div>' +
                         '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + fotoCards + '</div>' +
                     '</div>';
