@@ -3149,16 +3149,25 @@
         }
 
         // Kompres gambar sebelum disimpan (max lebar, kualitas JPEG)
+        // Kompresi gambar bertingkat — pastikan output < 200KB (aman untuk Apps Script)
         function compressImage(base64, maxW, quality) {
             return new Promise(function(resolve) {
                 var img = new Image();
                 img.onload = function() {
-                    var ratio = Math.min(1, maxW / img.width);
-                    var canvas = document.createElement("canvas");
-                    canvas.width  = Math.round(img.width  * ratio);
-                    canvas.height = Math.round(img.height * ratio);
-                    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL("image/jpeg", quality || 0.7));
+                    var tryCompress = function(w, q) {
+                        var ratio = Math.min(1, w / img.width);
+                        var canvas = document.createElement('canvas');
+                        canvas.width  = Math.round(img.width  * ratio);
+                        canvas.height = Math.round(img.height * ratio);
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        var result = canvas.toDataURL('image/jpeg', q);
+                        // Jika masih > 200KB (~270.000 chars base64), kurangi lagi
+                        if (result.length > 270000 && w > 300 && q > 0.3) {
+                            return tryCompress(Math.round(w * 0.8), Math.max(0.3, q - 0.1));
+                        }
+                        return result;
+                    };
+                    resolve(tryCompress(maxW || 600, quality || 0.5));
                 };
                 img.onerror = function() { resolve(base64); };
                 img.src = base64;
@@ -3587,7 +3596,7 @@
                     progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
                     try {
                         // Kompres foto ke max 800px sebelum simpan
-                        var compressed = await compressImage(previews[j], 800, 0.6);
+                        var compressed = await compressImage(previews[j], 600, 0.5);
                         var photoKey = 'penta_' + albumId + '_' + j;
                         var res = await new Promise(function(resolve, reject) {
                             google.script.run
