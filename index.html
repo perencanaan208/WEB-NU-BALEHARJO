@@ -860,35 +860,41 @@
         </div>
     </footer>
 
-    <div id="donationModal" class="fixed inset-0 z-50 flex flex-col hidden" style="background:rgba(5,46,22,0.97);backdrop-filter:blur(8px);">
-        <!-- Header modal -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
+    <div id="donationModal" class="fixed inset-0 z-50 flex flex-col hidden" style="background:#ffffff;">
+        <!-- Header modal — gaya seperti header halaman galeri -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 shrink-0 bg-white shadow-sm">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-nuGold-500 rounded-lg flex items-center justify-center"><i class="fas fa-hand-holding-heart text-nuGreen-950 text-sm"></i></div>
+                <div class="w-10 h-10 bg-nuGreen-800 rounded-xl flex items-center justify-center shadow">
+                    <i class="fas fa-hand-holding-heart text-nuGold-400 text-base"></i>
+                </div>
                 <div>
-                    <h2 class="text-white font-bold text-sm">UPZISNU Baleharjo</h2>
-                    <p class="text-white/50 text-[10px]">Zakat · Infaq · Shadaqah · Koin NU</p>
+                    <h2 class="text-nuGreen-900 font-bold text-sm leading-tight">UPZISNU Baleharjo</h2>
+                    <p class="text-slate-400 text-[10px]">Zakat · Infaq · Shadaqah · Koin NU</p>
                 </div>
             </div>
-            <button id="closeDonationModalBtn" class="text-white/60 hover:text-white text-xl transition"><i class="fas fa-times"></i></button>
+            <button id="closeDonationModalBtn" class="text-slate-400 hover:text-nuGreen-800 text-xl transition w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100"><i class="fas fa-times"></i></button>
         </div>
         <!-- Tab -->
-        <div class="flex border-b border-white/10 shrink-0 px-6">
-            <button id="tab-don-transparansi" class="py-3 px-4 text-xs font-bold text-nuGold-400 border-b-2 border-nuGold-400 mr-2 transition">
-                <i class="fas fa-images mr-1.5"></i>Foto Pentasyarufan
+        <div class="flex border-b border-slate-200 shrink-0 px-6 bg-white">
+            <button id="tab-don-transparansi" class="py-3 px-4 text-xs font-bold text-nuGreen-800 border-b-2 border-nuGold-500 mr-2 transition">
+                <i class="fas fa-images mr-1.5 text-nuGold-500"></i>Foto Pentasyarufan
             </button>
         </div>
-        <!-- Konten modal (scroll) -->
-        <div class="flex-1 overflow-y-auto">
-        <div id="donationModalBody" class="max-w-5xl mx-auto p-6">
+        <!-- Konten modal (scroll) — background putih seperti halaman galeri -->
+        <div class="flex-1 overflow-y-auto bg-slate-50">
+        <div id="donationModalBody" class="max-w-7xl mx-auto px-4 py-12">
 
             <div id="don-content-transparansi">
-                <div class="text-center mb-6">
-                    <h3 class="font-serif font-bold text-2xl text-white">Foto Kegiatan Pentasyarufan</h3>
-                    <p class="text-white/50 text-xs mt-1">Dokumentasi nyata penyaluran dana UPZISNU kepada yang berhak</p>
+                <!-- Judul bagian — persis seperti galeri publik -->
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Dokumentasi</span>
+                    <h3 class="font-serif font-bold text-3xl md:text-4xl text-slate-900 mt-2">Foto Kegiatan Pentasyarufan</h3>
+                    <div class="w-20 h-1 bg-nuGold-500 mx-auto mt-4 rounded-full"></div>
+                    <p class="text-slate-500 mt-4 text-sm">Dokumentasi nyata penyaluran dana UPZISNU kepada yang berhak</p>
                 </div>
-                <div id="pentasyarufanGaleri" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    <div class="col-span-full text-center py-10 text-white/30 text-sm italic">Memuat data...</div>
+                <!-- Grid galeri — per album dengan foto individual -->
+                <div id="pentasyarufanGaleri">
+                    <div class="text-center py-16 text-slate-400 text-sm italic">Memuat data...</div>
                 </div>
             </div>
 
@@ -3194,53 +3200,92 @@
         };
 
         window.renderPentasyarufanGaleri = function() {
-            var grid = document.getElementById('pentasyarufanGaleri');
-            if (!grid) return;
+            var container = document.getElementById('pentasyarufanGaleri');
+            if (!container) return;
             var albums = AppState.pentasyarufan || [];
 
-            // Flatten semua foto dari semua album jadi satu array galeri
+            // Flatten semua foto dari semua album jadi satu array galeri (untuk lightbox)
             var allPhotos = [];
-            albums.forEach(function(album, albumIdx) {
+            albums.forEach(function(album) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
-                fotos.forEach(function(f, photoIdx) {
+                fotos.forEach(function(f) {
                     var rawSrc = resolvePentaFoto(f) || f;
-                    // Hanya tampilkan foto yang valid (base64 atau http URL)
-                    var isValid = rawSrc && (rawSrc.startsWith('data:image') || rawSrc.startsWith('http'));
-                    var src = isValid ? rawSrc : '';
-                    if (src && src.length > 100) {
-                        allPhotos.push({
-                            src:       src,
-                            caption:   album.judul,
-                            timestamp: album.timestamp || '',
-                            globalIdx: allPhotos.length
-                        });
+                    // Validasi ketat: hanya base64 image atau URL http yang nyata, minimal 500 char untuk base64
+                    var isBase64 = rawSrc && rawSrc.startsWith('data:image') && rawSrc.length > 500;
+                    var isUrl    = rawSrc && rawSrc.startsWith('http') && !rawSrc.startsWith('error');
+                    if (isBase64 || isUrl) {
+                        allPhotos.push({ src: rawSrc, caption: album.judul });
                     }
                 });
             });
 
-            // Hapus foto invalid dari lightbox items
             if (allPhotos.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-16 text-white/30 text-sm italic">Belum ada foto dokumentasi.<br>Tambahkan melalui panel Admin → Keuangan UPZISNU.</div>';
+                container.innerHTML = '<div class="py-20 flex flex-col items-center justify-center gap-3 text-center">' +
+                    '<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">' +
+                        '<i class="fas fa-images text-3xl text-slate-300"></i>' +
+                    '</div>' +
+                    '<p class="text-slate-400 font-semibold text-sm">Belum ada foto dokumentasi</p>' +
+                    '<p class="text-slate-300 text-xs">Tambahkan melalui Panel Admin → Keuangan UPZISNU</p>' +
+                '</div>';
                 return;
             }
 
             // Simpan ke lightbox global
             _pentaLightbox.allPhotos = allPhotos;
 
-            grid.innerHTML = allPhotos.map(function(photo, i) {
-                return '<div class="penta-photo-card group cursor-pointer rounded-xl overflow-hidden border border-white/10 hover:border-nuGold-400/60 transition duration-300" onclick="openPentaPhoto(' + i + ')">' +
-                    '<div class="relative overflow-hidden" style="aspect-ratio:4/3">' +
-                        '<img src="' + photo.src + '" alt="' + photo.caption + '"' +
-                             ' class="w-full h-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"' +
-                             ' onerror="this.closest(\'.penta-photo-card\').style.display=\'none\'">' +
-                        '<div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>' +
-                        '<div class="absolute bottom-0 left-0 right-0 p-3 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition duration-300">' +
-                            '<p class="text-white text-[11px] font-semibold line-clamp-2 leading-snug">' + photo.caption + '</p>' +
+            // Render per album — setiap album jadi satu grup kartu seperti galeri publik
+            var albumsHtml = '';
+            var globalPhotoIdx = 0;
+
+            albums.forEach(function(album) {
+                var fotos = Array.isArray(album.fotos) ? album.fotos : [];
+                var validPhotos = [];
+                fotos.forEach(function(f) {
+                    var rawSrc = resolvePentaFoto(f) || f;
+                    var isBase64 = rawSrc && rawSrc.startsWith('data:image') && rawSrc.length > 500;
+                    var isUrl    = rawSrc && rawSrc.startsWith('http') && !rawSrc.startsWith('error');
+                    if (isBase64 || isUrl) {
+                        validPhotos.push({ src: rawSrc, globalIdx: globalPhotoIdx++ });
+                    } else {
+                        // foto rusak/invalid — skip saja, tidak tambah globalIdx
+                    }
+                });
+                if (validPhotos.length === 0) return; // skip album tanpa foto valid
+
+                var fotoCards = validPhotos.map(function(p) {
+                    return '<div class="relative group rounded-2xl overflow-hidden shadow-sm aspect-square cursor-pointer gallery-item" onclick="openPentaPhoto(' + p.globalIdx + ')">' +
+                        '<img src="' + p.src + '" alt="' + album.judul + '"' +
+                             ' class="w-full h-full object-cover transition duration-300 group-hover:scale-110" loading="lazy"' +
+                             ' onerror="this.parentElement.style.display=\'none\'">' +
+                        '<div class="absolute inset-0 bg-nuGreen-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-300">' +
+                            '<i class="fas fa-search-plus text-white text-2xl"></i>' +
                         '</div>' +
-                        '<div class="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white/80 text-[10px] px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition"><i class="fas fa-expand text-[8px] mr-1"></i>Lihat</div>' +
+                        '<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition duration-300">' +
+                            '<p class="text-white text-xs font-semibold truncate">' + album.judul + '</p>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+
+                albumsHtml +=
+                    '<div class="mb-10">' +
+                        '<div class="flex items-center gap-3 mb-4">' +
+                            '<div class="w-1 h-6 bg-nuGold-500 rounded-full"></div>' +
+                            '<h4 class="font-serif font-bold text-lg text-slate-800">' + album.judul + '</h4>' +
+                            '<span class="text-xs text-slate-400 ml-1">' + validPhotos.length + ' foto</span>' +
+                        '</div>' +
+                        '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + fotoCards + '</div>' +
+                    '</div>';
+            });
+
+            container.innerHTML = albumsHtml || (
+                '<div class="py-20 flex flex-col items-center justify-center gap-3 text-center">' +
+                    '<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">' +
+                        '<i class="fas fa-images text-3xl text-slate-300"></i>' +
                     '</div>' +
-                '</div>';
-            }).join('');
+                    '<p class="text-slate-400 font-semibold text-sm">Belum ada foto dokumentasi</p>' +
+                    '<p class="text-slate-300 text-xs">Tambahkan melalui Panel Admin → Keuangan UPZISNU</p>' +
+                '</div>'
+            );
         };
 
         // Buka lightbox foto tunggal (flat)
@@ -3280,9 +3325,18 @@
 
         function applyPentaLightbox() {
             var item = _pentaLightbox.items[_pentaLightbox.idx];
-            document.getElementById('pentaLightboxImg').src = item.src;
-            document.getElementById('pentaLightboxCaption').textContent =
-                item.caption + ' (' + (_pentaLightbox.idx+1) + '/' + _pentaLightbox.items.length + ')';
+            var imgEl = document.getElementById('pentaLightboxImg');
+            var capEl = document.getElementById('pentaLightboxCaption');
+            // Reset dan pasang onerror agar foto rusak tidak blank total
+            imgEl.onerror = function() {
+                this.style.display = 'none';
+                capEl.textContent = '⚠️ Foto tidak dapat ditampilkan · ' + item.caption;
+            };
+            imgEl.onload = function() {
+                this.style.display = '';
+            };
+            imgEl.src = item.src;
+            capEl.textContent = item.caption + ' (' + (_pentaLightbox.idx+1) + '/' + _pentaLightbox.items.length + ')';
         }
 
         // ── Admin: render daftar pentasyarufan ──
