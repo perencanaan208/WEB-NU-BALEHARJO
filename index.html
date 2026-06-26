@@ -3181,6 +3181,16 @@
             return ""; // belum tersedia, akan di-load async
         }
 
+        // Helper: cek apakah src adalah foto valid yang bisa ditampilkan
+        function isPentaFotoValid(src) {
+            if (!src || typeof src !== 'string') return false;
+            // URL http/https valid (bukan error string)
+            if (src.startsWith('http') && !src.startsWith('error')) return true;
+            // Base64 image valid — cukup >100 char saja, bukan 500
+            if (src.startsWith('data:image') && src.length > 100) return true;
+            return false;
+        }
+
         // Preload semua foto pentasyarufan dari AppState ke cache
         window.preloadPentaFotos = async function() {
             var items = AppState.pentasyarufan || [];
@@ -3188,13 +3198,22 @@
                 var fotos = Array.isArray(items[i].fotos) ? items[i].fotos : [];
                 for (var j = 0; j < fotos.length; j++) {
                     var key = fotos[j];
-                    if (key && key.startsWith("penta_") && !window._pentaFotoCache[key]) {
-                        // Foto sudah direkonstruksi oleh backend dan ada di fotos[] sebagai base64
-                        // Jika masih berupa key, kemungkinan backend belum merekonstruksi
-                    }
                     if (key && (key.startsWith("data:") || key.startsWith("http"))) {
                         window._pentaFotoCache[key] = key;
                     }
+                }
+                // Debug: log status setiap foto per album (bisa dilihat di F12 > Console)
+                if (fotos.length > 0) {
+                    console.log('[Pentasyarufan] Album:', items[i].judul, '| Total data fotos:', fotos.length);
+                    fotos.forEach(function(f, fi) {
+                        var src = f || '';
+                        var status = isPentaFotoValid(src) ? '✅ valid' :
+                                     (src === '' ? '❌ kosong' :
+                                     (src.startsWith('data:image') ? '⚠️ base64 pendek (' + src.length + ' char)' :
+                                     (src.startsWith('error') ? '❌ error: ' + src.substring(0,60) :
+                                     '❓ unknown: ' + src.substring(0,60))));
+                        console.log('  Foto[' + fi + ']:', status);
+                    });
                 }
             }
         };
@@ -3204,17 +3223,14 @@
             if (!container) return;
             var albums = AppState.pentasyarufan || [];
 
-            // Flatten semua foto dari semua album jadi satu array galeri (untuk lightbox)
+            // Flatten semua foto valid dari semua album (untuk lightbox navigation)
             var allPhotos = [];
             albums.forEach(function(album) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
                 fotos.forEach(function(f) {
-                    var rawSrc = resolvePentaFoto(f) || f;
-                    // Validasi ketat: hanya base64 image atau URL http yang nyata, minimal 500 char untuk base64
-                    var isBase64 = rawSrc && rawSrc.startsWith('data:image') && rawSrc.length > 500;
-                    var isUrl    = rawSrc && rawSrc.startsWith('http') && !rawSrc.startsWith('error');
-                    if (isBase64 || isUrl) {
-                        allPhotos.push({ src: rawSrc, caption: album.judul });
+                    var src = resolvePentaFoto(f) || f;
+                    if (isPentaFotoValid(src)) {
+                        allPhotos.push({ src: src, caption: album.judul });
                     }
                 });
             });
@@ -3233,26 +3249,30 @@
             // Simpan ke lightbox global
             _pentaLightbox.allPhotos = allPhotos;
 
-            // Render per album — setiap album jadi satu grup kartu seperti galeri publik
+            // Render per album
             var albumsHtml = '';
             var globalPhotoIdx = 0;
 
             albums.forEach(function(album) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
-                var validPhotos = [];
-                fotos.forEach(function(f) {
-                    var rawSrc = resolvePentaFoto(f) || f;
-                    var isBase64 = rawSrc && rawSrc.startsWith('data:image') && rawSrc.length > 500;
-                    var isUrl    = rawSrc && rawSrc.startsWith('http') && !rawSrc.startsWith('error');
-                    if (isBase64 || isUrl) {
-                        validPhotos.push({ src: rawSrc, globalIdx: globalPhotoIdx++ });
-                    } else {
-                        // foto rusak/invalid — skip saja, tidak tambah globalIdx
-                    }
-                });
-                if (validPhotos.length === 0) return; // skip album tanpa foto valid
 
-                var fotoCards = validPhotos.map(function(p) {
+                // Kumpulkan semua foto — valid langsung ditampilkan, invalid ditampilkan dengan onerror hide
+                // Hitung dulu berapa yang valid untuk badge counter
+                var validCount = 0;
+                var photoItems = [];
+                fotos.forEach(function(f) {
+                    var src = resolvePentaFoto(f) || f;
+                    var valid = isPentaFotoValid(src);
+                    if (valid) {
+                        validCount++;
+                        photoItems.push({ src: src, globalIdx: globalPhotoIdx++ });
+                    }
+                    // foto tidak valid (string kosong, error, key yg belum resolve) — skip
+                });
+
+                if (photoItems.length === 0) return; // skip album tanpa foto valid
+
+                var fotoCards = photoItems.map(function(p) {
                     return '<div class="relative group rounded-2xl overflow-hidden shadow-sm aspect-square cursor-pointer gallery-item" onclick="openPentaPhoto(' + p.globalIdx + ')">' +
                         '<img src="' + p.src + '" alt="' + album.judul + '"' +
                              ' class="w-full h-full object-cover transition duration-300 group-hover:scale-110" loading="lazy"' +
@@ -3271,7 +3291,7 @@
                         '<div class="flex items-center gap-3 mb-4">' +
                             '<div class="w-1 h-6 bg-nuGold-500 rounded-full"></div>' +
                             '<h4 class="font-serif font-bold text-lg text-slate-800">' + album.judul + '</h4>' +
-                            '<span class="text-xs text-slate-400 ml-1">' + validPhotos.length + ' foto</span>' +
+                            '<span class="text-xs text-slate-400 ml-1">' + validCount + ' foto</span>' +
                         '</div>' +
                         '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + fotoCards + '</div>' +
                     '</div>';
