@@ -3129,8 +3129,8 @@
         // Notifikasi melayang untuk aksi admin
         function showFloatingNotif(msg, type) {
             var notif = document.createElement("div");
-            var bg = type === "success" ? "#14532d" : type === "error" ? "#7f1d1d" : "#1e3a5f";
-            var icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
+            var bg = type === "success" ? "#14532d" : type === "error" ? "#7f1d1d" : type === "warning" ? "#78350f" : "#1e3a5f";
+            var icon = type === "success" ? "✅" : type === "error" ? "❌" : type === "warning" ? "⚠️" : "ℹ️";
             notif.style.cssText = [
                 "position:fixed;top:20px;right:20px;z-index:99999",
                 "background:"+bg+";color:#fff;padding:14px 20px;border-radius:14px",
@@ -3140,11 +3140,12 @@
             ].join(";");
             notif.innerHTML = '<span style="font-size:18px">' + icon + '</span><span>' + msg + '</span>';
             document.body.appendChild(notif);
+            var duration = type === "warning" ? 6000 : 3500;
             setTimeout(function() {
                 notif.style.opacity = "0"; notif.style.transform = "translateX(100px)";
                 notif.style.transition = "all .4s ease";
                 setTimeout(function(){ if(notif.parentNode) notif.parentNode.removeChild(notif); }, 400);
-            }, 3500);
+            }, duration);
         }
 
         // Kompres gambar sebelum disimpan (max lebar, kualitas JPEG)
@@ -3580,6 +3581,7 @@
 
                 var albumId = String(Date.now());
                 var driveUrls = [];
+                var failedPhotos = [];
                 for (var j = 0; j < previews.length; j++) {
                     progressBar.style.width = Math.round((j / previews.length) * 80) + '%';
                     progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
@@ -3593,9 +3595,28 @@
                                 .withFailureHandler(reject)
                                 .savePhoto(compressed, photoKey);
                         });
-                        if (res === "success") driveUrls.push(photoKey);
-                        else console.warn('Gagal simpan foto '+j+':', res);
-                    } catch(e) { console.warn('Gagal upload foto '+j, e); }
+                        if (res === "success") {
+                            driveUrls.push(photoKey);
+                        } else {
+                            failedPhotos.push(j+1);
+                            console.warn('Gagal simpan foto '+j+':', res);
+                        }
+                    } catch(e) {
+                        failedPhotos.push(j+1);
+                        console.warn('Gagal upload foto '+j, e);
+                    }
+                }
+
+                // Jika ada foto yang gagal — tanya user apakah tetap lanjut
+                if (failedPhotos.length > 0 && driveUrls.length === 0) {
+                    progressDiv.classList.add('hidden');
+                    btnSave.disabled = false;
+                    showFloatingNotif('❌ Semua foto gagal diunggah. Coba lagi atau kurangi jumlah foto.', 'error');
+                    return;
+                }
+                if (failedPhotos.length > 0) {
+                    progressTxt.textContent = '⚠️ ' + failedPhotos.length + ' foto gagal (foto ' + failedPhotos.join(', ') + '). ' + driveUrls.length + ' foto berhasil akan disimpan...';
+                    await new Promise(function(r){ setTimeout(r, 2500); }); // beri waktu user baca
                 }
 
                 progressBar.style.width = '90%';
@@ -3605,9 +3626,12 @@
                 google.script.run
                     .withSuccessHandler(function(res) {
                         progressBar.style.width = '100%';
-                        progressTxt.textContent = '✅ Berhasil disimpan!';
+                        var notifMsg = failedPhotos.length > 0
+                            ? '⚠️ ' + driveUrls.length + ' foto tersimpan, ' + failedPhotos.length + ' foto gagal (foto ke-' + failedPhotos.join(', ') + ')'
+                            : '📸 Semua ' + driveUrls.length + ' foto berhasil disimpan!';
+                        progressTxt.textContent = failedPhotos.length > 0 ? notifMsg : '✅ Berhasil disimpan!';
                         // Notif melayang
-                        showFloatingNotif("📸 Foto kegiatan berhasil disimpan!", "success");
+                        showFloatingNotif(notifMsg, failedPhotos.length > 0 ? 'warning' : 'success');
                         setTimeout(function() {
                             progressDiv.classList.add('hidden');
                             formDiv.classList.add('hidden');
