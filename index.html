@@ -598,7 +598,7 @@
             </div>
         </div><!-- end baris-1 -->
 
-        <!-- ── Baris 2: Slider Pengurus ── -->
+        <!-- ── Baris 2: Slider Pengurus (auto-slide, foto kotak) ── -->
         <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
@@ -606,25 +606,26 @@
                 </h3>
                 <a href="#" onclick="showPage('pengurus');return false;" class="text-[9px] text-white/50 hover:text-nuGold-300 flex items-center gap-1 transition">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></a>
             </div>
-            <div class="relative">
-                <div class="overflow-hidden" id="pengurusSliderWrap">
-                    <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out gap-3">
-                        <!-- Diisi JS -->
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+            <div class="relative overflow-hidden" id="pengurusSliderWrap">
+                <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out">
+                    <!-- skeleton -->
+                    <div class="pengurus-slide shrink-0 w-full flex gap-3">
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
                     </div>
                 </div>
-                <button onclick="pengurusSlide(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-nuGreen-900/80 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
+                <button onclick="bsMovePengurus(-1)" class="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <button onclick="pengurusSlide(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-nuGreen-900/80 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
+                <button onclick="bsMovePengurus(1)" class="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
+            <div id="pengurusDots" class="flex justify-center gap-1.5 mt-2"></div>
         </div><!-- end baris-2 -->
 
         </div><!-- end flex col wrapper -->
@@ -4216,61 +4217,110 @@
         // ══════════════════════════════════════════════
         // SLIDER PENGURUS DI BERANDA
         // ══════════════════════════════════════════════
-        var _pengurusSlider = { idx: 0, perView: 6, total: 0 };
+        // ─── Slider Pengurus: auto-slide, foto kotak, dots ───
+        var _pSlider = { idx: 0, total: 0, timer: null, perSlide: 6 };
 
-        function pengurusSlide(dir) {
+        function bsApplyPengurus(idx) {
             var track = document.getElementById('pengurusSliderTrack');
-            var wrap  = document.getElementById('pengurusSliderWrap');
-            if (!track || !wrap) return;
-            // Hitung perView berdasarkan lebar wrap
-            var cardW = 120; // px (w-28 + gap)
-            var perView = Math.max(1, Math.floor(wrap.offsetWidth / (cardW + 12)));
-            _pengurusSlider.perView = perView;
-            var maxIdx = Math.max(0, _pengurusSlider.total - perView);
-            _pengurusSlider.idx = Math.min(maxIdx, Math.max(0, _pengurusSlider.idx + dir));
-            track.style.transform = 'translateX(-' + (_pengurusSlider.idx * (cardW + 12)) + 'px)';
+            if (!track) return;
+            _pSlider.idx = (idx + _pSlider.total) % _pSlider.total;
+            track.style.transform = 'translateX(-' + (_pSlider.idx * 100) + '%)';
+            document.querySelectorAll('#pengurusDots .p-dot').forEach(function(d, i) {
+                d.style.background = i === _pSlider.idx ? 'rgba(255,200,50,0.9)' : 'rgba(255,255,255,0.3)';
+                d.style.width      = i === _pSlider.idx ? '18px' : '6px';
+            });
         }
+
+        function bsResetPengurus() {
+            if (_pSlider.timer) clearInterval(_pSlider.timer);
+            _pSlider.timer = setInterval(function() {
+                bsApplyPengurus(_pSlider.idx + 1);
+            }, 4000);
+        }
+
+        window.bsMovePengurus = function(dir) {
+            bsApplyPengurus(_pSlider.idx + dir);
+            bsResetPengurus();
+        };
 
         window.renderBerandaPengurus = function() {
             var track = document.getElementById('pengurusSliderTrack');
+            var dots  = document.getElementById('pengurusDots');
             if (!track) return;
+
             var list = (AppState.pengurus || []);
             if (list.length === 0) {
-                track.innerHTML = '<div class="text-white/40 text-xs italic py-4 px-2">Data pengurus belum tersedia.</div>';
+                track.innerHTML = '<div class="pengurus-slide shrink-0 w-full flex items-center justify-center py-4 text-white/40 text-xs italic">Data pengurus belum tersedia.</div>';
                 return;
             }
-            _pengurusSlider.total = list.length;
-            _pengurusSlider.idx   = 0;
 
             // Warna badge per group
-            var groupColor = {
-                'Pengurus NU': 'bg-nuGold-500 text-nuGreen-950',
-                'Muslimat':    'bg-emerald-400 text-emerald-950',
-                'Fatayat':     'bg-teal-400 text-teal-950',
-                'Ansor':       'bg-amber-400 text-amber-950',
-                'IPNU':        'bg-blue-400 text-blue-950',
-                'IPPNU':       'bg-pink-400 text-pink-950',
-                'UPZISNU':     'bg-lime-400 text-lime-950',
-                'KOKAM':       'bg-red-400 text-red-950',
-                'Pagar Nusa':  'bg-orange-400 text-orange-950',
+            var gc = {
+                'Pengurus NU':'bg-nuGold-500 text-nuGreen-950',
+                'Muslimat':'bg-emerald-400 text-emerald-950',
+                'Fatayat':'bg-teal-400 text-teal-950',
+                'Ansor':'bg-amber-400 text-amber-950',
+                'IPNU':'bg-blue-400 text-blue-950',
+                'IPPNU':'bg-pink-400 text-pink-950',
+                'UPZISNU':'bg-lime-400 text-lime-950',
+                'KOKAM':'bg-red-400 text-red-950',
+                'Pagar Nusa':'bg-orange-400 text-orange-950'
             };
 
-            track.innerHTML = list.map(function(p) {
-                var gc = groupColor[p.group] || 'bg-white/20 text-white';
-                var hasFoto = p.foto && p.foto.length > 50;
-                var avatarHtml = hasFoto
-                    ? '<img src="' + p.foto + '" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
-                      '<div class="w-full h-full hidden items-center justify-center text-nuGold-400 text-xl font-bold font-serif">' + (p.nama||'?')[0] + '</div>'
-                    : '<div class="w-full h-full flex items-center justify-center text-nuGold-400 text-xl font-bold font-serif">' + (p.nama||'?')[0] + '</div>';
-                return '<div class="shrink-0 w-28 flex flex-col items-center gap-1.5 cursor-pointer group" onclick="showPage(\'pengurus\')">' +
-                    '<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 group-hover:border-nuGold-400 transition bg-nuGreen-800 relative">' +
-                        avatarHtml +
-                    '</div>' +
-                    '<span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full ' + gc + ' text-center leading-tight">' + (p.group||'') + '</span>' +
-                    '<p class="text-[9px] font-semibold text-white text-center leading-tight line-clamp-2 w-full">' + (p.nama||'') + '</p>' +
-                    '<p class="text-[8px] text-white/50 text-center leading-tight line-clamp-1 w-full">' + (p.jabatan||'') + '</p>' +
-                '</div>';
+            // Bagi list jadi slide-slide, tiap slide 6 pengurus
+            var PER = 6;
+            var slides = [];
+            for (var i = 0; i < list.length; i += PER) {
+                slides.push(list.slice(i, i + PER));
+            }
+            _pSlider.total   = slides.length;
+            _pSlider.idx     = 0;
+
+            track.innerHTML = slides.map(function(group) {
+                var cards = group.map(function(p) {
+                    var badge   = gc[p.group] || 'bg-white/20 text-white';
+                    var hasFoto = p.foto && p.foto.startsWith('data:image') && p.foto.length > 200;
+                    var imgTag  = hasFoto
+                        ? '<img src="' + p.foto + '" class="w-full h-full object-cover object-top" loading="lazy" ' +
+                          'onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' +
+                          '<div style="display:none" class="w-full h-full items-center justify-center bg-nuGreen-800 text-nuGold-400 text-2xl font-bold font-serif">' + (p.nama||'?')[0].toUpperCase() + '</div>'
+                        : '<div class="w-full h-full flex items-center justify-center bg-nuGreen-800 text-nuGold-400 text-2xl font-bold font-serif">' + (p.nama||'?')[0].toUpperCase() + '</div>';
+
+                    return '<div class="flex-1 min-w-0 flex flex-col cursor-pointer group" onclick="showPage(\'pengurus\')">' +
+                        '<div class="relative overflow-hidden rounded-lg bg-nuGreen-900 border border-white/10 group-hover:border-nuGold-400/60 transition" style="aspect-ratio:3/4">' +
+                            imgTag +
+                            '<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>' +
+                            '<div class="absolute bottom-0 left-0 right-0 p-1.5">' +
+                                '<p class="text-white text-[8px] font-bold leading-tight line-clamp-2">' + (p.nama||'') + '</p>' +
+                                '<p class="text-white/60 text-[7px] leading-tight line-clamp-1 mt-0.5">' + (p.jabatan||'') + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-1 flex justify-center">' +
+                            '<span class="text-[7px] font-bold px-1 py-0.5 rounded-full ' + badge + ' text-center leading-tight line-clamp-1">' + (p.group||'') + '</span>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+
+                // Pad sisa slot jika group kurang dari PER
+                var padCount = PER - group.length;
+                for (var j = 0; j < padCount; j++) {
+                    cards += '<div class="flex-1 min-w-0"></div>';
+                }
+
+                return '<div class="pengurus-slide shrink-0 w-full flex gap-2 px-8">' + cards + '</div>';
             }).join('');
+
+            // Dots
+            if (dots) {
+                dots.innerHTML = slides.map(function(_, i) {
+                    return '<span class="p-dot cursor-pointer rounded-full transition-all duration-300" ' +
+                        'style="height:6px;background:rgba(255,255,255,0.3);width:6px" ' +
+                        'onclick="bsApplyPengurus(' + i + ');bsResetPengurus();"></span>';
+                }).join('');
+            }
+
+            bsApplyPengurus(0);
+            bsResetPengurus();
         };
 
         // ── Hash Router: buka berita dari URL hash ──
