@@ -507,7 +507,7 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch z-10 w-full">
+        <div class="relative max-w-7xl mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch z-10 w-full">
 
             <!-- ── Kolom 1: Teks Hero ── -->
             <div class="flex flex-col justify-center space-y-4 text-center lg:text-left">
@@ -576,6 +576,23 @@
                         </div>
                     </div>
                     <div id="beritaDots" class="flex justify-center gap-1"></div>
+                </div>
+            </div>
+
+            <!-- ── Kolom 4: Statistik Pengunjung ── -->
+            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.9s both;">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
+                    <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
+                        <i class="fas fa-chart-bar text-xs"></i>Statistik Pengunjung
+                    </h3>
+                    <div id="visitorStatsGrid" class="grid grid-cols-2 gap-2 flex-1">
+                        <!-- Skeleton -->
+                        <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
+                    </div>
+                    <p class="text-[9px] text-white/30 text-center">Diperbarui setiap kunjungan</p>
                 </div>
             </div>
 
@@ -847,26 +864,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════
-         STATISTIK PENGUNJUNG WEBSITE
-         ══════════════════════════════════════════════ -->
-    <section class="bg-white border-t border-slate-100 py-10">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-8">
-                <span class="text-nuGreen-800 font-bold tracking-widest text-xs uppercase">Transparansi</span>
-                <h3 class="font-serif font-bold text-2xl text-slate-900 mt-1">Statistik Pengunjung Website</h3>
-                <div class="w-12 h-0.5 bg-nuGold-500 mx-auto mt-2 rounded-full"></div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="visitorStatsGrid">
-                <!-- Skeleton loading -->
-                <div class="animate-pulse bg-slate-100 rounded-2xl h-28"></div>
-                <div class="animate-pulse bg-slate-100 rounded-2xl h-28"></div>
-                <div class="animate-pulse bg-slate-100 rounded-2xl h-28"></div>
-                <div class="animate-pulse bg-slate-100 rounded-2xl h-28"></div>
             </div>
         </div>
     </section>
@@ -3695,32 +3692,25 @@
         // SISTEM STATISTIK PENGUNJUNG
         // ══════════════════════════════════════════════
 
-        // Render card statistik pengunjung
+        // Render card statistik pengunjung (tema gelap — cocok di hero)
         function renderVisitorStats(stats) {
             var grid = document.getElementById('visitorStatsGrid');
             if (!grid) return;
             var cards = [
-                { label: 'Hari Ini',  icon: 'fa-sun',       color: 'nuGold',   val: stats.today  || 0 },
-                { label: 'Minggu Ini',icon: 'fa-calendar-week', color: 'blue', val: stats.week   || 0 },
-                { label: 'Bulan Ini', icon: 'fa-calendar-alt',  color: 'green',val: stats.month  || 0 },
-                { label: 'Total',     icon: 'fa-users',      color: 'purple',   val: stats.total  || 0 }
+                { label: 'Hari Ini',   icon: 'fa-sun',          color: 'gold',   val: stats.today || 0 },
+                { label: 'Minggu Ini', icon: 'fa-calendar-week', color: 'blue',   val: stats.week  || 0 },
+                { label: 'Bulan Ini',  icon: 'fa-calendar-alt',  color: 'green',  val: stats.month || 0 },
+                { label: 'Total',      icon: 'fa-users',          color: 'purple', val: stats.total || 0 }
             ];
-            var colorMap = {
-                nuGold:  { bg: 'bg-amber-50',   border: 'border-amber-200',  icon: 'text-amber-500',  num: 'text-amber-700'  },
-                blue:    { bg: 'bg-blue-50',     border: 'border-blue-200',   icon: 'text-blue-500',   num: 'text-blue-700'   },
-                green:   { bg: 'bg-nuGreen-50',  border: 'border-nuGreen-200',icon: 'text-nuGreen-700',num: 'text-nuGreen-800'},
-                purple:  { bg: 'bg-purple-50',   border: 'border-purple-200', icon: 'text-purple-500', num: 'text-purple-700' }
-            };
+            var iconColors = { gold:'text-nuGold-400', blue:'text-blue-300', green:'text-emerald-400', purple:'text-purple-300' };
+            var numColors  = { gold:'text-nuGold-300', blue:'text-blue-200', green:'text-emerald-300', purple:'text-purple-200' };
             grid.innerHTML = cards.map(function(c) {
-                var cl = colorMap[c.color] || colorMap.green;
-                return '<div class="' + cl.bg + ' border ' + cl.border + ' rounded-2xl p-5 flex flex-col items-center justify-center gap-2 shadow-sm hover:shadow-md transition">' +
-                    '<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">' +
-                        '<i class="fas ' + c.icon + ' ' + cl.icon + '"></i>' +
-                    '</div>' +
-                    '<span class="text-2xl font-bold ' + cl.num + ' tabular-nums" id="vstat-' + c.label.replace(/ /g,'') + '">' +
+                return '<div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-900/60 transition">' +
+                    '<i class="fas ' + c.icon + ' ' + iconColors[c.color] + ' text-sm"></i>' +
+                    '<span class="text-xl font-bold ' + numColors[c.color] + ' tabular-nums leading-none">' +
                         Number(c.val).toLocaleString('id-ID') +
                     '</span>' +
-                    '<span class="text-xs font-semibold text-slate-500 text-center">' + c.label + '</span>' +
+                    '<span class="text-[9px] font-semibold text-white/50 text-center leading-tight">' + c.label + '</span>' +
                 '</div>';
             }).join('');
         }
