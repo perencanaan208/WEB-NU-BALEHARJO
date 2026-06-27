@@ -580,14 +580,13 @@
                 </div>
             </div>
 
-            <!-- ── Kolom 4: Statistik Pengunjung ── -->
+            <!-- Kolom 4: Statistik Pengunjung -->
             <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.9s both;">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
                         <i class="fas fa-chart-bar text-xs"></i>Statistik Pengunjung
                     </h3>
                     <div id="visitorStatsGrid" class="grid grid-cols-2 gap-2 flex-1">
-                        <!-- Skeleton -->
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
@@ -598,7 +597,7 @@
             </div>
         </div><!-- end baris-1 -->
 
-        <!-- ── Baris 2: Slider Pengurus (auto-slide, foto kotak) ── -->
+        <!-- Baris 2: Slider Pengurus -->
         <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
@@ -608,27 +607,22 @@
             </div>
             <div class="relative overflow-hidden" id="pengurusSliderWrap">
                 <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out">
-                    <!-- skeleton -->
                     <div class="pengurus-slide shrink-0 w-full flex gap-3">
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
                     </div>
                 </div>
-                <button onclick="bsMovePengurus(-1)" class="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button onclick="bsMovePengurus(1)" class="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                <button onclick="bsMovePengurus(-1)" class="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10"><i class="fas fa-chevron-left"></i></button>
+                <button onclick="bsMovePengurus(1)"  class="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10"><i class="fas fa-chevron-right"></i></button>
             </div>
             <div id="pengurusDots" class="flex justify-center gap-1.5 mt-2"></div>
-        </div><!-- end baris-2 -->
+        </div>
 
-        </div><!-- end flex col wrapper -->
+        </div><!-- end flex col -->
     </section>
 
     <section id="profil" class="page-section py-20 bg-white">
@@ -908,7 +902,7 @@
     </footer>
 
     <div id="donationModal" class="fixed inset-0 z-50 flex flex-col hidden" style="background:#ffffff;">
-        <!-- Header modal — gaya seperti header halaman galeri -->
+        <!-- Header modal -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 shrink-0 bg-white shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-nuGreen-800 rounded-xl flex items-center justify-center shadow">
@@ -921,25 +915,21 @@
             </div>
             <button id="closeDonationModalBtn" class="text-slate-400 hover:text-nuGreen-800 text-xl transition w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100"><i class="fas fa-times"></i></button>
         </div>
-        <!-- Tab -->
         <div class="flex border-b border-slate-200 shrink-0 px-6 bg-white">
             <button id="tab-don-transparansi" class="py-3 px-4 text-xs font-bold text-nuGreen-800 border-b-2 border-nuGold-500 mr-2 transition">
                 <i class="fas fa-images mr-1.5 text-nuGold-500"></i>Foto Pentasyarufan
             </button>
         </div>
-        <!-- Konten modal (scroll) — background putih seperti halaman galeri -->
         <div class="flex-1 overflow-y-auto bg-slate-50">
         <div id="donationModalBody" class="max-w-7xl mx-auto px-4 py-12">
 
             <div id="don-content-transparansi">
-                <!-- Judul bagian — persis seperti galeri publik -->
                 <div class="text-center max-w-2xl mx-auto mb-12">
                     <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Dokumentasi</span>
                     <h3 class="font-serif font-bold text-3xl md:text-4xl text-slate-900 mt-2">Foto Kegiatan Pentasyarufan</h3>
                     <div class="w-20 h-1 bg-nuGold-500 mx-auto mt-4 rounded-full"></div>
                     <p class="text-slate-500 mt-4 text-sm">Dokumentasi nyata penyaluran dana UPZISNU kepada yang berhak</p>
                 </div>
-                <!-- Grid galeri — per album dengan foto individual -->
                 <div id="pentasyarufanGaleri">
                     <div class="text-center py-16 text-slate-400 text-sm italic">Memuat data...</div>
                 </div>
@@ -2166,7 +2156,7 @@
                                 <button onclick="window.shareNewsWA && window.shareNewsWA()" class="flex-1 flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs py-2.5 rounded-xl transition border border-green-100">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('✅ Link berita disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
+                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
                                     <i class="fas fa-link"></i> Salin Link
                                 </button>
                             </div>
@@ -2983,7 +2973,7 @@
                         }
                     }
                     // Beri sedikit jeda agar render selesai sebelum splash hilang
-                    setTimeout(function() { hideSplash('Data tersinkron ✓'); if(window._checkBeritaHash) _checkBeritaHash(); if(window.trackAndLoadVisitorStats) trackAndLoadVisitorStats(); }, 300);
+                    setTimeout(function() { hideSplash('Data tersinkron ✓'); if(window._checkBeritaHash)_checkBeritaHash(); if(window.trackAndLoadVisitorStats)trackAndLoadVisitorStats(); }, 300);
                 });
             } else {
                 // Tidak ada GAS (preview lokal) — tutup splash setelah 1.5 detik
@@ -3176,8 +3166,8 @@
         // Notifikasi melayang untuk aksi admin
         function showFloatingNotif(msg, type) {
             var notif = document.createElement("div");
-            var bg = type === "success" ? "#14532d" : type === "error" ? "#7f1d1d" : type === "warning" ? "#78350f" : "#1e3a5f";
-            var icon = type === "success" ? "✅" : type === "error" ? "❌" : type === "warning" ? "⚠️" : "ℹ️";
+            var bg = type === "success" ? "#14532d" : type === "error" ? "#7f1d1d" : "#1e3a5f";
+            var icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
             notif.style.cssText = [
                 "position:fixed;top:20px;right:20px;z-index:99999",
                 "background:"+bg+";color:#fff;padding:14px 20px;border-radius:14px",
@@ -3187,16 +3177,14 @@
             ].join(";");
             notif.innerHTML = '<span style="font-size:18px">' + icon + '</span><span>' + msg + '</span>';
             document.body.appendChild(notif);
-            var duration = type === "warning" ? 6000 : 3500;
             setTimeout(function() {
                 notif.style.opacity = "0"; notif.style.transform = "translateX(100px)";
                 notif.style.transition = "all .4s ease";
                 setTimeout(function(){ if(notif.parentNode) notif.parentNode.removeChild(notif); }, 400);
-            }, duration);
+            }, 3500);
         }
 
         // Kompres gambar sebelum disimpan (max lebar, kualitas JPEG)
-        // Kompresi gambar bertingkat — pastikan output < 200KB (aman untuk Apps Script)
         function compressImage(base64, maxW, quality) {
             return new Promise(function(resolve) {
                 var img = new Image();
@@ -3208,7 +3196,6 @@
                         canvas.height = Math.round(img.height * ratio);
                         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         var result = canvas.toDataURL('image/jpeg', q);
-                        // Jika masih > 200KB (~270.000 chars base64), kurangi lagi
                         if (result.length > 270000 && w > 300 && q > 0.3) {
                             return tryCompress(Math.round(w * 0.8), Math.max(0.3, q - 0.1));
                         }
@@ -3231,24 +3218,32 @@
 
         function resolvePentaFoto(keyOrSrc) {
             if (!keyOrSrc) return "";
-            // Jika sudah base64 atau URL biasa, kembalikan langsung
             if (keyOrSrc.startsWith("data:") || keyOrSrc.startsWith("http")) return keyOrSrc;
-            // Jika key (penta_...), cek cache dulu
             if (window._pentaFotoCache[keyOrSrc]) return window._pentaFotoCache[keyOrSrc];
-            return ""; // belum tersedia, akan di-load async
+            return "";
         }
 
-        // Helper: cek apakah src adalah foto valid yang bisa ditampilkan
         function isPentaFotoValid(src) {
             if (!src || typeof src !== 'string') return false;
-            // URL http/https valid (bukan error string)
             if (src.startsWith('http') && !src.startsWith('error')) return true;
-            // Base64 image valid — cukup >100 char saja, bukan 500
             if (src.startsWith('data:image') && src.length > 100) return true;
             return false;
         }
 
-        // Preload semua foto pentasyarufan dari AppState ke cache
+        window.pentaBadgeTick = function(badgeId, success) {
+            var el = document.getElementById(badgeId);
+            if (!el) return;
+            var done  = parseInt(el.getAttribute('data-done')  || '0', 10) + 1;
+            var ok2   = parseInt(el.getAttribute('data-ok')    || '0', 10) + (success ? 1 : 0);
+            var total = parseInt(el.getAttribute('data-total') || '0', 10);
+            el.setAttribute('data-done', done);
+            el.setAttribute('data-ok',   ok2);
+            if (done >= total) {
+                el.textContent = ok2 + ' foto' + (ok2 < total ? ' (' + (total - ok2) + ' gagal dimuat)' : '');
+            }
+        };
+
+        // Preload foto pentasyarufan
         window.preloadPentaFotos = async function() {
             var items = AppState.pentasyarufan || [];
             for (var i = 0; i < items.length; i++) {
@@ -3259,35 +3254,6 @@
                         window._pentaFotoCache[key] = key;
                     }
                 }
-                // Debug: log status setiap foto per album (bisa dilihat di F12 > Console)
-                if (fotos.length > 0) {
-                    console.log('[Pentasyarufan] Album:', items[i].judul, '| Total data fotos:', fotos.length);
-                    fotos.forEach(function(f, fi) {
-                        var src = f || '';
-                        var status = isPentaFotoValid(src) ? '✅ valid' :
-                                     (src === '' ? '❌ kosong' :
-                                     (src.startsWith('data:image') ? '⚠️ base64 pendek (' + src.length + ' char)' :
-                                     (src.startsWith('error') ? '❌ error: ' + src.substring(0,60) :
-                                     '❓ unknown: ' + src.substring(0,60))));
-                        console.log('  Foto[' + fi + ']:', status);
-                    });
-                }
-            }
-        };
-
-        // Update badge counter setelah gambar benar-benar load/error
-        // Sehingga angka "N foto" selalu akurat sesuai yang tampil
-        window.pentaBadgeTick = function(badgeId, success) {
-            var el = document.getElementById(badgeId);
-            if (!el) return;
-            var done  = parseInt(el.getAttribute('data-done')  || '0', 10) + 1;
-            var ok    = parseInt(el.getAttribute('data-ok')    || '0', 10) + (success ? 1 : 0);
-            var total = parseInt(el.getAttribute('data-total') || '0', 10);
-            el.setAttribute('data-done', done);
-            el.setAttribute('data-ok',   ok);
-            // Update teks badge saat semua foto sudah dicoba load
-            if (done >= total) {
-                el.textContent = ok + ' foto' + (ok < total ? ' (' + (total - ok) + ' gagal dimuat)' : '');
             }
         };
 
@@ -3295,93 +3261,40 @@
             var container = document.getElementById('pentasyarufanGaleri');
             if (!container) return;
             var albums = AppState.pentasyarufan || [];
-
-            // Flatten semua foto valid dari semua album (untuk lightbox navigation)
             var allPhotos = [];
             albums.forEach(function(album) {
-                var fotos = Array.isArray(album.fotos) ? album.fotos : [];
-                fotos.forEach(function(f) {
+                (Array.isArray(album.fotos) ? album.fotos : []).forEach(function(f) {
                     var src = resolvePentaFoto(f) || f;
-                    if (isPentaFotoValid(src)) {
-                        allPhotos.push({ src: src, caption: album.judul });
-                    }
+                    if (isPentaFotoValid(src)) allPhotos.push({ src: src, caption: album.judul });
                 });
             });
-
             if (allPhotos.length === 0) {
-                container.innerHTML = '<div class="py-20 flex flex-col items-center justify-center gap-3 text-center">' +
-                    '<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">' +
-                        '<i class="fas fa-images text-3xl text-slate-300"></i>' +
-                    '</div>' +
-                    '<p class="text-slate-400 font-semibold text-sm">Belum ada foto dokumentasi</p>' +
-                    '<p class="text-slate-300 text-xs">Tambahkan melalui Panel Admin → Keuangan UPZISNU</p>' +
-                '</div>';
+                container.innerHTML = '<div class="py-20 text-center text-slate-400"><i class="fas fa-images text-4xl mb-3 text-slate-300"></i><p class="font-semibold text-sm">Belum ada foto dokumentasi</p></div>';
                 return;
             }
-
-            // Simpan ke lightbox global
             _pentaLightbox.allPhotos = allPhotos;
-
-            // Render per album
             var albumsHtml = '';
-            var globalPhotoIdx = 0;
-
+            var globalIdx = 0;
             albums.forEach(function(album) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
-
-                // Kumpulkan semua foto — valid langsung ditampilkan, invalid ditampilkan dengan onerror hide
-                // Hitung dulu berapa yang valid untuk badge counter
-                var validCount = 0;
-                var photoItems = [];
+                var validPhotos = [];
                 fotos.forEach(function(f) {
                     var src = resolvePentaFoto(f) || f;
-                    var valid = isPentaFotoValid(src);
-                    if (valid) {
-                        validCount++;
-                        photoItems.push({ src: src, globalIdx: globalPhotoIdx++ });
-                    }
-                    // foto tidak valid (string kosong, error, key yg belum resolve) — skip
+                    if (isPentaFotoValid(src)) validPhotos.push({ src: src, globalIdx: globalIdx++ });
                 });
-
-                if (photoItems.length === 0) return; // skip album tanpa foto valid
-
+                if (validPhotos.length === 0) return;
                 var badgeId = 'penta-badge-' + album.id;
-
-                var fotoCards = photoItems.map(function(p) {
-                    return '<div class="relative group rounded-2xl overflow-hidden shadow-sm aspect-square cursor-pointer gallery-item" onclick="openPentaPhoto(' + p.globalIdx + ')">' +
-                        '<img src="' + p.src + '" alt="' + album.judul + '"' +
-                             ' class="w-full h-full object-cover transition duration-300 group-hover:scale-110" loading="lazy"' +
-                             ' onload="window.pentaBadgeTick && pentaBadgeTick(\''+badgeId+'\',true)"' +
-                             ' onerror="this.parentElement.style.display=\'none\';window.pentaBadgeTick && pentaBadgeTick(\''+badgeId+'\',false)">' +
-                        '<div class="absolute inset-0 bg-nuGreen-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-300">' +
-                            '<i class="fas fa-search-plus text-white text-2xl"></i>' +
-                        '</div>' +
-                        '<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition duration-300">' +
-                            '<p class="text-white text-xs font-semibold truncate">' + album.judul + '</p>' +
-                        '</div>' +
+                var cards = validPhotos.map(function(ph) {
+                    return '<div class="relative group rounded-2xl overflow-hidden shadow-sm aspect-square cursor-pointer" onclick="openPentaPhoto(' + ph.globalIdx + ')">' +
+                        '<img src="' + ph.src + '" alt="' + album.judul + '" class="w-full h-full object-cover transition duration-300 group-hover:scale-110" loading="lazy"' +
+                        ' onload="window.pentaBadgeTick&&pentaBadgeTick(\'' + badgeId + '\',true)"' +
+                        ' onerror="this.parentElement.style.display=\'none\';window.pentaBadgeTick&&pentaBadgeTick(\'' + badgeId + '\',false)">' +
+                        '<div class="absolute inset-0 bg-nuGreen-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition"><i class="fas fa-search-plus text-white text-2xl"></i></div>' +
                     '</div>';
                 }).join('');
-
-                albumsHtml +=
-                    '<div class="mb-10">' +
-                        '<div class="flex items-center gap-3 mb-4">' +
-                            '<div class="w-1 h-6 bg-nuGold-500 rounded-full"></div>' +
-                            '<h4 class="font-serif font-bold text-lg text-slate-800">' + album.judul + '</h4>' +
-                            '<span id="' + badgeId + '" class="text-xs text-slate-400 ml-1" data-total="' + photoItems.length + '" data-ok="0" data-done="0">' + photoItems.length + ' foto</span>' +
-                        '</div>' +
-                        '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + fotoCards + '</div>' +
-                    '</div>';
+                albumsHtml += '<div class="mb-10"><div class="flex items-center gap-3 mb-4"><div class="w-1 h-6 bg-nuGold-500 rounded-full"></div><h4 class="font-serif font-bold text-lg text-slate-800">' + album.judul + '</h4><span id="' + badgeId + '" class="text-xs text-slate-400 ml-1" data-total="' + validPhotos.length + '" data-ok="0" data-done="0">' + validPhotos.length + ' foto</span></div><div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + cards + '</div></div>';
             });
-
-            container.innerHTML = albumsHtml || (
-                '<div class="py-20 flex flex-col items-center justify-center gap-3 text-center">' +
-                    '<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">' +
-                        '<i class="fas fa-images text-3xl text-slate-300"></i>' +
-                    '</div>' +
-                    '<p class="text-slate-400 font-semibold text-sm">Belum ada foto dokumentasi</p>' +
-                    '<p class="text-slate-300 text-xs">Tambahkan melalui Panel Admin → Keuangan UPZISNU</p>' +
-                '</div>'
-            );
+            container.innerHTML = albumsHtml || '<div class="py-20 text-center text-slate-400">Belum ada foto.</div>';
         };
 
         // Buka lightbox foto tunggal (flat)
@@ -3423,14 +3336,8 @@
             var item = _pentaLightbox.items[_pentaLightbox.idx];
             var imgEl = document.getElementById('pentaLightboxImg');
             var capEl = document.getElementById('pentaLightboxCaption');
-            // Reset dan pasang onerror agar foto rusak tidak blank total
-            imgEl.onerror = function() {
-                this.style.display = 'none';
-                capEl.textContent = '⚠️ Foto tidak dapat ditampilkan · ' + item.caption;
-            };
-            imgEl.onload = function() {
-                this.style.display = '';
-            };
+            imgEl.onerror = function() { this.style.display='none'; capEl.textContent = '⚠️ Foto tidak dapat ditampilkan · ' + item.caption; };
+            imgEl.onload  = function() { this.style.display=''; };
             imgEl.src = item.src;
             capEl.textContent = item.caption + ' (' + (_pentaLightbox.idx+1) + '/' + _pentaLightbox.items.length + ')';
         }
@@ -3637,7 +3544,6 @@
 
                 var albumId = String(Date.now());
                 var driveUrls = [];
-                var failedPhotos = [];
                 for (var j = 0; j < previews.length; j++) {
                     progressBar.style.width = Math.round((j / previews.length) * 80) + '%';
                     progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
@@ -3651,28 +3557,9 @@
                                 .withFailureHandler(reject)
                                 .savePhoto(compressed, photoKey);
                         });
-                        if (res === "success") {
-                            driveUrls.push(photoKey);
-                        } else {
-                            failedPhotos.push(j+1);
-                            console.warn('Gagal simpan foto '+j+':', res);
-                        }
-                    } catch(e) {
-                        failedPhotos.push(j+1);
-                        console.warn('Gagal upload foto '+j, e);
-                    }
-                }
-
-                // Jika ada foto yang gagal — tanya user apakah tetap lanjut
-                if (failedPhotos.length > 0 && driveUrls.length === 0) {
-                    progressDiv.classList.add('hidden');
-                    btnSave.disabled = false;
-                    showFloatingNotif('❌ Semua foto gagal diunggah. Coba lagi atau kurangi jumlah foto.', 'error');
-                    return;
-                }
-                if (failedPhotos.length > 0) {
-                    progressTxt.textContent = '⚠️ ' + failedPhotos.length + ' foto gagal (foto ' + failedPhotos.join(', ') + '). ' + driveUrls.length + ' foto berhasil akan disimpan...';
-                    await new Promise(function(r){ setTimeout(r, 2500); }); // beri waktu user baca
+                        if (res === "success") driveUrls.push(photoKey);
+                        else console.warn('Gagal simpan foto '+j+':', res);
+                    } catch(e) { console.warn('Gagal upload foto '+j, e); }
                 }
 
                 progressBar.style.width = '90%';
@@ -3682,12 +3569,9 @@
                 google.script.run
                     .withSuccessHandler(function(res) {
                         progressBar.style.width = '100%';
-                        var notifMsg = failedPhotos.length > 0
-                            ? '⚠️ ' + driveUrls.length + ' foto tersimpan, ' + failedPhotos.length + ' foto gagal (foto ke-' + failedPhotos.join(', ') + ')'
-                            : '📸 Semua ' + driveUrls.length + ' foto berhasil disimpan!';
-                        progressTxt.textContent = failedPhotos.length > 0 ? notifMsg : '✅ Berhasil disimpan!';
+                        progressTxt.textContent = '✅ Berhasil disimpan!';
                         // Notif melayang
-                        showFloatingNotif(notifMsg, failedPhotos.length > 0 ? 'warning' : 'success');
+                        showFloatingNotif("📸 Foto kegiatan berhasil disimpan!", "success");
                         setTimeout(function() {
                             progressDiv.classList.add('hidden');
                             formDiv.classList.add('hidden');
@@ -3719,59 +3603,6 @@
                     .addPentasyarufan(payload);
             });
         });
-
-        // ══════════════════════════════════════════════
-        // SISTEM STATISTIK PENGUNJUNG
-        // ══════════════════════════════════════════════
-
-        // Render card statistik pengunjung (tema gelap — cocok di hero)
-        function renderVisitorStats(stats) {
-            var grid = document.getElementById('visitorStatsGrid');
-            if (!grid) return;
-            var cards = [
-                { label: 'Hari Ini',   icon: 'fa-sun',          color: 'gold',   val: stats.today || 0 },
-                { label: 'Minggu Ini', icon: 'fa-calendar-week', color: 'blue',   val: stats.week  || 0 },
-                { label: 'Bulan Ini',  icon: 'fa-calendar-alt',  color: 'green',  val: stats.month || 0 },
-                { label: 'Total',      icon: 'fa-users',          color: 'purple', val: stats.total || 0 }
-            ];
-            var iconColors = { gold:'text-nuGold-400', blue:'text-blue-300', green:'text-emerald-400', purple:'text-purple-300' };
-            var numColors  = { gold:'text-nuGold-300', blue:'text-blue-200', green:'text-emerald-300', purple:'text-purple-200' };
-            grid.innerHTML = cards.map(function(c) {
-                return '<div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-900/60 transition">' +
-                    '<i class="fas ' + c.icon + ' ' + iconColors[c.color] + ' text-sm"></i>' +
-                    '<span class="text-xl font-bold ' + numColors[c.color] + ' tabular-nums leading-none">' +
-                        Number(c.val).toLocaleString('id-ID') +
-                    '</span>' +
-                    '<span class="text-[9px] font-semibold text-white/50 text-center leading-tight">' + c.label + '</span>' +
-                '</div>';
-            }).join('');
-        }
-
-        // Catat kunjungan & ambil statistik via Apps Script
-        function trackAndLoadVisitorStats() {
-            // Cegah double-count dalam satu sesi tab
-            if (sessionStorage.getItem('_prnu_visited')) {
-                // Tetap load stats meski sudah tercatat
-                if (window.google && google.script) {
-                    google.script.run
-                        .withSuccessHandler(function(r) {
-                            try { renderVisitorStats(JSON.parse(r)); } catch(e) {}
-                        })
-                        .withFailureHandler(function(){})
-                        .getVisitorStats();
-                }
-                return;
-            }
-            sessionStorage.setItem('_prnu_visited', '1');
-            if (window.google && google.script) {
-                google.script.run
-                    .withSuccessHandler(function(r) {
-                        try { renderVisitorStats(JSON.parse(r)); } catch(e) {}
-                    })
-                    .withFailureHandler(function(){})
-                    .trackVisit();
-            }
-        }
 
         function renderAllPublicComponents() {
             try { renderSiteSettings(); } catch(e) {}
@@ -4178,8 +4009,7 @@
 
             // ── Share WhatsApp ──
             window.shareNewsWA = function() {
-                var beritaUrl = window.location.origin + window.location.pathname + '#berita-' + id;
-                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + beritaUrl;
+                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + window.location.href;
                 var url  = 'https://wa.me/?text=' + encodeURIComponent(text);
                 window.open(url, '_blank');
             };
@@ -4206,99 +4036,2658 @@
                 else related.closest('.mt-12').style.display = '';
             }
 
-            // ── Tampilkan modal & set hash URL ──
+            // ── Tampilkan modal (slide dari bawah di mobile, fade di PC) ──
             modal.classList.remove('hidden');
             if (scroll) scroll.scrollTop = 0;
             document.body.style.overflow = 'hidden';
-            // Set hash agar URL bisa dibagikan langsung ke berita ini
             history.pushState({ beritaId: id }, '', '#berita-' + id);
         };
 
-        // ══════════════════════════════════════════════
-        // SLIDER PENGURUS DI BERANDA
-        // ══════════════════════════════════════════════
-        // ─── Slider Pengurus: 1 foto per slide, auto-slide, persis seperti berita ───
-        var _pSlider = { idx: 0, total: 0, timer: null };
 
+        // ══ Visitor Stats ══
+        function renderVisitorStats(stats) {
+            var grid = document.getElementById('visitorStatsGrid');
+            if (!grid) return;
+            var cards = [
+                { label:'Hari Ini',   icon:'fa-sun',          color:'gold',   val: stats.today||0 },
+                { label:'Minggu Ini', icon:'fa-calendar-week',color:'blue',   val: stats.week||0  },
+                { label:'Bulan Ini',  icon:'fa-calendar-alt', color:'green',  val: stats.month||0 },
+                { label:'Total',      icon:'fa-users',         color:'purple', val: stats.total||0 }
+            ];
+            var ic = { gold:'text-nuGold-400', blue:'text-blue-300', green:'text-emerald-400', purple:'text-purple-300' };
+            var nc = { gold:'text-nuGold-300', blue:'text-blue-200', green:'text-emerald-300', purple:'text-purple-200' };
+            grid.innerHTML = cards.map(function(c) {
+                return '<div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-900/60 transition">' +
+                    '<i class="fas ' + c.icon + ' ' + ic[c.color] + ' text-sm"></i>' +
+                    '<span class="text-xl font-bold ' + nc[c.color] + ' tabular-nums">' + Number(c.val).toLocaleString('id-ID') + '</span>' +
+                    '<span class="text-[9px] font-semibold text-white/50 text-center">' + c.label + '</span>' +
+                '</div>';
+            }).join('');
+        }
+        function trackAndLoadVisitorStats() {
+            if (!window.google || !google.script) return;
+            if (sessionStorage.getItem('_prnu_visited')) {
+                google.script.run.withSuccessHandler(function(r){ try{renderVisitorStats(JSON.parse(r));}catch(e){} }).withFailureHandler(function(){}).getVisitorStats();
+                return;
+            }
+            sessionStorage.setItem('_prnu_visited','1');
+            google.script.run.withSuccessHandler(function(r){ try{renderVisitorStats(JSON.parse(r));}catch(e){} }).withFailureHandler(function(){}).trackVisit();
+        }
+
+        // ══ Slider Pengurus ══
+        var _pSlider = { idx:0, total:0, timer:null };
         function bsApplyPengurus(idx) {
             var track = document.getElementById('pengurusSliderTrack');
-            if (!track) return;
-            _pSlider.idx = ((idx % _pSlider.total) + _pSlider.total) % _pSlider.total;
-            track.style.transform = 'translateX(-' + (_pSlider.idx * 100) + '%)';
-            document.querySelectorAll('#pengurusDots .p-dot').forEach(function(d, i) {
-                d.style.background = i === _pSlider.idx ? 'rgba(255,200,50,0.9)' : 'rgba(255,255,255,0.3)';
-                d.style.width      = i === _pSlider.idx ? '16px' : '6px';
+            if (!track || !_pSlider.total) return;
+            _pSlider.idx = ((idx%_pSlider.total)+_pSlider.total)%_pSlider.total;
+            track.style.transform = 'translateX(-'+(_pSlider.idx*100)+'%)';
+            document.querySelectorAll('#pengurusDots .p-dot').forEach(function(d,i){
+                d.style.background = i===_pSlider.idx?'rgba(255,200,50,0.9)':'rgba(255,255,255,0.3)';
+                d.style.width      = i===_pSlider.idx?'16px':'6px';
             });
         }
-
         function bsResetPengurus() {
             if (_pSlider.timer) clearInterval(_pSlider.timer);
-            _pSlider.timer = setInterval(function() {
-                bsApplyPengurus(_pSlider.idx + 1);
-            }, 4000);
+            _pSlider.timer = setInterval(function(){ bsApplyPengurus(_pSlider.idx+1); }, 4000);
         }
-
-        window.bsMovePengurus = function(dir) {
-            bsApplyPengurus(_pSlider.idx + dir);
-            bsResetPengurus();
-        };
-
+        window.bsMovePengurus = function(dir){ bsApplyPengurus(_pSlider.idx+dir); bsResetPengurus(); };
         window.renderBerandaPengurus = function() {
             var track = document.getElementById('pengurusSliderTrack');
             var dots  = document.getElementById('pengurusDots');
             if (!track) return;
-
-            var list = (AppState.pengurus || []);
-            if (list.length === 0) {
-                track.innerHTML = '<div class="bs-slide-hero shrink-0 w-full flex items-center justify-center py-6 text-white/40 text-xs italic">Data pengurus belum tersedia.</div>';
+            var list = AppState.pengurus || [];
+            if (!list.length) {
+                track.innerHTML = '<div class="pengurus-slide shrink-0 w-full flex items-center justify-center py-6 text-white/40 text-xs italic">Data pengurus belum tersedia.</div>';
                 return;
             }
-
-            // Badge warna per group
-            var gc = {
-                'Pengurus NU':'bg-nuGold-500 text-nuGreen-950',
-                'Muslimat':'bg-emerald-400 text-emerald-950',
-                'Fatayat':'bg-teal-400 text-teal-950',
-                'Ansor':'bg-amber-400 text-amber-950',
-                'IPNU':'bg-blue-400 text-blue-950',
-                'IPPNU':'bg-pink-400 text-pink-950',
-                'UPZISNU':'bg-lime-400 text-lime-950',
-                'KOKAM':'bg-red-400 text-red-950',
-                'Pagar Nusa':'bg-orange-400 text-orange-950'
-            };
-
+            var gc = {'Pengurus NU':'bg-nuGold-500 text-nuGreen-950','Muslimat':'bg-emerald-400 text-emerald-950','Fatayat':'bg-teal-400 text-teal-950','Ansor':'bg-amber-400 text-amber-950','IPNU':'bg-blue-400 text-blue-950','IPPNU':'bg-pink-400 text-pink-950','UPZISNU':'bg-lime-400 text-lime-950','KOKAM':'bg-red-400 text-red-950','Pagar Nusa':'bg-orange-400 text-orange-950'};
             _pSlider.total = list.length;
             _pSlider.idx   = 0;
-
-            // 1 pengurus per slide — persis seperti berita
             track.innerHTML = list.map(function(p) {
-                var badge = gc[p.group] || 'bg-white/20 text-white';
-                var foto  = p.photo || ('https://placehold.co/400x500/14532d/d4a831?text=' + encodeURIComponent((p.name||'?')[0]));
+                var badge = gc[p.group]||'bg-white/20 text-white';
+                var foto  = p.photo||('https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0]));
                 return '<div class="bs-slide-hero shrink-0 w-full">' +
-                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 h-full flex flex-col" onclick="showPage(\'pengurus\')">' +
+                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 flex flex-col" onclick="showPage(\'pengurus\')">' +
                         '<div class="relative overflow-hidden" style="aspect-ratio:4/3">' +
-                            '<img src="' + foto + '" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" ' +
-                                'onerror="this.src=\'https://placehold.co/400x300/14532d/d4a831?text=' + encodeURIComponent((p.name||'?')[0]) + '\'">' +
-                            '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full ' + badge + '">' + (p.group||'') + '</span>' +
+                            '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src=\'https://placehold.co/400x300/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
+                            '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
                         '</div>' +
-                        '<div class="p-2.5 flex flex-col flex-1">' +
-                            '<h3 class="font-bold text-white text-[11px] leading-snug group-hover:text-nuGold-300">' + (p.name||'') + '</h3>' +
-                            '<p class="text-[10px] text-white/60 mt-0.5">' + (p.role||'') + '</p>' +
-                            '<span class="mt-1.5 text-[9px] font-semibold text-nuGold-400 flex items-center gap-1">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></span>' +
+                        '<div class="p-2.5">' +
+                            '<h3 class="font-bold text-white text-[11px] leading-snug group-hover:text-nuGold-300">'+(p.name||'')+'</h3>' +
+                            '<p class="text-[10px] text-white/60 mt-0.5">'+(p.role||'')+'</p>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
             }).join('');
-
-            // Dots
             if (dots) {
-                dots.innerHTML = list.map(function(_, i) {
-                    return '<span class="p-dot cursor-pointer rounded-full transition-all duration-300" ' +
-                        'style="height:6px;background:rgba(255,255,255,0.3);width:6px" ' +
-                        'onclick="bsApplyPengurus(' + i + ');bsResetPengurus();"></span>';
+                dots.innerHTML = list.map(function(_,i){
+                    return '<span class="p-dot cursor-pointer rounded-full transition-all duration-300" style="height:6px;background:rgba(255,255,255,0.3);width:6px" onclick="bsApplyPengurus('+i+');bsResetPengurus();"></span>';
                 }).join('');
             }
-
             bsApplyPengurus(0);
             bsResetPengurus();
         };
+
+        // ══ Hash Router ══
+        window._checkBeritaHash = function() {
+            var hash = window.location.hash;
+            if (hash && hash.startsWith('#berita-')) {
+                var id = hash.replace('#berita-','');
+                if (id && AppState.news && AppState.news.length) {
+                    var found = AppState.news.find(function(x){ return String(x.id)===String(id); });
+                    if (found) setTimeout(function(){ window.openNewsDetail && openNewsDetail(id); }, 300);
+                }
+            }
+        };
+        window.addEventListener('popstate', function() {
+            var hash = window.location.hash;
+            if (hash && hash.startsWith('#berita-')) {
+                var id = hash.replace('#berita-','');
+                if (id) { window.openNewsDetail && openNewsDetail(id); }
+            } else {
+                var modal = document.getElementById('newsModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow='';
+                }
+            }
+        });
+        window.closeNewsModal = function() {
+            const modal = document.getElementById('newsModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (window.location.hash.startsWith('#berita-')) history.pushState(null,'',window.location.pathname);
+        };
+
+        window.renderPublicFinanceTable = function() {
+            const tbody = document.getElementById('publicFinanceTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const donContainer = document.getElementById('donReportsContainer');
+            if (donContainer) donContainer.innerHTML = '';
+            
+            if (AppState.financialReports.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-400 italic">Belum ada laporan keuangan tersedia.</td></tr>`;
+                if (donContainer) donContainer.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">Belum ada rincian data kas terbaru.</p>`;
+                return;
+            }
+            
+            let totalIncome = 0;
+            let totalExpense = 0;
+            
+            AppState.financialReports.forEach(item => {
+                totalIncome += Number(item.income || 0);
+                totalExpense += Number(item.expense || 0);
+                
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50/50 text-xs md:text-sm">
+                        <td class="p-3 font-semibold text-slate-800 font-sans">${item.period}</td>
+                        <td class="p-3 text-emerald-700 font-medium">${formatIDR(item.income)}</td>
+                        <td class="p-3 text-rose-600 font-medium">${formatIDR(item.expense)}</td>
+                        <td class="p-3 font-bold text-nuGreen-900">${formatIDR(item.balance)}</td>
+                        <td class="p-3 text-slate-600">${item.description}</td>
+                        <td class="p-3 text-center">
+                            <a href="#" onclick="event.preventDefault(); showToast('Simulasi mengunduh berkas: ' + '${item.file}')" class="inline-flex items-center gap-1.5 text-xs text-nuGreen-800 hover:text-nuGold-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100/50 transition">
+                                <i class="fas fa-download text-[10px]"></i>
+                                <span>Unduh</span>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+
+                if (donContainer) {
+                    const donRow = `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800 block">${item.period}</span>
+                                <span class="text-slate-500 text-[10px] block line-clamp-1 mt-0.5">${item.description}</span>
+                            </div>
+                            <div class="text-right font-sans shrink-0">
+                                <span class="text-emerald-700 font-semibold block">+${formatIDR(item.income)}</span>
+                                <span class="text-rose-600 font-semibold block">-${formatIDR(item.expense)}</span>
+                            </div>
+                        </div>
+                    `;
+                    donContainer.innerHTML += donRow;
+                }
+            });
+
+            const donTotalIncomeEl = document.getElementById('donTotalIncome');
+            const donTotalExpenseEl = document.getElementById('donTotalExpense');
+            const donTotalBalanceEl = document.getElementById('donTotalBalance');
+            
+            if (donTotalIncomeEl) donTotalIncomeEl.innerText = formatIDR(totalIncome);
+            if (donTotalExpenseEl) donTotalExpenseEl.innerText = formatIDR(totalExpense);
+            if (donTotalBalanceEl) donTotalBalanceEl.innerText = formatIDR(totalIncome - totalExpense);
+        }
+
+        window.renderPublicPengurus = function() {
+            const container = document.getElementById('publicPengurusGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (AppState.pengurus.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-xs text-slate-400 italic py-6">Data pimpinan belum dimasukkan.</p>`;
+                return;
+            }
+
+            AppState.pengurus.forEach(item => {
+                let groupBadgeColor = '';
+                switch(item.group) {
+                    case 'Pengurus NU':
+                        groupBadgeColor = 'bg-emerald-950 text-nuGold-400 border border-emerald-800';
+                        break;
+                    case 'Muslimat':
+                        groupBadgeColor = 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+                        break;
+                    case 'Fatayat':
+                        groupBadgeColor = 'bg-teal-100 text-teal-800 border border-teal-200';
+                        break;
+                    case 'Ansor':
+                        groupBadgeColor = 'bg-amber-100 text-amber-900 border border-amber-200';
+                        break;
+                    case 'IPNU':
+                        groupBadgeColor = 'bg-blue-100 text-blue-800 border border-blue-200';
+                        break;
+                    case 'IPPNU':
+                        groupBadgeColor = 'bg-pink-100 text-pink-800 border border-pink-200';
+                        break;
+                    case 'UPZISNU':
+                        groupBadgeColor = 'bg-emerald-200 text-emerald-950 border border-emerald-300';
+                        break;
+                    case 'Pagar Nusa':
+                        groupBadgeColor = 'bg-red-100 text-red-800 border border-red-200';
+                        break;
+                    default:
+                        groupBadgeColor = 'bg-slate-100 text-slate-800 border border-slate-200';
+                }
+
+                const card = `
+                    <div class="public-pengurus-item bg-white rounded-2xl border border-slate-200/60 overflow-hidden hover:shadow-xl transition duration-300 animate-fade-in group" data-group="${item.group}">
+                        <!-- Foto portrait - tidak terpotong, aspect 3:4 -->
+                        <div class="relative overflow-hidden bg-slate-100" style="aspect-ratio:3/4;">
+                            <img src="${item.photo}"
+                                onerror="this.src='https://placehold.co/300x400/14532d/ffffff?text=${encodeURIComponent(item.name.charAt(0))}'"
+                                alt="${item.name}"
+                                class="w-full h-full object-cover object-top transition duration-500 group-hover:scale-105"
+                                loading="lazy" decoding="async">
+                            <!-- Badge overlay di bawah tengah -->
+                            <div class="absolute bottom-0 left-0 right-0 flex justify-center pb-2 pt-6" style="background:linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%)">
+                                <span class="text-[8px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full ${groupBadgeColor} shadow backdrop-blur-sm">${item.group}</span>
+                            </div>
+                        </div>
+                        <!-- Info bawah -->
+                        <div class="p-3 text-center border-t border-slate-100">
+                            <h4 class="font-bold text-sm text-slate-900 leading-tight">${item.name}</h4>
+                            <p class="text-[11px] text-nuGreen-700 font-semibold mt-0.5 uppercase tracking-wide">${item.role}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+
+            // Default: tampilkan Pengurus NU saat pertama render (tidak tampil semua sekaligus)
+            setTimeout(function() { filterPublicPengurus('Pengurus NU'); }, 0);
+        }
+
+        window.filterPublicPengurus = function(group) {
+            // Tampilkan hanya item yang sesuai grup, sembunyikan lainnya
+            document.querySelectorAll('.public-pengurus-item').forEach(function(item) {
+                if (item.getAttribute('data-group') === group) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            // Reset semua tombol ke state default
+            document.querySelectorAll('.pub-pengurus-filter-btn').forEach(function(btn) {
+                btn.className = "pub-pengurus-filter-btn px-4 py-1.5 text-xs rounded-xl font-semibold bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 transition";
+            });
+
+            // Aktifkan tombol yang diklik
+            var targetId = 'btn-pub-' + group.replace(/\s+/g, '-');
+            var activeBtn = document.getElementById(targetId);
+            if (activeBtn) {
+                activeBtn.className = "pub-pengurus-filter-btn px-4 py-1.5 text-xs rounded-xl font-semibold bg-nuGreen-800 text-white transition";
+            }
+
+            // Update masa khidmat sesuai banom aktif
+            var ps = AppState.pengurusSettings || {};
+            var masaKey = "masaKhidmat_" + group.replace(/\s+/g, "_");
+            var masa = (ps[masaKey] && ps[masaKey].trim()) || ps.masaKhidmat || "";
+            var subEl = document.getElementById("pubPengurusSub");
+            if (subEl && masa) {
+                // Simpan teks subjudul asli (tanpa masa khidmat) sebagai data attr
+                if (!subEl.dataset.baseText) subEl.dataset.baseText = subEl.textContent.replace(/,?\s*Masa Khidmat[^$]*/i, "").trim();
+                subEl.textContent = subEl.dataset.baseText + ", Masa Khidmat " + masa;
+            }
+            // Update tag/label atas sesuai banom
+            var tagKey = "tag_" + group.replace(/\s+/g, "_");
+            var tagEl  = document.getElementById("pubPengurusTag");
+            if (tagEl) tagEl.textContent = (ps[tagKey] && ps[tagKey].trim()) || ps.tag || "Struktur Kepengurusan";
+        };
+
+        window.handleAdminBtnClick = function() {
+            if (AppState.isAdminLoggedIn) {
+                window.openAdminPanelModal();
+            } else {
+                window.openLoginModal();
+            }
+        }
+
+        window.openLoginModal = function() {
+            const modal = document.getElementById('loginModal');
+            const body  = document.getElementById('loginModalBody');
+
+            // ── Reset form setiap kali modal dibuka ──
+            const form = document.getElementById('adminLoginForm');
+            if (form) form.reset();
+
+            // Paksa kosongkan field (override autofill browser)
+            const userEl = document.getElementById('loginUser');
+            const passEl = document.getElementById('loginPass');
+            if (userEl) { userEl.value = ''; userEl.removeAttribute('value'); }
+            if (passEl) { passEl.value = ''; passEl.removeAttribute('value'); passEl.type = 'password'; }
+
+            // Reset ikon show/hide password
+            const icon = document.getElementById('togglePassIcon');
+            if (icon) { icon.className = 'fas fa-eye text-sm'; }
+            const hint = document.getElementById('passVisibleHint');
+            if (hint) hint.classList.add('hidden');
+
+            // Reset tombol submit ke state awal
+            const submitBtn = document.getElementById('adminLoginSubmitBtn');
+            if (submitBtn) submitBtn.innerHTML = '<span>Masuk ke Dashboard</span>';
+
+            // Tampilkan modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                body.classList.remove('scale-95', 'opacity-0');
+                body.classList.add('scale-100', 'opacity-100');
+                // Delay focus agar browser tidak trigger autofill
+                setTimeout(() => { if (userEl) userEl.focus(); }, 150);
+            }, 50);
+        };
+
+        window.closeLoginModal = function() {
+            const modal = document.getElementById('loginModal');
+            const body = document.getElementById('loginModalBody');
+            body.classList.remove('scale-100', 'opacity-100');
+            body.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        window.handleLoginSubmit = function(event) {
+            event.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            const submitBtn = document.getElementById('adminLoginSubmitBtn');
+
+            submitBtn.innerHTML = `<i class="fas fa-spinner animate-spin mr-2"></i> Memproses...`;
+
+            const successAuth = () => {
+                AppState.isAdminLoggedIn = true;
+                document.getElementById('adminBtnText').innerText = "Panel Admin";
+                document.getElementById('mobileAdminBtnText').innerText = "Panel Admin";
+                
+                const loginBtn = document.getElementById('adminLoginBtn');
+                loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 text-sm";
+                
+                const icon = document.getElementById('adminLockIcon');
+                if (icon) icon.className = "fas fa-desktop text-nuGreen-800";
+                
+                closeLoginModal();
+                showToast("Selamat Datang, Admin NU Baleharjo!");
+
+                // Prep initial fields
+                document.getElementById('editHeroTitle').value = AppState.homepageSettings.heroTitle;
+                document.getElementById('editHeroSubtitle').value = AppState.homepageSettings.heroSubtitle;
+                document.getElementById('editAgendaDay').value = AppState.homepageSettings.agendaDay;
+                document.getElementById('editAgendaMonth').value = AppState.homepageSettings.agendaMonth;
+                document.getElementById('editAgendaTitle').value = AppState.homepageSettings.agendaTitle;
+                document.getElementById('editAgendaLocation').value = AppState.homepageSettings.agendaLocation;
+
+                document.getElementById('editSelayangPandang').value = AppState.profileSettings.selayangPandang;
+                document.getElementById('editPesanQuote').value = AppState.profileSettings.pesanQuote;
+                document.getElementById('editPesanAuthor').value = AppState.profileSettings.pesanAuthor;
+                document.getElementById('editPesanAuthorTitle').value = AppState.profileSettings.pesanAuthorTitle;
+
+                loadLayananToForm();
+                loadBanomToForm();
+                
+                renderAdminNewsTable();
+                renderAdminFinanceTable();
+                renderAdminPengurusTable();
+                renderInbox();
+                
+                setTimeout(() => { openAdminPanelModal(); }, 400);
+            };
+
+            const failAuth = () => {
+                showToast("Maaf, Username atau Password salah!");
+                submitBtn.innerHTML = `<span>Masuk ke Dashboard</span>`;
+            };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(function(isValid) {
+                    if (isValid) {
+                        successAuth();
+                    } else {
+                        failAuth();
+                    }
+                }).withFailureHandler(function() {
+                    // Failback local
+                    if (user === 'admin' && (pass === 'aswaja1926' || pass === 'admin')) {
+                        successAuth();
+                    } else {
+                        failAuth();
+                    }
+                }).checkAdminCredentials(user, pass);
+            } else {
+                if (user === 'admin' && (pass === 'aswaja1926' || pass === 'admin')) {
+                    successAuth();
+                } else {
+                    failAuth();
+                }
+            }
+        }
+
+        // Tampilkan modal konfirmasi logout
+        window.handleLogout = function() {
+            const modal = document.getElementById('logoutConfirmModal');
+            const dialog = document.getElementById('logoutDialog');
+            if (!modal || !dialog) { doLogout(); return; }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    dialog.classList.remove('scale-90', 'opacity-0');
+                    dialog.classList.add('scale-100', 'opacity-100');
+                });
+            });
+        };
+
+        // Tutup modal tanpa logout
+        window.cancelLogout = function() {
+            const modal = document.getElementById('logoutConfirmModal');
+            const dialog = document.getElementById('logoutDialog');
+            if (!modal || !dialog) return;
+            dialog.classList.remove('scale-100', 'opacity-100');
+            dialog.classList.add('scale-90', 'opacity-0');
+            setTimeout(function() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 280);
+        };
+
+        // Eksekusi logout setelah konfirmasi
+        window.confirmLogout = function() {
+            // Animasi keluar dulu
+            const modal = document.getElementById('logoutConfirmModal');
+            const dialog = document.getElementById('logoutDialog');
+            if (dialog) {
+                dialog.classList.remove('scale-100', 'opacity-100');
+                dialog.classList.add('scale-90', 'opacity-0');
+            }
+            setTimeout(function() {
+                if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+                doLogout();
+            }, 280);
+        };
+
+        // Proses logout yang sebenarnya
+        function doLogout() {
+            AppState.isAdminLoggedIn = false;
+            document.getElementById('adminBtnText').innerText = "Login Admin";
+            document.getElementById('mobileAdminBtnText').innerText = "Login Admin";
+
+            const loginBtn = document.getElementById('adminLoginBtn');
+            if (loginBtn) loginBtn.className = "border border-slate-200 text-slate-700 hover:text-nuGreen-800 font-semibold px-3 py-2 rounded-xl hover:bg-slate-50 transition flex items-center gap-1.5 text-xs";
+
+            const icon = document.getElementById('adminLockIcon');
+            if (icon) icon.className = "fas fa-lock text-nuGreen-800 text-xs";
+
+            closeAdminPanelModal();
+            showToast("Anda telah keluar dari Panel Admin.");
+        }
+
+        window.openAdminPanelModal = function() {
+            const modal = document.getElementById('adminPanelModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            modal.style.flexDirection = 'column';
+            document.body.style.overflow = 'hidden';
+            try { populateSiteSettingsForm(); } catch(e) {}
+            try { renderAdminPengurusTable(); } catch(e) {}
+            try { renderAdminGaleriGrid(); } catch(e) {}
+            try { renderInbox(); } catch(e) {}
+        };
+
+        window.closeAdminPanelModal = function() {
+            const modal = document.getElementById('adminPanelModal');
+            if (!modal) return;
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        };
+
+        window.switchAdminTab = function(tabName) {
+            document.querySelectorAll('.admin-panel-content').forEach(el => el.classList.add('hidden'));
+
+            // Reset semua tombol sidebar ke state default
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-nuGreen-800','text-white','shadow-sm','active');
+                btn.classList.add('text-slate-600','hover:bg-slate-50');
+                const sp = btn.querySelector('span.rounded-lg');
+                if (sp) {
+                    sp.classList.remove('bg-white/20');
+                    sp.classList.add('bg-slate-100');
+                    const ic = sp.querySelector('i');
+                    if (ic) { ic.classList.remove('text-white'); ic.classList.add('text-slate-500'); }
+                }
+            });
+
+            const contentEl = document.getElementById('admin-tab-' + tabName);
+            if (contentEl) contentEl.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('btn-admin-' + tabName);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600','hover:bg-slate-50');
+                activeBtn.classList.add('bg-nuGreen-800','text-white','shadow-sm','active');
+                const sp = activeBtn.querySelector('span.rounded-lg');
+                if (sp) {
+                    sp.classList.remove('bg-slate-100');
+                    sp.classList.add('bg-white/20');
+                    const ic = sp.querySelector('i');
+                    if (ic) { ic.classList.remove('text-slate-500'); ic.classList.add('text-white'); }
+                }
+            }
+
+            // Scroll konten ke atas
+            const ca = document.getElementById('adminContentArea');
+            if (ca) ca.scrollTop = 0;
+
+            if (tabName === 'siteconfig') { populateSiteSettingsForm(); setupLogoFileInput(); }
+            if (tabName === 'galeri') { renderAdminGaleriGrid(); setupGaleriFileInput(); }
+            if (tabName === 'profil-settings') { populateProfileForm(); setupProfilImgPreview(); }
+            if (tabName === 'beranda-settings') { try { populateHomepageForm(); } catch(e) {} }
+            if (tabName === 'kontak') { setupKontakAdminForm(); }
+            if (tabName === 'pengurus-manage') { setupPengurusHeaderForm(); }
+        }
+
+        window.handleHomepageSettingsUpdate = function(event) {
+            event.preventDefault();
+            AppState.homepageSettings.heroTitle = document.getElementById('editHeroTitle').value;
+            AppState.homepageSettings.heroSubtitle = document.getElementById('editHeroSubtitle').value;
+            AppState.homepageSettings.agendaDay = document.getElementById('editAgendaDay').value;
+            AppState.homepageSettings.agendaMonth = document.getElementById('editAgendaMonth').value;
+            AppState.homepageSettings.agendaTitle = document.getElementById('editAgendaTitle').value;
+            AppState.homepageSettings.agendaLocation = document.getElementById('editAgendaLocation').value;
+
+            renderHomepageContent();
+            syncStateToBackend();
+            // Simpan ke GAS Spreadsheet Sheet Settings
+            if (GAS) {
+                const settingsBatch = {
+                    'homepage.heroTitle': AppState.homepageSettings.heroTitle,
+                    'homepage.heroSubtitle': AppState.homepageSettings.heroSubtitle,
+                    'homepage.agendaDay': AppState.homepageSettings.agendaDay,
+                    'homepage.agendaMonth': AppState.homepageSettings.agendaMonth,
+                    'homepage.agendaTitle': AppState.homepageSettings.agendaTitle,
+                    'homepage.agendaLocation': AppState.homepageSettings.agendaLocation
+                };
+                google.script.run
+                    .withSuccessHandler(function(r){ if(r==='success') showToast('Beranda tersimpan ke Spreadsheet!'); })
+                    .withFailureHandler(function(e){ console.warn('saveSettings GAS:', e); })
+                    .saveSettingsBatch(JSON.stringify(settingsBatch));
+            }
+            showToast("Pengaturan halaman Beranda berhasil diperbarui!");
+        }
+
+        window.handleProfileSettingsUpdate = function(event) {
+            event.preventDefault();
+            const ps = AppState.profileSettings;
+
+            // ── Ambil semua nilai form ──
+            ps.selayangPandang    = document.getElementById('editSelayangPandang').value;
+            ps.pesanQuote         = document.getElementById('editPesanQuote').value;
+            ps.pesanAuthor        = document.getElementById('editPesanAuthor').value;
+            ps.pesanAuthorTitle   = document.getElementById('editPesanAuthorTitle').value;
+            ps.profilCaption      = document.getElementById('editProfilCaption').value;
+            ps.profilSubCaption   = document.getElementById('editProfilSubCaption').value;
+            ps.stat1Num           = document.getElementById('editStat1Num').value;
+            ps.stat1Label         = document.getElementById('editStat1Label').value;
+            ps.stat2Num           = document.getElementById('editStat2Num').value;
+            ps.stat2Label         = document.getElementById('editStat2Label').value;
+
+            const urlInput = document.getElementById('editProfilImgUrl').value.trim();
+            if (urlInput) ps.profilImg = urlInput;
+
+            const fokusRows = document.querySelectorAll('.fokus-row');
+            ps.fokus = [];
+            fokusRows.forEach(function(row) {
+                const judul = row.querySelector('.fokus-judul').value.trim();
+                const desc  = row.querySelector('.fokus-desc').value.trim();
+                const icon  = row.querySelector('.fokus-icon').value.trim() || 'fa-star';
+                if (judul) ps.fokus.push({ judul, desc, icon });
+            });
+
+            // Update tampilan lokal langsung
+            const imgEl = document.getElementById('pubProfilImg');
+            if (imgEl && ps.profilImg) imgEl.src = ps.profilImg;
+            renderProfileContent();
+            syncStateToBackend();
+
+            if (!GAS) { showToast('Profil diperbarui (mode lokal)!'); return; }
+
+            // ── STEP 1: Simpan data teks (tanpa foto) ──
+            var batchTeks = {
+                'profile.selayangPandang':  ps.selayangPandang,
+                'profile.pesanQuote':       ps.pesanQuote,
+                'profile.pesanAuthor':      ps.pesanAuthor,
+                'profile.pesanAuthorTitle': ps.pesanAuthorTitle,
+                'profile.profilCaption':    ps.profilCaption,
+                'profile.profilSubCaption': ps.profilSubCaption,
+                'profile.stat1Num':         ps.stat1Num,
+                'profile.stat1Label':       ps.stat1Label,
+                'profile.stat2Num':         ps.stat2Num,
+                'profile.stat2Label':       ps.stat2Label,
+                'profile.fokus':            JSON.stringify(ps.fokus)
+            };
+
+            google.script.run
+                .withSuccessHandler(function(r) {
+                    if (r !== 'success') { showToast('⚠️ Gagal simpan data: ' + r); return; }
+
+                    var fotoSrc = ps.profilImg || '';
+                    if (!fotoSrc) { showToast('✓ Data profil tersimpan!'); return; }
+
+                    // ── STEP 2: Simpan foto via savePhoto (chunking otomatis di GAS) ──
+                    // savePhoto memecah base64 besar menjadi chunks < 44KB per cell
+                    // getSettings() otomatis menggabungkan kembali saat web dibuka
+                    google.script.run
+                        .withSuccessHandler(function(r2) {
+                            if (r2 === 'success') showToast('✓ Profil & foto berhasil disimpan!');
+                            else showToast('⚠️ Foto gagal: ' + r2);
+                        })
+                        .withFailureHandler(function(e) {
+                            console.error('GAS savePhoto:', e);
+                            showToast('❌ Foto gagal: ' + (e.message || e));
+                        })
+                        .savePhoto(fotoSrc, 'profile.profilImg');
+                })
+                .withFailureHandler(function(e) {
+                    console.error('GAS teks:', e);
+                    showToast('❌ Koneksi GAS gagal: ' + (e.message || e));
+                })
+                .saveSettingsBatch(JSON.stringify(batchTeks));
+        };
+
+        /**
+         * Kompres bertahap untuk fallback cell Sheets (< 44.000 char)
+         */
+        function _kompresUntukGAS(base64src, callback) {
+            // GAS dapat menerima argumen string sampai ~150KB (120.000-150.000 char base64)
+            // Sheets cell limit: 50.000 char — tapi untuk Drive tidak ada batasan cell
+            // Strategi: kompres bertahap sampai < 130.000 char (aman untuk GAS argument)
+            // Untuk fallback cell Sheets, fungsi pemanggil harus kompres lebih lanjut ke < 44.000
+            var BATAS = 44000; // default aman untuk cell Sheets
+            var langkah = [
+                { w: 480, h: 320, q: 0.85 },
+                { w: 380, h: 253, q: 0.82 },
+                { w: 300, h: 200, q: 0.80 },
+                { w: 240, h: 160, q: 0.78 },
+                { w: 180, h: 120, q: 0.75 }
+            ];
+            var idx = 0;
+
+            function coba(src) {
+                if (idx >= langkah.length) {
+                    callback(src.length <= BATAS ? src : null);
+                    return;
+                }
+                var step = langkah[idx++];
+                var tmpI = new Image();
+                tmpI.onload = function() {
+                    var sw = tmpI.width, sh = tmpI.height, sx = 0, sy = 0;
+                    var dstR = step.w / step.h;
+                    var srcR = sw / sh;
+                    if (srcR > dstR) { sw = Math.round(sh * dstR); sx = Math.round((tmpI.width - sw) / 2); }
+                    else             { sh = Math.round(sw / dstR); sy = Math.round((tmpI.height - sh) / 2); }
+                    var c = document.createElement('canvas');
+                    c.width = step.w; c.height = step.h;
+                    c.getContext('2d').drawImage(tmpI, sx, sy, sw, sh, 0, 0, step.w, step.h);
+                    var hasil = c.toDataURL('image/jpeg', step.q);
+                    if (hasil.length <= BATAS) { callback(hasil); }
+                    else { coba(hasil); }
+                };
+                tmpI.onerror = function() { callback(null); };
+                tmpI.src = src;
+            }
+            coba(base64src);
+        }
+
+        // Kompres khusus untuk dikirim ke GAS Drive (batas argumen ~150KB base64)
+        function _kompresUntukDrive(base64src, callback) {
+            var BATAS_DRIVE = 130000; // aman untuk argumen GAS string
+            var langkah = [
+                { w: 640, h: 427, q: 0.88 },
+                { w: 520, h: 347, q: 0.85 },
+                { w: 420, h: 280, q: 0.83 },
+                { w: 340, h: 227, q: 0.80 },
+                { w: 260, h: 173, q: 0.78 }
+            ];
+            var idx = 0;
+
+            // Jika sudah kecil → langsung callback
+            if (base64src.length <= BATAS_DRIVE) { callback(base64src); return; }
+
+            function coba(src) {
+                if (idx >= langkah.length) {
+                    callback(src.length <= BATAS_DRIVE ? src : null);
+                    return;
+                }
+                var step = langkah[idx++];
+                var tmpI = new Image();
+                tmpI.onload = function() {
+                    var sw = tmpI.width, sh = tmpI.height, sx = 0, sy = 0;
+                    var dstR = step.w / step.h;
+                    var srcR = sw / sh;
+                    if (srcR > dstR) { sw = Math.round(sh * dstR); sx = Math.round((tmpI.width - sw) / 2); }
+                    else             { sh = Math.round(sw / dstR); sy = Math.round((tmpI.height - sh) / 2); }
+                    var c = document.createElement('canvas');
+                    c.width = step.w; c.height = step.h;
+                    c.getContext('2d').drawImage(tmpI, sx, sy, sw, sh, 0, 0, step.w, step.h);
+                    var hasil = c.toDataURL('image/jpeg', step.q);
+                    if (hasil.length <= BATAS_DRIVE) { callback(hasil); }
+                    else { coba(hasil); }
+                };
+                tmpI.onerror = function() { callback(null); };
+                tmpI.src = src;
+            }
+            coba(base64src);
+        }
+
+        // TAB: Layanan Settings
+        function loadLayananToForm() {
+            const index = document.getElementById('editLayananSelect').value;
+            const selected = AppState.layanan[index];
+            if (selected) {
+                document.getElementById('editLayananTitle').value = selected.title;
+                document.getElementById('editLayananIcon').value = selected.icon;
+                document.getElementById('editLayananDesc').value = selected.desc;
+            }
+        }
+
+        window.handleLayananSettingsUpdate = function(event) {
+            event.preventDefault();
+            const index = document.getElementById('editLayananSelect').value;
+            if (AppState.layanan[index]) {
+                AppState.layanan[index].title = document.getElementById('editLayananTitle').value;
+                AppState.layanan[index].icon = document.getElementById('editLayananIcon').value;
+                AppState.layanan[index].desc = document.getElementById('editLayananDesc').value;
+                
+                renderPublicLayanan();
+                syncStateToBackend();
+                if (GAS) {
+                    google.script.run
+                        .withSuccessHandler(function(r){ if(r==='success') showToast('Data layanan tersimpan ke database!'); })
+                        .withFailureHandler(function(e){ console.warn('GAS layanan:', e); })
+                        .saveSettingsBatch(JSON.stringify({ 'site.layanan': JSON.stringify(AppState.layanan) }));
+                } else {
+                    showToast("Data Program & Layanan berhasil diperbarui!");
+                }
+            }
+        }
+
+        // TAB: Banom Settings
+        function loadBanomToForm() {
+            const key = document.getElementById('editBanomSelect').value;
+            const selected = AppState.banoms[key];
+            if (selected) {
+                document.getElementById('editBanomTag').value = selected.tag;
+                document.getElementById('editBanomTitle').value = selected.title;
+                document.getElementById('editBanomDesc').value = selected.desc;
+                document.getElementById('editBanomFeatures').value = selected.features.join(', ');
+            }
+        }
+
+        window.handleBanomSettingsUpdate = function(event) {
+            event.preventDefault();
+            const key = document.getElementById('editBanomSelect').value;
+            if (!AppState.banoms[key]) return;
+
+            // Update teks
+            AppState.banoms[key].tag   = document.getElementById('editBanomTag').value;
+            AppState.banoms[key].title = document.getElementById('editBanomTitle').value;
+            AppState.banoms[key].desc  = document.getElementById('editBanomDesc').value;
+            const featsRaw = document.getElementById('editBanomFeatures').value;
+            AppState.banoms[key].features = featsRaw.split(',').map(f => f.trim()).filter(f => f.length > 0);
+
+            function saveBanomToGAS(imgBase64) {
+                renderPublicBanom();
+                syncStateToBackend();
+                if (!GAS) { showToast('Banom berhasil diperbarui!'); return; }
+
+                // ── STEP 1: Simpan data teks (tanpa foto) ──
+                var banomsTeks = {};
+                Object.keys(AppState.banoms).forEach(function(k) {
+                    banomsTeks[k] = {
+                        tag:      AppState.banoms[k].tag,
+                        title:    AppState.banoms[k].title,
+                        desc:     AppState.banoms[k].desc,
+                        features: AppState.banoms[k].features
+                    };
+                });
+
+                google.script.run
+                    .withSuccessHandler(function(r) {
+                        if (r !== 'success') { showToast('⚠️ Gagal simpan data banom: ' + r); return; }
+
+                        if (!imgBase64) { showToast('✓ Data banom tersimpan!'); return; }
+
+                        // ── STEP 2: Simpan foto via savePhoto (sheet Photos, bebas limit 50K) ──
+                        // Key: "site.banom_img_ansor", "site.banom_img_fatayat", dst
+                        var fotoKey = 'site.banom_img_' + key;
+
+                        if (imgBase64.startsWith('http')) {
+                            // URL langsung → simpan di Settings biasa (pendek, aman)
+                            google.script.run
+                                .withSuccessHandler(function(r2){ if(r2==='success') showToast('✓ Foto banom tersimpan!'); })
+                                .withFailureHandler(function(e){ console.warn('GAS banom URL:', e); })
+                                .saveSetting(fotoKey, imgBase64);
+                        } else {
+                            // Base64 → simpan ke sheet Photos (chunking otomatis, tidak ada limit)
+                            google.script.run
+                                .withSuccessHandler(function(r2) {
+                                    if (r2 === 'success') {
+                                        showToast('✓ Banom & foto berhasil disimpan!');
+                                    } else {
+                                        showToast('⚠️ Foto banom gagal: ' + r2);
+                                    }
+                                })
+                                .withFailureHandler(function(e) {
+                                    console.error('GAS savePhoto banom:', e);
+                                    showToast('❌ Foto banom gagal: ' + (e.message || e));
+                                })
+                                .savePhoto(imgBase64, fotoKey);
+                        }
+                    })
+                    .withFailureHandler(function(e){ console.warn('GAS banom teks:', e); showToast('Gagal menyimpan data banom.'); })
+                    .saveSettingsBatch(JSON.stringify({ 'site.banoms': JSON.stringify(banomsTeks) }));
+            }
+
+            const fileInput = document.getElementById('editBanomImgFile');
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                // Kompres foto banom ke 700×470 q0.80
+                compressAndReadFile(fileInput.files[0], 700, 470, 0.80, function(compressed) {
+                    AppState.banoms[key].img = compressed;
+                    saveBanomToGAS(compressed);
+                });
+            } else {
+                saveBanomToGAS(null); // simpan teks saja tanpa foto baru
+            }
+        }
+
+        window.toggleAddNewsForm = function() {
+            const form = document.getElementById('addNewsForm');
+            const toggleBtn = document.getElementById('btnAddNewsToggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleBtn.innerText = "Tutup Form";
+            } else {
+                form.classList.add('hidden');
+                toggleBtn.innerText = "+ Tulis Berita Baru";
+                editingNewsId = null;
+                document.getElementById('addNewsForm').reset();
+                document.querySelector('#addNewsForm h5').innerText = "Tulis Berita Baru";
+                document.querySelector('#addNewsForm button[type="submit"]').innerText = "Publish Berita";
+            }
+        }
+
+        window.editNews = function(id) {
+            const item = AppState.news.find(x => x.id === id);
+            if (!item) return;
+
+            editingNewsId = id;
+            document.getElementById('newNewsTitle').value = item.title;
+            document.getElementById('newNewsCat').value = item.category;
+            document.getElementById('newNewsAuthor').value = item.author;
+            document.getElementById('newNewsContent').innerHTML = item.content || item.summary || '';
+
+            document.querySelector('#addNewsForm h5').innerText = "Edit Kabar Berita";
+            document.querySelector('#addNewsForm button[type="submit"]').innerText = "Simpan Perubahan";
+
+            const form = document.getElementById('addNewsForm');
+            const toggleBtn = document.getElementById('btnAddNewsToggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleBtn.innerText = "Tutup Form";
+            }
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        window.handleAddNewNews = function(event) {
+            event.preventDefault();
+            const title   = document.getElementById('newNewsTitle').value.trim();
+            const cat     = document.getElementById('newNewsCat').value;
+            const author  = document.getElementById('newNewsAuthor').value.trim();
+            const content = document.getElementById('newNewsContent').innerHTML.trim();
+            const imgsInput = document.getElementById('newNewsImgs');
+
+            // Generate summary otomatis dari 150 karakter pertama konten
+            const summary = content.replace(/\n+/g, ' ').substring(0, 150) + (content.length > 150 ? '…' : '');
+
+            const saveNews = (imgList) => {
+                const finalImgs = imgList.length > 0 ? imgList : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
+                
+                const _savingNewsId = editingNewsId;
+                if (_savingNewsId !== null) {
+                    const idx = AppState.news.findIndex(x => x.id === editingNewsId);
+                    if (idx !== -1) {
+                        AppState.news[idx].title = title;
+                        AppState.news[idx].category = cat;
+                        AppState.news[idx].summary = summary;
+                        AppState.news[idx].content = content;
+                        AppState.news[idx].author = author;
+                        if (imgsInput.files.length > 0) {
+                            AppState.news[idx].imgs = finalImgs;
+                            AppState.news[idx].img = finalImgs[0];
+                        }
+                    }
+                    showToast("Kabar berita berhasil diperbarui!");
+                    editingNewsId = null;
+                } else {
+                    const newArticle = {
+                        id: Date.now(),
+                        title: title,
+                        category: cat,
+                        date: "Hari Ini",
+                        summary: summary,
+                        content: content,
+                        author: author,
+                        imgs: finalImgs,
+                        img: finalImgs[0]
+                    };
+                    AppState.news.unshift(newArticle);
+                    showToast("Kabar berita baru berhasil dipublikasi!");
+                }
+
+                renderNewsList();
+                renderAdminNewsTable();
+                syncStateToBackend();
+                // Simpan ke GAS Spreadsheet
+                if (GAS) {
+                    const newsPayload = {
+                        title: title, summary: summary, content: content,
+                        category: cat, date: new Date().toLocaleDateString('id-ID'),
+                        author: author, img: finalImgs[0] || ''
+                    };
+                    if (_savingNewsId !== null) {
+                        google.script.run
+                            .withSuccessHandler(function(r){
+                                if(r === 'success') showToast('Berita berhasil diperbarui!');
+                                else if(r === 'not_found') showToast('Gagal: data tidak ditemukan di database. Coba reload halaman.');
+                            })
+                            .withFailureHandler(function(e){ console.warn('updateNews GAS:', e); })
+                            .updateNews(String(_savingNewsId), JSON.stringify(newsPayload));
+                    } else {
+                        // INSERT baru
+                        google.script.run
+                            .withSuccessHandler(function(r){ if(r==='success') showToast('Berita tersimpan ke database!'); })
+                            .withFailureHandler(function(e){ console.warn('addNews GAS:', e); })
+                            .addNews(JSON.stringify(newsPayload));
+                    }
+                }
+                
+                document.getElementById('addNewsForm').reset();
+                toggleAddNewsForm();
+            };
+
+            if (imgsInput.files.length > 0) {
+                if (imgsInput.files.length > 4) {
+                    showToast("Maksimal hanya boleh memilih 4 foto saja!");
+                    return;
+                }
+                
+                let loadedImgs = [];
+                let filesCount = imgsInput.files.length;
+                let filesProcessed = 0;
+
+                for (let i = 0; i < filesCount; i++) {
+                    compressAndReadFile(imgsInput.files[i], 1000, 750, 0.82, function(compressedBase64) {
+                        loadedImgs.push(compressedBase64);
+                        filesProcessed++;
+                        if (filesProcessed === filesCount) {
+                            saveNews(loadedImgs);
+                        }
+                    });
+                }
+            } else {
+                if (editingNewsId !== null) {
+                    const currentItem = AppState.news.find(x => x.id === editingNewsId);
+                    saveNews(currentItem && currentItem.imgs ? currentItem.imgs : (currentItem ? [currentItem.img] : []));
+                } else {
+                    saveNews([]);
+                }
+            }
+        }
+
+        window.deleteNews = function(id) {
+            showDeleteConfirm(
+                'Yakin hapus berita ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
+                function() {
+                    AppState.news = AppState.news.filter(x => x.id !== id);
+                    renderNewsList();
+                    renderAdminNewsTable();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Berita dihapus dari database.'); })
+                            .withFailureHandler(function(e){ console.warn('deleteNews GAS:', e); })
+                            .deleteNews(String(id));
+                    } else {
+                        showToast("Berita berhasil dihapus.");
+                    }
+                }
+            );
+        }
+
+        function renderAdminNewsTable() {
+            const tbody = document.getElementById('adminNewsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            AppState.news.forEach(item => {
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 font-sans">
+                        <td class="p-3 font-semibold text-slate-800 max-w-xs truncate">${item.title}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.category === 'dakwah' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.category.toUpperCase()}</span></td>
+                        <td class="p-3 text-slate-500">${item.date}</td>
+                        <td class="p-3 text-slate-600">${item.author}</td>
+                        <td class="p-3 text-right flex justify-end gap-1.5">
+                            <button onclick="window.editNews(${item.id})" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-edit text-[10px]"></i> Edit
+                            </button>
+                            <button onclick="window.deleteNews(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-trash-alt text-[10px]"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        window.toggleAddFinanceForm = function() {
+            const form = document.getElementById('addFinanceForm');
+            const toggleBtn = document.getElementById('btnFinanceToggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleBtn.innerText = "Tutup Form";
+            } else {
+                form.classList.add('hidden');
+                toggleBtn.innerText = "+ Input Kas/Laporan Keuangan";
+            }
+        }
+
+        window.handleAddNewFinance = function(event) {
+            event.preventDefault();
+            const period = document.getElementById('newFinancePeriod').value;
+            const income = parseFloat(document.getElementById('newFinanceIncome').value) || 0;
+            const expense = parseFloat(document.getElementById('newFinanceExpense').value) || 0;
+            const desc = document.getElementById('newFinanceDesc').value;
+            const fileInput = document.getElementById('newFinanceFile');
+
+            let fileName = "Laporan_Manual.pdf";
+            if (fileInput.files.length > 0) {
+                fileName = fileInput.files[0].name;
+            } else {
+                const safePeriod = period.replace(/\s+/g, '_');
+                fileName = `Laporan_UPZISNU_${safePeriod}.pdf`;
+            }
+
+            const calculatedBalance = income - expense;
+            const newReport = {
+                id: Date.now(),
+                period: period,
+                income: income,
+                expense: expense,
+                balance: calculatedBalance,
+                description: desc,
+                file: fileName
+            };
+
+            const _savingFinanceId = editingFinanceId;
+            if (_savingFinanceId !== null) {
+                // UPDATE data yang ada di AppState
+                const fidx = AppState.financialReports.findIndex(x => x.id === editingFinanceId);
+                if (fidx !== -1) {
+                    AppState.financialReports[fidx].period      = period;
+                    AppState.financialReports[fidx].description = desc;
+                    AppState.financialReports[fidx].income      = income;
+                    AppState.financialReports[fidx].expense     = expense;
+                    AppState.financialReports[fidx].balance     = income - expense;
+                }
+            } else {
+                AppState.financialReports.unshift(newReport);
+            }
+
+            renderPublicFinanceTable();
+            renderAdminFinanceTable();
+            syncStateToBackend();
+
+            if (GAS) {
+                const finPayload = { date: period, description: desc, type: 'laporan', income: income, expense: expense };
+                if (_savingFinanceId !== null) {
+                    google.script.run
+                        .withSuccessHandler(function(r){
+                            if(r === 'success') showToast('Laporan keuangan berhasil diperbarui!');
+                            else if(r === 'not_found') showToast('Gagal: data tidak ditemukan di database. Coba reload halaman.');
+                        })
+                        .withFailureHandler(function(e){ console.warn('updateFinance GAS:', e); })
+                        .updateFinance(String(_savingFinanceId), JSON.stringify(finPayload));
+                } else {
+                    google.script.run
+                        .withSuccessHandler(function(r){ if(r==='success') showToast('Laporan tersimpan ke database!'); })
+                        .withFailureHandler(function(e){ console.warn('addFinance GAS:', e); })
+                        .addFinance(JSON.stringify(finPayload));
+                }
+            }
+
+            const isEdit = _savingFinanceId !== null;
+            editingFinanceId = null;
+            document.getElementById('addFinanceForm').reset();
+            toggleAddFinanceForm();
+            showToast(isEdit ? "Laporan berhasil diperbarui!" : "Laporan Keuangan baru berhasil ditambahkan!");
+        }
+
+        window.editFinanceReport = function(id) {
+            const item = AppState.financialReports.find(x => x.id === id);
+            if (!item) return;
+            editingFinanceId = id;
+            // Isi form dengan data yang ada
+            const fp = document.getElementById('newFinancePeriod');
+            const fi = document.getElementById('newFinanceIncome');
+            const fe = document.getElementById('newFinanceExpense');
+            const fd = document.getElementById('newFinanceDesc');
+            if (fp) fp.value = item.period || '';
+            if (fi) fi.value = item.income || 0;
+            if (fe) fe.value = item.expense || 0;
+            if (fd) fd.value = item.description || '';
+            // Tampilkan form
+            const formEl = document.getElementById('addFinanceForm');
+            const toggleBtn = document.getElementById('btnFinanceToggle');
+            if (formEl) formEl.classList.remove('hidden');
+            // Update judul form
+            const formTitle = formEl ? formEl.querySelector('h4') : null;
+            if (formTitle) formTitle.textContent = 'Edit Laporan Keuangan';
+            if (toggleBtn) toggleBtn.textContent = 'Batal';
+            formEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast('Silakan edit data laporan, lalu klik Simpan.');
+        };
+
+        window.deleteFinanceReport = function(id) {
+            showDeleteConfirm(
+                'Yakin hapus laporan keuangan ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
+                function() {
+                    AppState.financialReports = AppState.financialReports.filter(x => x.id !== id);
+                    renderPublicFinanceTable();
+                    renderAdminFinanceTable();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Laporan dihapus dari database.'); })
+                            .withFailureHandler(function(e){ console.warn('deleteFinance GAS:', e); })
+                            .deleteFinance(String(id));
+                    } else {
+                        showToast("Laporan berhasil dihapus.");
+                    }
+                }
+            );
+        }
+
+        function renderAdminFinanceTable() {
+            const tbody = document.getElementById('adminFinanceTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            AppState.financialReports.forEach(item => {
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-slate-800 font-sans">${item.period}</td>
+                        <td class="p-3 text-emerald-700">${formatIDR(item.income)}</td>
+                        <td class="p-3 text-rose-600">${formatIDR(item.expense)}</td>
+                        <td class="p-3 font-bold text-nuGreen-900">${formatIDR(item.balance)}</td>
+                        <td class="p-3 text-slate-500 max-w-[120px] truncate" title="${item.file}"><i class="fas fa-file-invoice mr-1 text-slate-400"></i>${item.file}</td>
+                        <td class="p-3 text-right flex gap-1.5 justify-end">
+                            <button onclick="window.editFinanceReport(${item.id})" class="text-nuGreen-700 hover:text-nuGreen-900 font-semibold px-2 py-1 bg-nuGreen-50 hover:bg-nuGreen-100 rounded transition text-[11px] inline-flex items-center gap-1">
+                                <i class="fas fa-edit text-[10px]"></i> Edit
+                            </button>
+                            <button onclick="window.deleteFinanceReport(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] inline-flex items-center gap-1">
+                                <i class="fas fa-trash-alt text-[10px]"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        window.toggleAddPengurusForm = function() {
+            const form = document.getElementById('addPengurusForm');
+            const toggleBtn = document.getElementById('btnPengurusToggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleBtn.innerText = "Tutup Form";
+            } else {
+                form.classList.add('hidden');
+                toggleBtn.innerText = "+ Tambah Pengurus Baru";
+                editingPengurusId = null;
+                document.getElementById('addPengurusForm').reset();
+                document.querySelector('#addPengurusForm h5').innerText = "Identitas Pengurus / Pimpinan";
+                document.querySelector('#addPengurusForm button[type="submit"]').innerText = "Daftarkan Pengurus";
+            }
+        }
+
+        window.editPengurus = function(id) {
+            const item = AppState.pengurus.find(x => x.id === id);
+            if (!item) return;
+
+            editingPengurusId = id;
+            document.getElementById('newPengurusName').value = item.name;
+            document.getElementById('newPengurusRole').value = item.role;
+            document.getElementById('newPengurusGroup').value = item.group;
+
+            document.querySelector('#addPengurusForm h5').innerText = "Edit Identitas Pengurus";
+            document.querySelector('#addPengurusForm button[type="submit"]').innerText = "Simpan Perubahan";
+
+            const form = document.getElementById('addPengurusForm');
+            const toggleBtn = document.getElementById('btnPengurusToggle');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                toggleBtn.innerText = "Tutup Form";
+            }
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        var _pengurusSubmitting = false;
+        window.handleAddNewPengurus = function(event) {
+            event.preventDefault();
+            if (_pengurusSubmitting) return;
+            _pengurusSubmitting = true;
+            setTimeout(function(){ _pengurusSubmitting = false; }, 3000);
+            const name  = document.getElementById('newPengurusName').value.trim();
+            const role  = document.getElementById('newPengurusRole').value.trim();
+            const group = document.getElementById('newPengurusGroup').value.trim();
+            const photoInput = document.getElementById('newPengurusPhoto');
+
+            if (!name) { showToast('Nama pengurus wajib diisi!'); return; }
+
+            const savePengurus = (imgDataUrl) => {
+                // ★ KUNCI FIX: capture ID ke variabel lokal SEBELUM apapun direset
+                const frozenId = editingPengurusId;
+
+                // Ambil foto lama sebelum AppState diubah
+                var fotoLama = '';
+                if (frozenId !== null) {
+                    const oldItem = AppState.pengurus.find(x => x.id === frozenId);
+                    if (oldItem) fotoLama = oldItem.photo || '';
+                }
+
+                // Foto yang akan dikirim ke GAS (bisa base64 baru atau URL lama)
+                const fotoUntukGAS = imgDataUrl || fotoLama || '';
+
+                // Update AppState lokal
+                if (frozenId !== null) {
+                    const idx = AppState.pengurus.findIndex(x => x.id === frozenId);
+                    if (idx !== -1) {
+                        AppState.pengurus[idx].name  = name;
+                        AppState.pengurus[idx].role  = role;
+                        AppState.pengurus[idx].group = group;
+                        if (imgDataUrl) AppState.pengurus[idx].photo = imgDataUrl;
+                    }
+                    showToast('Data pengurus diperbarui!');
+                } else {
+                    const newId = Date.now();
+                    AppState.pengurus.unshift({ id: newId, name, role, group, photo: imgDataUrl || '' });
+                    showToast('Pengurus baru didaftarkan!');
+                }
+
+                // Reset form SEBELUM async (aman, frozenId sudah di-capture)
+                editingPengurusId = null;
+                renderPublicPengurus();
+                renderAdminPengurusTable();
+                syncStateToBackend();
+                document.getElementById('addPengurusForm').reset();
+                toggleAddPengurusForm();
+
+                if (!GAS) return;
+
+                // ── Fungsi kirim ke GAS — selalu pakai frozenId, bukan editingPengurusId ──
+                function kirimPengurusKeGAS(urlFoto) {
+                    var pPayload = JSON.stringify({ nama: name, jabatan: role, kategori: group, foto: urlFoto });
+                    if (frozenId !== null) {
+                        // MODE EDIT
+                        google.script.run
+                            .withSuccessHandler(function(r) {
+                                if (r === 'success') {
+                                    showToast('Foto & data pengurus tersimpan ke Spreadsheet!');
+                                    // Update photo di AppState dengan URL final (Drive URL)
+                                    var idx3 = AppState.pengurus.findIndex(function(x){ return x.id === frozenId; });
+                                    if (idx3 !== -1 && urlFoto.startsWith('https://drive.google.com')) {
+                                        AppState.pengurus[idx3].photo = urlFoto;
+                                        renderPublicPengurus();
+                                        renderAdminPengurusTable();
+                                    }
+                                } else if (r === 'not_found') {
+                                    showToast('⚠️ Gagal: data tidak ditemukan di Spreadsheet.');
+                                }
+                            })
+                            .withFailureHandler(function(e){ console.warn('updatePengurus GAS:', e); showToast('Gagal update ke Spreadsheet.'); })
+                            .updatePengurus(String(frozenId), pPayload);
+                    } else {
+                        // MODE TAMBAH BARU — gunakan ID yang baru dibuat (unshift pertama)
+                        google.script.run
+                            .withSuccessHandler(function(r){ if(r === 'success') showToast('Pengurus & foto tersimpan!'); })
+                            .withFailureHandler(function(e){ console.warn('addPengurus GAS:', e); })
+                            .addPengurus(pPayload);
+                    }
+                }
+
+                if (fotoUntukGAS && fotoUntukGAS.startsWith('data:')) {
+                    var namaFile = 'pengurus_' + name.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
+
+                    // Kompres ke ukuran sedang untuk Drive (< 130KB base64)
+                    _kompresUntukDrive(fotoUntukGAS, function(fotoDrive) {
+                        if (!fotoDrive) fotoDrive = fotoUntukGAS;
+
+                        google.script.run
+                            .withSuccessHandler(function(driveUrl) {
+                                if (driveUrl && driveUrl.startsWith('https://drive.google.com')) {
+                                    // Drive berhasil → URL pendek, foto tajam
+                                    var idx4 = AppState.pengurus.findIndex(function(x){ return x.id === frozenId; });
+                                    if (idx4 !== -1) {
+                                        AppState.pengurus[idx4].photo = driveUrl;
+                                        renderPublicPengurus();
+                                        renderAdminPengurusTable();
+                                    }
+                                    kirimPengurusKeGAS(driveUrl);
+                                } else {
+                                    // Drive gagal → simpan via savePhoto (chunking)
+                                    // PENTING: frozenId bisa null (mode tambah baru)
+                                    var realId = frozenId !== null ? frozenId
+                                        : (AppState.pengurus.length > 0 ? AppState.pengurus[0].id : Date.now());
+                                    var chunkKey = 'pengurus_photo_' + realId;
+                                    google.script.run
+                                        .withSuccessHandler(function(r2){
+                                            // URL foto adalah referensi ke chunk key
+                                            kirimPengurusKeGAS('__chunk__' + chunkKey);
+                                        })
+                                        .withFailureHandler(function(e2){
+                                            console.warn('savePhoto pengurus:', e2);
+                                            kirimPengurusKeGAS(''); // simpan tanpa foto
+                                        })
+                                        .savePhoto(fotoUntukGAS, chunkKey);
+                                }
+                            })
+                            .withFailureHandler(function(e){
+                                console.warn('Drive pengurus gagal:', e);
+                                kirimPengurusKeGAS('');
+                            })
+                            .savePhotoToDrive(fotoDrive, namaFile);
+                    });
+                } else {
+                    kirimPengurusKeGAS(fotoUntukGAS);
+                }
+            };
+
+            if (photoInput.files && photoInput.files[0]) {
+                // Foto wajah: 500×500 cover-crop, quality 0.85 → tajam di tampilan circle
+                compressAndReadFile(photoInput.files[0], 500, 500, 0.85, function(compressedBase64) {
+                    savePengurus(compressedBase64);
+                }, true);
+            } else {
+                if (editingPengurusId !== null) {
+                    const currentItem = AppState.pengurus.find(x => x.id === editingPengurusId);
+                    savePengurus(currentItem ? currentItem.photo : `https://placehold.co/300x300/14532d/ffffff?text=${encodeURIComponent(name)}`);
+                } else {
+                    savePengurus(`https://placehold.co/300x300/14532d/ffffff?text=${encodeURIComponent(name)}`);
+                }
+            }
+        }
+
+        window.deletePengurus = function(id) {
+            showDeleteConfirm(
+                'Yakin hapus data pengurus ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
+                function() {
+                    AppState.pengurus = AppState.pengurus.filter(x => x.id !== id);
+                    renderPublicPengurus();
+                    renderAdminPengurusTable();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Data pengurus dihapus dari database.'); })
+                            .withFailureHandler(function(e){ console.warn('deletePengurus GAS:', e); })
+                            .deletePengurus(String(id));
+                    } else {
+                        showToast("Data pengurus berhasil dihapus.");
+                    }
+                }
+            );
+        }
+
+        function renderAdminPengurusTable() {
+            const tbody = document.getElementById('adminPengurusTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            AppState.pengurus.forEach(item => {
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="p-3">
+                            <div class="w-11 h-11 rounded-full overflow-hidden border-2 border-slate-200 bg-slate-100">
+                                <img src="${item.photo}" onerror="this.src='https://placehold.co/500x500/14532d/ffffff?text=PRNU'" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
+                            </div>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-800">${item.name}</td>
+                        <td class="p-3 text-slate-600">${item.role}</td>
+                        <td class="p-3"><span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">${item.group}</span></td>
+                        <td class="p-3 text-right flex justify-end gap-1.5">
+                            <button onclick="window.editPengurus(${item.id})" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-edit text-[10px]"></i> Edit
+                            </button>
+                            <button onclick="window.deletePengurus(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-trash-alt text-[10px]"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function renderInbox() {
+            const container = document.getElementById('adminInboxContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (AppState.messages.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-6 text-center italic">Belum ada aspirasi warga yang masuk.</p>`;
+                return;
+            }
+
+            AppState.messages.forEach(msg => {
+                const messageCard = `
+                    <div class="p-4 bg-slate-50 border border-slate-200/60 rounded-2xl space-y-2 font-sans">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="font-bold text-sm text-slate-800 block">${msg.sender} <span class="text-slate-400 font-normal">(${msg.phone})</span></span>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold inline-block mt-1">${msg.category}</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400"><i class="fas fa-clock mr-1"></i>Aspirasi Masuk</span>
+                        </div>
+                        <p class="text-xs text-slate-600 italic bg-white p-3 rounded-xl border border-slate-100">
+                            "${msg.message}"
+                        </p>
+                        <div class="flex justify-end pt-1">
+                            <button onclick="window.deleteInboxMessage(${msg.id})"
+                                class="text-rose-500 hover:text-rose-700 text-xs font-semibold flex items-center gap-1 hover:bg-rose-50 px-2 py-1 rounded-lg transition">
+                                <i class="fas fa-trash-alt text-[10px]"></i> Hapus Pesan
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += messageCard;
+            });
+        }
+
+
+        window.deleteInboxMessage = function(id) {
+            showDeleteConfirm(
+                'Yakin hapus pesan ini?<br><span class="text-rose-500 font-semibold">Pesan tidak dapat dikembalikan.</span>',
+                function() {
+                    AppState.messages = AppState.messages.filter(x => x.id !== id);
+                    renderInbox();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Pesan dihapus dari database.'); })
+                            .withFailureHandler(function(e){ console.warn('deleteInbox GAS:', e); })
+                            .deleteInbox(String(id));
+                    } else {
+                        showToast("Pesan berhasil dihapus.");
+                    }
+                }
+            );
+        };
+
+        window.handleContactSubmit = function(event) {
+            event.preventDefault();
+            const name     = document.getElementById('contactName').value;
+            const phone    = document.getElementById('contactPhone').value;
+            const message  = document.getElementById('contactMessage').value;
+
+            const newMsg = { id: Date.now(), sender: name, phone, message };
+            AppState.messages.unshift(newMsg);
+            if (AppState.isAdminLoggedIn) renderInbox();
+
+            if (GAS) {
+                const inboxPayload = { nama: name, wa: phone, pesan: message };
+                google.script.run
+                    .withFailureHandler(function(e){ console.warn('addInbox GAS:', e); })
+                    .addInbox(JSON.stringify(inboxPayload));
+            }
+
+            // Gunakan nomor WA dari AppState.kontakSettings
+            const waNum  = (AppState.kontakSettings && AppState.kontakSettings.waNumber) || '6282327603545';
+            const waText = encodeURIComponent(
+                `Assalamualaikum Pengurus NU Baleharjo,\n\nMasyarakat mengirim pesan melalui website:\nNama: ${name}\nHP: ${phone}\nPesan: ${message}`
+            );
+            window.open(`https://api.whatsapp.com/send?phone=${waNum}&text=${waText}`, '_blank');
+
+            document.getElementById('contactForm').reset();
+            syncStateToBackend();
+            showToast("Pesan Anda tercatat dan diarahkan ke WhatsApp Pengurus!");
+        };
+
+        window.openDonationModal = function() {
+            const modal = document.getElementById('donationModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            try { renderPentasyarufanGaleri(); } catch(e) {}
+        }
+
+        window.closeDonationModal = function() {
+            const modal = document.getElementById('donationModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        window.copyToClipboard = function(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast("Nomor rekening BSI berhasil disalin!");
+        }
+
+        window.switchDonationTab = function(tab) {
+            // Tab salurkan sudah dihapus — hanya foto pentasyarufan
+            var transContent = document.getElementById('don-content-transparansi');
+            if (transContent) transContent.classList.remove('hidden');
+            if (tab !== 'transparansi') {
+                salTab.className = "flex-1 py-3 text-sm font-bold text-nuGreen-800 border-b-2 border-nuGreen-800 transition";
+                transTab.className = "flex-1 py-3 text-sm font-bold text-slate-500 hover:text-nuGreen-800 border-b-2 border-transparent transition";
+                salContent.classList.remove('hidden');
+                transContent.classList.add('hidden');
+            }
+        }
+
+        window.switchBanom = function(banomId) {
+            activeBanomKey = banomId;
+            renderPublicBanom();
+
+            document.querySelectorAll('.banom-tab').forEach(btn => {
+                btn.className = "banom-tab px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 bg-slate-100 text-slate-700 hover:bg-slate-200";
+            });
+            
+            const activeTab = document.getElementById(`tab-${banomId}`);
+            if (activeTab) {
+                activeTab.className = "banom-tab active px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 bg-nuGreen-800 text-white shadow-md";
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, 3000);
+        }
+
+
+        // ============================================================
+        // SPA PAGE NAVIGATION SYSTEM
+        // ============================================================
+        const PAGE_SECTIONS = ['beranda','profil','pengurus','layanan','banom','berita','galeri','kontak'];
+
+        window.showPage = function(pageId) {
+            // Sembunyikan semua section
+            PAGE_SECTIONS.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active-page');
+            });
+
+            // Tampilkan section yang dipilih
+            const target = document.getElementById(pageId);
+            if (target) {
+                target.classList.add('active-page');
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+
+            // ── Desktop nav: update active pill ──
+            document.querySelectorAll('.nav-link-item').forEach(function(link) {
+                link.classList.remove('nav-active', 'text-white');
+                link.classList.add('text-slate-600');
+            });
+            document.querySelectorAll('.nav-link-item[data-page="' + pageId + '"]').forEach(function(link) {
+                link.classList.add('nav-active');
+                link.classList.remove('text-slate-600');
+            });
+
+            // ── Mobile nav: update active pill ──
+            document.querySelectorAll('.mobile-nav-link').forEach(function(link) {
+                link.classList.remove('mobile-active', 'text-white');
+                link.classList.add('text-slate-600');
+            });
+            document.querySelectorAll('.mobile-nav-link[data-page="' + pageId + '"]').forEach(function(link) {
+                link.classList.add('mobile-active');
+                link.classList.remove('text-slate-600');
+            });
+
+            // Tutup mobile drawer
+            const drawer = document.getElementById('mobileDrawer');
+            if (drawer) drawer.classList.add('hidden');
+
+            // Re-render komponen
+            if (pageId === 'beranda')  { try { renderPrayerTimes(); } catch(e) {} }
+            if (pageId === 'pengurus') { try { renderPublicPengurus(); } catch(e) {} }
+            if (pageId === 'berita')   { try { renderNewsList(); } catch(e) {} }
+            if (pageId === 'layanan')  { try { renderPublicLayanan(); renderPublicFinanceTable(); } catch(e) {} }
+            if (pageId === 'banom')    { try { renderPublicBanom(); } catch(e) {} }
+            if (pageId === 'galeri')   { try { renderPublicGaleri(); } catch(e) {} }
+        };
+
+        // Inisialisasi: tampilkan Beranda saat pertama load
+        function initSPA() {
+            // Tampilkan beranda default
+            const hash = window.location.hash ? window.location.hash.replace('#','') : 'beranda';
+            const validPage = PAGE_SECTIONS.includes(hash) ? hash : 'beranda';
+            showPage(validPage);
+        }
+
+
+
+        // ============================================================
+        // SITE SETTINGS: Running Text + Logo
+        // ============================================================
+
+        function renderSiteSettings() {
+            const ss = AppState.siteSettings;
+            if (!ss) return;
+
+            // ── Running Text Bar ──
+            const bar = document.getElementById('runningTextBar');
+            const rtContent = document.getElementById('runningTextContent');
+            if (bar) {
+                if (ss.runningTextEnabled === false) {
+                    bar.style.display = 'none';
+                } else {
+                    bar.style.display = '';
+                }
+            }
+            if (rtContent) {
+                // Format text: ganti | dengan spasi dekoratif
+                const formatted = (ss.runningText || '')
+                    .split('|').map(t => t.trim())
+                    .filter(Boolean)
+                    .join('&nbsp;&nbsp;&nbsp;❖&nbsp;&nbsp;&nbsp;');
+                rtContent.innerHTML = formatted;
+                rtContent.className = 'marquee-content speed-' + (ss.runningTextSpeed || 'normal');
+            }
+
+            // ── Logo ──
+            const logoImg  = document.getElementById('navLogoImg');
+            const logoSvg  = document.getElementById('navLogoSvg');
+            const logoText = document.getElementById('navLogoText');
+            const logoSub  = document.getElementById('navLogoSubText');
+            if (ss.logoImg && ss.logoImg.length > 10) {
+                if (logoImg) { logoImg.src = ss.logoImg; logoImg.classList.remove('hidden'); }
+                if (logoSvg) logoSvg.classList.add('hidden');
+                // Update logo di splash juga
+                const splashLogo = document.getElementById('splashLogoImg');
+                if (splashLogo) splashLogo.src = ss.logoImg;
+                // Cache ke localStorage agar muncul langsung di kunjungan berikutnya
+                try { localStorage.setItem("prnu_site_logo", ss.logoImg); } catch(e) {}
+            } else {
+                if (logoImg) logoImg.classList.add('hidden');
+                if (logoSvg) logoSvg.classList.remove('hidden');
+            }
+            if (logoText) logoText.textContent = ss.logoText || 'NU BALEHARJO';
+            if (logoSub)  logoSub.textContent  = ss.logoSubText || 'Sukodono · Sragen';
+
+            // ── Topbar info ──
+            const elAlamat = document.getElementById('pubTopbarAlamat');
+            const elEmail  = document.getElementById('pubTopbarEmail');
+            if (elAlamat) elAlamat.innerHTML = '<i class="fas fa-map-marker-alt mr-1.5"></i> ' + (ss.topbarAlamat || 'Baleharjo, Sukodono, Sragen, Jawa Tengah');
+            if (elEmail)  elEmail.innerHTML  = '<i class="fas fa-envelope mr-1.5"></i> ' + (ss.topbarEmail || 'info@nubaleharjo.or.id');
+
+            // ── Sosmed links ──
+            const fb = document.getElementById('pubSosmedFb');
+            const yt = document.getElementById('pubSosmedYt');
+            const ig = document.getElementById('pubSosmedIg');
+            if (fb && ss.sosmedFb) fb.href = ss.sosmedFb;
+            if (yt && ss.sosmedYt) yt.href = ss.sosmedYt;
+            if (ig && ss.sosmedIg) ig.href = ss.sosmedIg;
+        }
+
+        function populateSiteSettingsForm() {
+            const ss = AppState.siteSettings;
+            if (!ss) return;
+
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+            const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+
+            setVal('adminRunningText', ss.runningText);
+            setCheck('adminRunningTextEnabled', ss.runningTextEnabled !== false);
+            setVal('adminLogoText', ss.logoText);
+            setVal('adminLogoSubText', ss.logoSubText);
+            setVal('adminLogoUrl', ss.logoImg && ss.logoImg.startsWith('http') ? ss.logoImg : '');
+            setVal('adminTopbarAlamat', ss.topbarAlamat);
+            setVal('adminTopbarEmail',  ss.topbarEmail);
+            setVal('adminSosmedFb', ss.sosmedFb !== '#' ? ss.sosmedFb : '');
+            setVal('adminSosmedYt', ss.sosmedYt !== '#' ? ss.sosmedYt : '');
+            setVal('adminSosmedIg', ss.sosmedIg !== '#' ? ss.sosmedIg : '');
+
+            // Logo preview
+            const prev = document.getElementById('adminLogoPreviewImg');
+            const prevSvg = document.getElementById('adminLogoPreviewSvg');
+            if (ss.logoImg && ss.logoImg.length > 10) {
+                if (prev) { prev.src = ss.logoImg; prev.classList.remove('hidden'); }
+                if (prevSvg) prevSvg.classList.add('hidden');
+            } else {
+                if (prev) prev.classList.add('hidden');
+                if (prevSvg) prevSvg.classList.remove('hidden');
+            }
+
+            // Kecepatan radio
+            const speed = ss.runningTextSpeed || 'normal';
+            const radio = document.querySelector('input[name="rtSpeed"][value="' + speed + '"]');
+            if (radio) radio.checked = true;
+
+            // Preview
+            previewRunningText();
+        }
+
+        window.previewRunningText = function() {
+            const text = document.getElementById('adminRunningText');
+            const preview = document.getElementById('rtPreviewContent');
+            const speedRadio = document.querySelector('input[name="rtSpeed"]:checked');
+            if (!text || !preview) return;
+            const formatted = (text.value || '')
+                .split('|').map(t => t.trim()).filter(Boolean)
+                .join('&nbsp;&nbsp;❖&nbsp;&nbsp;');
+            preview.innerHTML = formatted || 'Preview teks berjalan...';
+            const spd = speedRadio ? speedRadio.value : 'normal';
+            preview.className = 'marquee-content speed-' + spd;
+        };
+
+        window.saveSiteSettings = function() {
+            const ss = AppState.siteSettings;
+
+            ss.runningText        = document.getElementById('adminRunningText')?.value || ss.runningText;
+            ss.runningTextEnabled = document.getElementById('adminRunningTextEnabled')?.checked !== false;
+            const speedRadio      = document.querySelector('input[name="rtSpeed"]:checked');
+            ss.runningTextSpeed   = speedRadio ? speedRadio.value : 'normal';
+            ss.logoText           = document.getElementById('adminLogoText')?.value || ss.logoText;
+            ss.logoSubText        = document.getElementById('adminLogoSubText')?.value || ss.logoSubText;
+            const logoUrl         = document.getElementById('adminLogoUrl')?.value.trim();
+            if (logoUrl) ss.logoImg = logoUrl;
+
+            // ── Field baru: topbar & sosmed ──
+            ss.topbarAlamat = document.getElementById('adminTopbarAlamat')?.value.trim() || ss.topbarAlamat;
+            ss.topbarEmail  = document.getElementById('adminTopbarEmail')?.value.trim()  || ss.topbarEmail;
+            const fbVal = document.getElementById('adminSosmedFb')?.value.trim();
+            const ytVal = document.getElementById('adminSosmedYt')?.value.trim();
+            const igVal = document.getElementById('adminSosmedIg')?.value.trim();
+            if (fbVal) ss.sosmedFb = fbVal;
+            if (ytVal) ss.sosmedYt = ytVal;
+            if (igVal) ss.sosmedIg = igVal;
+
+            renderSiteSettings();
+            syncStateToBackend();
+
+            if (GAS) {
+                const batchSettings = {
+                    'site.runningText':        ss.runningText,
+                    'site.runningTextEnabled': String(ss.runningTextEnabled),
+                    'site.runningTextSpeed':   ss.runningTextSpeed,
+                    'site.logoText':           ss.logoText,
+                    'site.logoSubText':        ss.logoSubText,
+                    'site.topbarAlamat':       ss.topbarAlamat || '',
+                    'site.topbarEmail':        ss.topbarEmail  || '',
+                    'site.sosmedFb':           ss.sosmedFb || '#',
+                    'site.sosmedYt':           ss.sosmedYt || '#',
+                    'site.sosmedIg':           ss.sosmedIg || '#'
+                };
+                google.script.run
+                    .withSuccessHandler(function(r){
+                        if (r === 'success') {
+                            showToast('✓ Pengaturan situs berhasil disimpan!');
+                            if (ss.logoImg) {
+                                google.script.run
+                                    .withSuccessHandler(function(r2){ if(r2==='success') showToast('Logo berhasil tersimpan!'); })
+                                    .withFailureHandler(function(e){ console.warn('GAS logo:', e); })
+                                    .saveSettingsBatch(JSON.stringify({ 'site.logoImg': ss.logoImg }));
+                            }
+                        } else {
+                            showToast('Gagal simpan: ' + r);
+                        }
+                    })
+                    .withFailureHandler(function(e){ console.warn('GAS site:', e); showToast('Gagal menghubungi server GAS.'); })
+                    .saveSettingsBatch(JSON.stringify(batchSettings));
+            } else {
+                showToast('Pengaturan situs berhasil disimpan (lokal)!');
+            }
+        };
+
+        window.resetLogoToDefault = function() {
+            AppState.siteSettings.logoImg = '';
+                try { localStorage.removeItem('prnu_site_logo'); } catch(e) {}
+            const prev = document.getElementById('adminLogoPreviewImg');
+            const prevSvg = document.getElementById('adminLogoPreviewSvg');
+            if (prev) prev.classList.add('hidden');
+            if (prevSvg) prevSvg.classList.remove('hidden');
+            const urlInput = document.getElementById('adminLogoUrl');
+            if (urlInput) urlInput.value = '';
+            renderSiteSettings();
+            showToast('Logo direset ke tampilan default.');
+        };
+
+        // Setup file input preview untuk logo
+        function setupLogoFileInput() {
+            const fileInput = document.getElementById('adminLogoFile');
+            if (!fileInput) return;
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                // Kompres logo ke 300x300 quality 0.85 agar tajam di tampilan navbar
+                compressAndReadFile(file, 300, 300, 0.85, function(compressedBase64) {
+                    AppState.siteSettings.logoImg = compressedBase64;
+                    const prev = document.getElementById('adminLogoPreviewImg');
+                    const prevSvg = document.getElementById('adminLogoPreviewSvg');
+                    if (prev) { prev.src = compressedBase64; prev.classList.remove('hidden'); }
+                    if (prevSvg) prevSvg.classList.add('hidden');
+                    const urlInput = document.getElementById('adminLogoUrl');
+                    if (urlInput) urlInput.value = '';
+                    renderSiteSettings();
+                }); // end compressAndReadFile
+            }); // end change
+        }
+
+        // ============================================================
+        // PROFIL ADMIN HELPERS
+        // ============================================================
+
+        // Populate form saat admin buka tab Kelola Profil
+        function populateProfileForm() {
+            const ps = AppState.profileSettings;
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+            const setImg = (id, src) => { const el = document.getElementById(id); if (el && src) el.src = src; };
+
+            setVal('editSelayangPandang',  ps.selayangPandang);
+            setVal('editPesanQuote',       ps.pesanQuote);
+            setVal('editPesanAuthor',      ps.pesanAuthor);
+            setVal('editPesanAuthorTitle', ps.pesanAuthorTitle);
+            setVal('editProfilCaption',    ps.profilCaption);
+            setVal('editProfilSubCaption', ps.profilSubCaption);
+            setVal('editStat1Num',         ps.stat1Num);
+            setVal('editStat1Label',       ps.stat1Label);
+            setVal('editStat2Num',         ps.stat2Num);
+            setVal('editStat2Label',       ps.stat2Label);
+            setVal('editProfilImgUrl',     ps.profilImg && ps.profilImg.startsWith('http') ? ps.profilImg : '');
+            setImg('editProfilImgPreview', ps.profilImg);
+
+            // Render fokus rows
+            renderFokusAdminRows(ps.fokus || []);
+        }
+
+        function renderFokusAdminRows(fokusArr) {
+            const container = document.getElementById('editFokusContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            (fokusArr.length > 0 ? fokusArr : [
+                { judul: '', desc: '', icon: 'fa-star' }
+            ]).forEach(function(f, idx) {
+                container.appendChild(buildFokusRow(f, idx));
+            });
+        }
+
+        function buildFokusRow(f, idx) {
+            const div = document.createElement('div');
+            div.className = 'fokus-row bg-white border border-slate-200 rounded-xl p-3 space-y-2 relative';
+            div.innerHTML = `
+                <button type="button" onclick="this.closest('.fokus-row').remove()"
+                    class="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs font-bold">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs text-slate-500 font-semibold uppercase">Judul Fokus</label>
+                        <input type="text" class="fokus-judul w-full border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-nuGreen-500" 
+                            value="${f.judul || ''}" placeholder="Pendidikan Dakwah Aswaja">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 font-semibold uppercase">Icon (Font Awesome)</label>
+                        <input type="text" class="fokus-icon w-full border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-nuGreen-500" 
+                            value="${f.icon || 'fa-star'}" placeholder="fa-book-reader">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-500 font-semibold uppercase">Deskripsi</label>
+                    <textarea class="fokus-desc w-full border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-nuGreen-500" 
+                        rows="2" placeholder="Keterangan singkat...">${f.desc || ''}</textarea>
+                </div>`;
+            return div;
+        }
+
+        window.addFokusItem = function() {
+            const container = document.getElementById('editFokusContainer');
+            if (container) container.appendChild(buildFokusRow({ judul: '', desc: '', icon: 'fa-star' }, container.children.length));
+        };
+
+        // Preview foto saat upload file
+        function setupProfilImgPreview() {
+            const fileInput = document.getElementById('editProfilImgFile');
+            if (!fileInput || fileInput._profilBound) return;
+            fileInput._profilBound = true;
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+
+                // ── SKEMA IDENTIK GALERI: 900×675 q0.82 → base64 langsung ──
+                // Tidak perlu Drive — galeri berhasil tajam dengan cara ini
+                compressAndReadFile(file, 900, 675, 0.82, function(b64) {
+                    AppState.profileSettings.profilImg = b64;
+                    AppState.profileSettings._profilImgBase64 = b64; // simpan referensi
+
+                    // Preview & tampilan publik langsung
+                    const preview = document.getElementById('editProfilImgPreview');
+                    if (preview) preview.src = b64;
+                    const pubImg = document.getElementById('pubProfilImg');
+                    if (pubImg) pubImg.src = b64;
+                    const urlInput = document.getElementById('editProfilImgUrl');
+                    if (urlInput) urlInput.value = '';
+                });
+            });
+        }
+
+
+        window.togglePasswordVisibility = function() {
+            const input = document.getElementById('loginPass');
+            const icon  = document.getElementById('togglePassIcon');
+            const hint  = document.getElementById('passVisibleHint');
+            if (!input) return;
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            if (icon) {
+                icon.className = isHidden ? 'fas fa-eye-slash text-sm' : 'fas fa-eye text-sm';
+            }
+            if (hint) hint.classList.toggle('hidden', !isHidden);
+            // Auto-hide setelah 5 detik untuk keamanan
+            if (isHidden) {
+                clearTimeout(window._passHideTimer);
+                window._passHideTimer = setTimeout(function() {
+                    if (input.type === 'text') {
+                        input.type = 'password';
+                        if (icon) icon.className = 'fas fa-eye text-sm';
+                        if (hint) hint.classList.add('hidden');
+                    }
+                }, 5000);
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════
+        // GALERI PUBLIC
+        // ═══════════════════════════════════════════════════════
+        var _galeriLightbox = { idx: 0 };
+        function applyGaleriLightbox() {
+            var photos = AppState.galeri || [];
+            var item = photos[_galeriLightbox.idx];
+            if (!item) return;
+            var imgEl = document.getElementById('galeriLbImg');
+            var capEl = document.getElementById('galeriLbCaption');
+            if (imgEl) imgEl.src = item.img || item;
+            if (capEl) capEl.textContent = (item.caption || '') + ' (' + (_galeriLightbox.idx+1) + '/' + photos.length + ')';
+        }
+        function renderPublicGaleri() {
+            var photos = AppState.galeri || [];
+            var container = document.getElementById('publicGaleriGrid');
+            if (!container) return;
+            if (!photos.length) { container.innerHTML = '<div class="col-span-full text-center text-slate-400 py-10">Belum ada foto galeri.</div>'; return; }
+            var html = '';
+            photos.forEach(function(item, idx) {
+                var src = item.img || item;
+                var cap = item.caption || '';
+                html += '<div class="group relative overflow-hidden rounded-2xl cursor-pointer shadow-sm hover:shadow-lg transition aspect-square" onclick="openGaleriLightbox(' + idx + ')">' +
+                    '<img src="' + src + '" alt="' + cap + '" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" loading="lazy">' +
+                    '<div class="absolute inset-0 bg-nuGreen-950/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center"><i class="fas fa-search-plus text-white text-2xl"></i></div>' +
+                    (cap ? '<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 p-3 opacity-0 group-hover:opacity-100 transition"><p class="text-white text-xs font-semibold truncate">' + cap + '</p></div>' : '') +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+        function openGaleriLightbox(startIdx) {
+            var photos = AppState.galeri || [];
+            if (!photos.length) return;
+            _galeriLightbox.idx = startIdx || 0;
+            var old = document.getElementById('galeriLightbox');
+            if (old) old.remove();
+            var lb = document.createElement('div');
+            lb.id = 'galeriLightbox';
+            lb.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:16px;';
+            lb.addEventListener('click', function(e) { if (e.target === lb) lb.remove(); });
+            var closeBtn = document.createElement('button');
+            closeBtn.style.cssText = 'position:absolute;top:16px;right:20px;color:rgba(255,255,255,0.7);font-size:1.5rem;background:none;border:none;cursor:pointer;z-index:10;';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            closeBtn.addEventListener('click', function() { lb.remove(); });
+            lb.appendChild(closeBtn);
+            ['left','right'].forEach(function(dir) {
+                var btn = document.createElement('button');
+                btn.style.cssText = 'position:absolute;' + dir + ':12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.4rem;width:44px;height:44px;border-radius:50%;cursor:pointer;z-index:10;';
+                btn.innerHTML = '<i class="fas fa-chevron-' + dir + '"></i>';
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    _galeriLightbox.idx = (_galeriLightbox.idx + (dir==='left'?-1:1) + photos.length) % photos.length;
+                    applyGaleriLightbox();
+                });
+                lb.appendChild(btn);
+            });
+            var inner = document.createElement('div');
+            inner.style.cssText = 'max-width:860px;width:100%;text-align:center;';
+            var img = document.createElement('img');
+            img.id = 'galeriLbImg';
+            img.style.cssText = 'max-height:80vh;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 25px 60px rgba(0,0,0,0.5);';
+            var capEl = document.createElement('p');
+            capEl.id = 'galeriLbCaption';
+            capEl.style.cssText = 'color:rgba(255,255,255,0.65);font-size:0.8rem;margin-top:12px;';
+            inner.appendChild(img); inner.appendChild(capEl);
+            lb.appendChild(inner);
+            document.body.appendChild(lb);
+            lb._kh = function(e) {
+                if (e.key==='ArrowLeft')  { _galeriLightbox.idx=(_galeriLightbox.idx-1+photos.length)%photos.length; applyGaleriLightbox(); }
+                if (e.key==='ArrowRight') { _galeriLightbox.idx=(_galeriLightbox.idx+1)%photos.length; applyGaleriLightbox(); }
+                if (e.key==='Escape')     { lb.remove(); document.removeEventListener('keydown',lb._kh); }
+            };
+            document.addEventListener('keydown', lb._kh);
+            applyGaleriLightbox();
+        }
+        window.openGaleriLightbox = openGaleriLightbox;
+
+        // ═══════════════════════════════════════════════════════
+        // GALERI ADMIN
+        // ═══════════════════════════════════════════════════════
+        // ============================================================
+        // GALERI — multi-upload, drop-zone, progress, Drive upload
+        // ============================================================
+        var _galeriSelectedFiles = []; // file objects yang dipilih
+        var _galeriPreviews     = []; // { dataUrl, filename }
+
+        window.showAddGaleriForm = function() {
+            var form = document.getElementById('addGaleriForm');
+            if (form) form.classList.remove('hidden');
+            window.clearGaleriSelection();
+            var ui = document.getElementById('galeriUrlInput');
+            var ci = document.getElementById('galeriCaptionInput');
+            if (ui) ui.value = '';
+            if (ci) ci.value = '';
+            form && form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        window.hideAddGaleriForm = function() {
+            var form = document.getElementById('addGaleriForm');
+            if (form) form.classList.add('hidden');
+            window.clearGaleriSelection();
+        };
+
+        window.clearGaleriSelection = function() {
+            _galeriSelectedFiles = [];
+            _galeriPreviews = [];
+            var fi = document.getElementById('galeriFileInput');
+            if (fi) fi.value = '';
+            var prev = document.getElementById('galeriSelectedPreview');
+            if (prev) prev.classList.add('hidden');
+            var grid = document.getElementById('galeriPreviewGrid');
+            if (grid) grid.innerHTML = '';
+            var cnt = document.getElementById('galeriSelectedCount');
+            if (cnt) cnt.textContent = '0';
+        };
+
+        function setupGaleriFileInput() {
+            var fi = document.getElementById('galeriFileInput');
+            var dz = document.getElementById('galeriDropZone');
+            if (!fi || fi._galBound) return;
+            fi._galBound = true;
+
+            // Drop zone klik
+            if (dz) {
+                dz.addEventListener('click', function() { fi.click(); });
+                dz.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    dz.classList.add('border-nuGreen-500', 'bg-nuGreen-50/40');
+                });
+                dz.addEventListener('dragleave', function() {
+                    dz.classList.remove('border-nuGreen-500', 'bg-nuGreen-50/40');
+                });
+                dz.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    dz.classList.remove('border-nuGreen-500', 'bg-nuGreen-50/40');
+                    var files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                    if (files.length) processGaleriFiles(files);
+                });
+            }
+
+            fi.addEventListener('change', function() {
+                var files = Array.from(this.files);
+                if (files.length) processGaleriFiles(files);
+            });
+        }
+
+        function processGaleriFiles(files) {
+            var MAX = 10;
+            if (files.length > MAX) {
+                showToast('Maksimal ' + MAX + ' foto sekali upload. ' + (files.length - MAX) + ' foto diabaikan.');
+                files = files.slice(0, MAX);
+            }
+            _galeriSelectedFiles = files;
+            _galeriPreviews = [];
+
+            var prev = document.getElementById('galeriSelectedPreview');
+            var grid = document.getElementById('galeriPreviewGrid');
+            var cnt  = document.getElementById('galeriSelectedCount');
+            if (prev) prev.classList.remove('hidden');
+            if (grid) grid.innerHTML = '';
+            if (cnt)  cnt.textContent = files.length;
+
+            var loaded = 0;
+            files.forEach(function(file, idx) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    _galeriPreviews[idx] = { dataUrl: e.target.result, filename: file.name };
+                    loaded++;
+
+                    // Tambah preview thumbnail
+                    if (grid) {
+                        var thumb = document.createElement('div');
+                        thumb.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nuGreen-200 bg-slate-100';
+                        thumb.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">'
+                            + '<button onclick="window.removeGaleriPreview(' + idx + ')" class="absolute top-1 right-1 w-5 h-5 bg-rose-500 hover:bg-rose-700 rounded-full text-white flex items-center justify-center text-[9px] shadow">'
+                            + '<i class="fas fa-times"></i></button>';
+                        grid.appendChild(thumb);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.removeGaleriPreview = function(idx) {
+            _galeriSelectedFiles.splice(idx, 1);
+            _galeriPreviews.splice(idx, 1);
+            if (_galeriSelectedFiles.length === 0) {
+                window.clearGaleriSelection();
+            } else {
+                processGaleriFiles(_galeriSelectedFiles);
+            }
+        };
+
+        window.saveGaleriPhoto = function() {
+            var ui  = document.getElementById('galeriUrlInput');
+            var ci  = document.getElementById('galeriCaptionInput');
+            var cap = ci ? ci.value.trim() : '';
+
+            // MODE URL TUNGGAL
+            if (!_galeriSelectedFiles || _galeriSelectedFiles.length === 0) {
+                var urlVal = ui ? ui.value.trim() : '';
+                if (!urlVal) { showToast('Pilih foto atau masukkan URL terlebih dahulu.'); return; }
+                if (!AppState.galeri) AppState.galeri = [];
+                var item = { id: Date.now(), img: urlVal, caption: cap };
+                AppState.galeri.unshift(item);
+                syncStateToBackend();
+                renderPublicGaleri();
+                renderAdminGaleriGrid();
+                _addSatuFotoGaleriKeGAS(item, function(ok) {
+                    showToast(ok ? '✓ Foto berhasil ditambahkan!' : '⚠️ Foto ditambah lokal, gagal simpan ke database.');
+                });
+                window.hideAddGaleriForm();
+                return;
+            }
+
+            // MODE FILE UPLOAD (multi) — upload satu per satu ke GAS
+            var totalFiles  = _galeriSelectedFiles.length;
+            var uploaded    = 0;
+            var berhasil    = 0;
+            var progressBar = document.getElementById('galeriProgressBar');
+            var progressTxt = document.getElementById('galeriProgressText');
+            var progressDiv = document.getElementById('galeriUploadProgress');
+            var saveLabel   = document.getElementById('galeriSaveLabel');
+            if (progressDiv) progressDiv.classList.remove('hidden');
+            if (saveLabel)   saveLabel.textContent = 'Mengupload…';
+
+            if (!AppState.galeri) AppState.galeri = [];
+
+            _galeriSelectedFiles.forEach(function(file, idx) {
+                compressAndReadFile(file, 900, 675, 0.82, function(b64) {
+                    var item = { id: Date.now() + idx, img: b64, caption: cap };
+                    AppState.galeri.unshift(item);
+
+                    // Simpan langsung ke GAS sheet GaleriPhotos
+                    _addSatuFotoGaleriKeGAS(item, function(ok) {
+                        if (ok) berhasil++;
+                        uploaded++;
+                        var pct = Math.round((uploaded / totalFiles) * 100);
+                        if (progressBar) progressBar.style.width = pct + '%';
+                        if (progressTxt) progressTxt.textContent = 'Menyimpan foto ' + uploaded + ' dari ' + totalFiles + '…';
+
+                        if (uploaded === totalFiles) {
+                            syncStateToBackend();
+                            renderPublicGaleri();
+                            renderAdminGaleriGrid();
+                            setTimeout(function() {
+                                window.hideAddGaleriForm();
+                                if (progressDiv) progressDiv.classList.add('hidden');
+                                if (progressBar) progressBar.style.width = '0%';
+                                if (saveLabel) saveLabel.textContent = 'Simpan ke Galeri';
+                                showToast('✓ ' + berhasil + '/' + totalFiles + ' foto berhasil tersimpan ke database!');
+                            }, 400);
+                        }
+                    });
+                });
+            });
+        };
+
+        function _simpanGaleriKeGAS() {
+            // Tidak dipakai lagi — galeri disimpan per-foto via addGaleriPhoto
+            syncStateToBackend();
+        }
+
+        // Simpan satu foto galeri baru ke GAS sheet GaleriPhotos
+        function _addSatuFotoGaleriKeGAS(item, onDone) {
+            if (!GAS) { if (onDone) onDone(true); return; }
+            google.script.run
+                .withSuccessHandler(function(r) { if (onDone) onDone(r === 'success'); })
+                .withFailureHandler(function(e) {
+                    console.warn('addGaleriPhoto GAS:', e);
+                    if (onDone) onDone(false);
+                })
+                .addGaleriPhoto(JSON.stringify({ id: item.id, img: item.img, caption: item.caption || '' }));
+        }
+
+        function renderAdminGaleriGrid() {
+            var grid    = document.getElementById('adminGaleriGrid');
+            var empty   = document.getElementById('adminGaleriEmpty');
+            var counter = document.getElementById('galeriCountBadge');
+            var btnHapus= document.getElementById('btnHapusSemua');
+            if (!grid) return;
+            grid.innerHTML = '';
+            var list = AppState.galeri || [];
+
+            if (counter) counter.textContent = list.length + ' foto';
+            if (btnHapus) btnHapus.classList.toggle('hidden', list.length === 0);
+            if (empty)    empty.classList.toggle('hidden', list.length > 0);
+
+            list.forEach(function(item, idx) {
+                var wrap = document.createElement('div');
+                wrap.className = 'relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-100';
+                wrap.style.aspectRatio = '1/1';
+
+                var img = document.createElement('img');
+                img.src = item.img || item;
+                img.className = 'w-full h-full object-cover transition duration-300 group-hover:scale-105';
+                img.loading = 'lazy';
+                img.onerror = function() { this.src = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Foto'; };
+
+                var ov = document.createElement('div');
+                ov.className = 'absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end p-2';
+
+                if (item.caption) {
+                    var cp = document.createElement('p');
+                    cp.className = 'text-white text-[9px] font-semibold line-clamp-2 mb-1.5';
+                    cp.textContent = item.caption;
+                    ov.appendChild(cp);
+                }
+
+                var delBtn = document.createElement('button');
+                delBtn.className = 'w-full bg-rose-500/90 hover:bg-rose-600 text-white text-[10px] font-bold py-1 rounded-lg flex items-center justify-center gap-1 transition';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
+                delBtn.addEventListener('click', (function(id) {
+                    return function(e) { e.stopPropagation(); window.deleteGaleriPhoto(id); };
+                })(item.id || idx));
+                ov.appendChild(delBtn);
+
+                wrap.appendChild(img);
+                wrap.appendChild(ov);
+                grid.appendChild(wrap);
+            });
+        }
+
+        window.deleteGaleriPhoto = function(idOrIdx) {
+            showDeleteConfirm(
+                'Yakin hapus foto ini dari galeri?<br><span class="text-rose-500 font-semibold text-sm">Foto tidak dapat dikembalikan.</span>',
+                function() {
+                    var targetId = idOrIdx;
+                    AppState.galeri = (AppState.galeri || []).filter(function(item, i) {
+                        return item.id !== idOrIdx && i !== idOrIdx;
+                    });
+                    renderPublicGaleri();
+                    renderAdminGaleriGrid();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Foto dihapus dari galeri.'); })
+                            .withFailureHandler(function(e){ console.warn('deleteGaleriPhoto GAS:', e); showToast('Foto dihapus lokal.'); })
+                            .deleteGaleriPhoto(String(targetId));
+                    } else {
+                        showToast('Foto dihapus dari galeri.');
+                    }
+                }
+            );
+        };
+
+        window.deleteAllGaleri = function() {
+            showDeleteConfirm(
+                '<i class="fas fa-exclamation-triangle text-rose-500 text-2xl mb-2 block"></i>'
+                + '<span class="font-bold text-slate-800">Hapus Semua Foto Galeri?</span><br>'
+                + '<span class="text-slate-500 text-sm">Seluruh ' + (AppState.galeri||[]).length + ' foto akan dihapus permanen.</span>',
+                function() {
+                    AppState.galeri = [];
+                    renderPublicGaleri();
+                    renderAdminGaleriGrid();
+                    syncStateToBackend();
+                    if (GAS) {
+                        google.script.run
+                            .withSuccessHandler(function(r){ showToast('Semua foto galeri dihapus.'); })
+                            .withFailureHandler(function(e){ console.warn('deleteAllGaleri GAS:', e); })
+                            .deleteAllGaleriPhotos();
+                    } else {
+                        showToast('Semua foto galeri dihapus.');
+                    }
+                }
+            );
+        };
+
+
+        // ============================================================
+        // DELETE CONFIRMATION MODAL
+        // ============================================================
+        var _deleteCallback = null;
+
+        function showDeleteConfirm(message, onConfirm) {
+            _deleteCallback = onConfirm;
+            var modal   = document.getElementById('deleteConfirmModal');
+            var dialog  = document.getElementById('deleteConfirmDialog');
+            var msg     = document.getElementById('deleteConfirmMsg');
+            if (!modal || !dialog) { onConfirm(); return; }
+            if (msg && message) msg.innerHTML = message;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    dialog.classList.remove('scale-90', 'opacity-0');
+                    dialog.classList.add('scale-100', 'opacity-100');
+                });
+            });
+        }
+
+
+        // Konfirmasi sebelum menyimpan perubahan edit
+        function showEditConfirm(itemName, onConfirm) {
+            showDeleteConfirm(
+                '<i class="fas fa-edit text-nuGreen-700 text-2xl mb-2 block"></i>' +
+                '<span class="font-bold text-slate-800">Simpan Perubahan?</span><br>' +
+                '<span class="text-slate-500 text-sm">' + (itemName || 'data') + ' akan diperbarui.</span>',
+                onConfirm
+            );
+            // Ganti ikon dan warna tombol konfirmasi jadi hijau (bukan merah)
+            setTimeout(function() {
+                var btn = document.getElementById('deleteConfirmBtn');
+                if (btn) {
+                    btn.className = btn.className.replace('from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700', 'from-nuGreen-700 to-nuGreen-800 hover:from-nuGreen-800 hover:to-nuGreen-900');
+                    btn.innerHTML = '<i class="fas fa-save text-xs"></i> Ya, Simpan';
+                }
+                var icon = document.querySelector('#deleteConfirmModal .fa-trash-alt');
+                if (icon) {
+                    icon.className = 'fas fa-save text-2xl text-nuGreen-600';
+                    icon.closest('.w-16').className = 'w-16 h-16 rounded-full bg-nuGreen-50 border-2 border-nuGreen-100 flex items-center justify-center';
+                }
+                var strip = document.querySelector('#deleteConfirmModal .h-1\.5');
+                if (strip) strip.className = strip.className.replace('from-rose-500 to-rose-400', 'from-nuGreen-600 to-nuGreen-500');
+            }, 50);
+        }
+
+        function resetDeleteConfirmStyle() {
+            // Kembalikan ke style hapus (merah) setelah modal ditutup
+            setTimeout(function() {
+                var btn = document.getElementById('deleteConfirmBtn');
+                if (btn) {
+                    btn.className = btn.className
+                        .replace('from-nuGreen-700 to-nuGreen-800 hover:from-nuGreen-800 hover:to-nuGreen-900',
+                                 'from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700');
+                    btn.innerHTML = '<i class="fas fa-trash-alt text-xs"></i> Ya, Hapus';
+                }
+            }, 350);
+        }
+
+        window.closeDeleteConfirm = function() {
+            var modal  = document.getElementById('deleteConfirmModal');
+            var dialog = document.getElementById('deleteConfirmDialog');
+            if (!dialog) return;
+            dialog.classList.remove('scale-100', 'opacity-100');
+            dialog.classList.add('scale-90', 'opacity-0');
+            setTimeout(function() {
+                if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+                _deleteCallback = null;
+                resetDeleteConfirmStyle();
+            }, 280);
+        }
+
+        window.confirmDeleteAction = function() {
+            var cb = _deleteCallback;
+            closeDeleteConfirm();
+            setTimeout(function() { if (cb) cb(); }, 100);
+        }
+
+        function setupAllEventListeners() {
+            const safeBind = (id, event, callback) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener(event, callback);
+            };
+
+            safeBind('adminLoginBtn', 'click', handleAdminBtnClick);
+            safeBind('mobileAdminLoginBtn', 'click', () => {
+                document.getElementById('mobileDrawer').classList.add('hidden');
+                handleAdminBtnClick();
+            });
+
+            safeBind('openDonationBtn', 'click', openDonationModal);
+            safeBind('heroDonationBtn', 'click', openDonationModal);
+            safeBind('mobileDonationBtn', 'click', () => {
+                document.getElementById('mobileDrawer').classList.add('hidden');
+                openDonationModal();
+            });
+
+            safeBind('closeDonationModalBtn', 'click', closeDonationModal);
+            safeBind('closeDonationBackdrop', 'click', closeDonationModal);
+            safeBind('tab-don-transparansi', 'click', () => switchDonationTab('transparansi'));
+            safeBind('tab-don-salurkan', 'click', () => switchDonationTab('salurkan'));
+            safeBind('copyBsiBtn', 'click', () => copyToClipboard('1234567890'));
+
+            safeBind('closeLoginModalBtn', 'click', closeLoginModal);
+            safeBind('closeLoginBackdrop', 'click', closeLoginModal);
+            safeBind('adminLoginForm', 'submit', handleLoginSubmit);
+
+            safeBind('closeAdminPanelModalBtn', 'click', closeAdminPanelModal);
+            safeBind('btn-mob-admin-siteconfig', 'click', () => switchAdminTab('siteconfig'));
+            
+            // Sidebar Admin tabs
+            safeBind('btn-admin-siteconfig', 'click', () => switchAdminTab('siteconfig'));
+            safeBind('btn-admin-galeri', 'click', () => switchAdminTab('galeri'));
+            safeBind('btn-admin-beranda-settings', 'click', () => switchAdminTab('beranda-settings'));
+            safeBind('btn-admin-profil-settings', 'click', () => switchAdminTab('profil-settings'));
+            safeBind('btn-admin-layanan-settings', 'click', () => switchAdminTab('layanan-settings'));
+            safeBind('btn-admin-banom-settings', 'click', () => switchAdminTab('banom-settings'));
+            safeBind('btn-admin-shalat', 'click', () => switchAdminTab('shalat'));
+            safeBind('btn-admin-berita-manage', 'click', () => switchAdminTab('berita-manage'));
+            safeBind('btn-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
+            safeBind('btn-admin-pengurus-manage', 'click', () => switchAdminTab('pengurus-manage'));
+            safeBind('btn-admin-inbox', 'click', () => switchAdminTab('inbox'));
+            
+            // Mobile Admin tabs
+            safeBind('btn-mob-admin-beranda', 'click', () => switchAdminTab('beranda-settings'));
+            safeBind('btn-mob-admin-profil', 'click', () => switchAdminTab('profil-settings'));
+            safeBind('btn-mob-admin-layanan', 'click', () => switchAdminTab('layanan-settings'));
+            safeBind('btn-mob-admin-banom', 'click', () => switchAdminTab('banom-settings'));
+            safeBind('btn-mob-admin-shalat', 'click', () => switchAdminTab('shalat'));
+            safeBind('btn-mob-admin-berita', 'click', () => switchAdminTab('berita-manage'));
+            safeBind('btn-mob-admin-galeri', 'click', () => switchAdminTab('galeri'));
+            safeBind('btn-mob-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
+            safeBind('btn-mob-admin-pengurus', 'click', () => switchAdminTab('pengurus-manage'));
+            safeBind('btn-mob-admin-inbox', 'click', () => switchAdminTab('inbox'));
+            safeBind('btn-mob-admin-kontak', 'click', () => switchAdminTab('kontak'));
+            safeBind('btn-admin-kontak', 'click', () => switchAdminTab('kontak'));
+            safeBind('formKontakSettings', 'submit', handleKontakSettingsUpdate);
+
+            safeBind('adminLogoutBtnSidebar', 'click', handleLogout);
+            safeBind('adminLogoutBtnMobile', 'click', handleLogout);
+
+            safeBind('editLayananSelect', 'change', loadLayananToForm);
+            safeBind('editBanomSelect', 'change', loadBanomToForm);
+
+            safeBind('formHomepageSettings', 'submit', handleHomepageSettingsUpdate);
+            safeBind('formProfileSettings', 'submit', handleProfileSettingsUpdate);
+            safeBind('formLayananSettings', 'submit', handleLayananSettingsUpdate);
+            safeBind('formBanomSettings', 'submit', handleBanomSettingsUpdate);
+            var addNewsFormEl = document.getElementById('addNewsForm');
+            if (addNewsFormEl) {
+                addNewsFormEl.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (editingNewsId !== null) {
+                        showEditConfirm('Berita ini', function() { handleAddNewNews(e); });
+                    } else {
+                        handleAddNewNews(e);
+                    }
+                });
+            }
+            var addFinanceFormEl = document.getElementById('addFinanceForm');
+            if (addFinanceFormEl) {
+                addFinanceFormEl.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (editingFinanceId !== null) {
+                        showEditConfirm('Laporan keuangan ini', function() { handleAddNewFinance(e); });
+                    } else {
+                        handleAddNewFinance(e);
+                    }
+                });
+            }
+            // Wrap submit dengan konfirmasi edit
+            var addPengurusForm = document.getElementById('addPengurusForm');
+            if (addPengurusForm) {
+                addPengurusForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (editingPengurusId !== null) {
+                        var nm = document.getElementById('newPengurusName') ? document.getElementById('newPengurusName').value : 'pengurus';
+                        showEditConfirm('Data ' + nm, function() { handleAddNewPengurus(e); });
+                    } else {
+                        handleAddNewPengurus(e);
+                    }
+                });
+            }
+            safeBind('contactForm', 'submit', handleContactSubmit);
+
+            safeBind('btnAddNewsToggle', 'click', toggleAddNewsForm);
+            safeBind('btnCancelAddNews', 'click', toggleAddNewsForm);
+            safeBind('btnFinanceToggle', 'click', toggleAddFinanceForm);
+            safeBind('btnCancelAddFinance', 'click', toggleAddFinanceForm);
+            safeBind('btnPengurusToggle', 'click', toggleAddPengurusForm);
+            safeBind('btnCancelAddPengurus', 'click', toggleAddPengurusForm);
+
+            safeBind('tab-ansor', 'click', () => switchBanom('ansor'));
+            safeBind('tab-fatayat', 'click', () => switchBanom('fatayat'));
+            safeBind('tab-ipnu', 'click', () => switchBanom('ipnu'));
+            safeBind('tab-muslimat', 'click', () => switchBanom('muslimat'));
+            safeBind('tab-upzisnu', 'click', () => switchBanom('upzisnu'));
+            safeBind('tab-pagar_nusa', 'click', () => switchBanom('pagar_nusa'));
+
+            safeBind('btn-pub-Pengurus-NU', 'click', () => filterPublicPengurus('Pengurus NU'));
+            safeBind('btn-pub-Muslimat', 'click', () => filterPublicPengurus('Muslimat'));
+            safeBind('btn-pub-Fatayat', 'click', () => filterPublicPengurus('Fatayat'));
+            safeBind('btn-pub-Ansor', 'click', () => filterPublicPengurus('Ansor'));
+            safeBind('btn-pub-IPNU', 'click', () => filterPublicPengurus('IPNU'));
+            safeBind('btn-pub-IPPNU', 'click', () => filterPublicPengurus('IPPNU'));
+            safeBind('btn-pub-UPZISNU', 'click', () => filterPublicPengurus('UPZISNU'));
+            safeBind('btn-pub-Pagar-Nusa', 'click', () => filterPublicPengurus('Pagar Nusa'));
+
+            safeBind('btn-cat-semua', 'click', () => filterNews('semua'));
+            safeBind('btn-cat-kegiatan', 'click', () => filterNews('kegiatan'));
+            safeBind('btn-cat-dakwah', 'click', () => filterNews('dakwah'));
+
+            safeBind('mobileMenuBtn', 'click', () => {
+                document.getElementById('mobileDrawer').classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('mobileDrawer').classList.add('hidden');
+                });
+            });
+
+            // Berita modal — tombol close via onclick di HTML, tidak perlu binding
+
+            const setupGalleryClick = () => {
+                document.querySelectorAll('.gallery-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const imgUrl = el.getAttribute('data-img');
+                        document.getElementById('lightboxImg').src = imgUrl;
+                        document.getElementById('lightbox').classList.remove('hidden');
+                    });
+                });
+            };
+            setupGalleryClick();
+
+            safeBind('closeLightboxBtn', 'click', () => {
+                document.getElementById('lightbox').classList.add('hidden');
+            });
+            safeBind('lightbox', 'click', (e) => {
+                if (e.target.id === 'lightbox') {
+                    document.getElementById('lightbox').classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+    <!-- MODAL KONFIRMASI LOGOUT -->
+    <div id="logoutConfirmModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div id="logoutBackdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="cancelLogout()"></div>
+        <!-- Dialog -->
+        <div id="logoutDialog" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm transform scale-90 opacity-0 transition-all duration-300 overflow-hidden">
+            <!-- Header strip -->
+            <div class="h-1.5 w-full bg-gradient-to-r from-rose-500 to-rose-400"></div>
+            <div class="p-6">
+                <!-- Icon -->
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-rose-50 border-2 border-rose-100 flex items-center justify-center">
+                        <i class="fas fa-sign-out-alt text-2xl text-rose-500"></i>
+                    </div>
+                </div>
+                <!-- Teks -->
+                <h3 class="text-center text-lg font-bold text-slate-800 mb-1">Konfirmasi Logout</h3>
+                <p class="text-center text-sm text-slate-500 leading-relaxed mb-6">
+                    Anda akan keluar dari <span class="font-semibold text-nuGreen-800">Panel Admin PRNU</span>.<br>
+                    Yakin ingin melanjutkan?
+                </p>
+                <!-- Tombol -->
+                <div class="flex gap-3">
+                    <button onclick="cancelLogout()"
+                        class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-arrow-left text-xs"></i> Batal
+                    </button>
+                    <button onclick="confirmLogout()"
+                        class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold text-sm hover:from-rose-600 hover:to-rose-700 shadow-md shadow-rose-200 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-out-alt text-xs"></i> Ya, Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL KONFIRMASI HAPUS -->
+    <div id="deleteConfirmModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
+        <div id="deleteConfirmBackdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDeleteConfirm()"></div>
+        <div id="deleteConfirmDialog" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm transform scale-90 opacity-0 transition-all duration-300 overflow-hidden">
+            <div class="h-1.5 w-full bg-gradient-to-r from-rose-500 to-rose-400"></div>
+            <div class="p-6">
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-rose-50 border-2 border-rose-100 flex items-center justify-center">
+                        <i class="fas fa-trash-alt text-2xl text-rose-500"></i>
+                    </div>
+                </div>
+                <h3 class="text-center text-lg font-bold text-slate-800 mb-1">Konfirmasi Hapus</h3>
+                <p id="deleteConfirmMsg" class="text-center text-sm text-slate-500 leading-relaxed mb-6">Yakin ingin menghapus data ini?<br>Data tidak dapat dikembalikan.</p>
+                <div class="flex gap-3">
+                    <button id="deleteCancelBtn" onclick="closeDeleteConfirm()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-arrow-left text-xs"></i> Batal
+                    </button>
+                    <button id="deleteConfirmBtn" onclick="confirmDeleteAction()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold text-sm hover:from-rose-600 hover:to-rose-700 shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fas fa-trash-alt text-xs"></i> Ya, Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
