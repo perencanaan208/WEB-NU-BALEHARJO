@@ -2084,7 +2084,7 @@
                                 <button onclick="window.shareNewsWA && window.shareNewsWA()" class="flex-1 flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs py-2.5 rounded-xl transition border border-green-100">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
+                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('✅ Link berita disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
                                     <i class="fas fa-link"></i> Salin Link
                                 </button>
                             </div>
@@ -2117,7 +2117,7 @@
                                 <button onclick="window.shareNewsWA && window.shareNewsWA()" class="flex-1 flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs py-2.5 rounded-xl transition border border-green-100">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
+                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('✅ Link berita disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200">
                                     <i class="fas fa-link"></i> Salin Link
                                 </button>
                             </div>
@@ -2934,7 +2934,7 @@
                         }
                     }
                     // Beri sedikit jeda agar render selesai sebelum splash hilang
-                    setTimeout(function() { hideSplash('Data tersinkron ✓'); }, 300);
+                    setTimeout(function() { hideSplash('Data tersinkron ✓'); if(window._checkBeritaHash) _checkBeritaHash(); }, 300);
                 });
             } else {
                 // Tidak ada GAS (preview lokal) — tutup splash setelah 1.5 detik
@@ -4075,7 +4075,8 @@
 
             // ── Share WhatsApp ──
             window.shareNewsWA = function() {
-                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + window.location.href;
+                var beritaUrl = window.location.origin + window.location.pathname + '#berita-' + id;
+                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + beritaUrl;
                 var url  = 'https://wa.me/?text=' + encodeURIComponent(text);
                 window.open(url, '_blank');
             };
@@ -4102,16 +4103,52 @@
                 else related.closest('.mt-12').style.display = '';
             }
 
-            // ── Tampilkan modal (slide dari bawah di mobile, fade di PC) ──
+            // ── Tampilkan modal & set hash URL ──
             modal.classList.remove('hidden');
             if (scroll) scroll.scrollTop = 0;
             document.body.style.overflow = 'hidden';
+            // Set hash agar URL bisa dibagikan langsung ke berita ini
+            history.pushState({ beritaId: id }, '', '#berita-' + id);
         };
+
+        // ── Hash Router: buka berita dari URL hash ──
+        // Dipanggil setelah semua data AppState siap
+        window._checkBeritaHash = function() {
+            var hash = window.location.hash;
+            if (hash && hash.startsWith('#berita-')) {
+                var beritaId = hash.replace('#berita-', '');
+                if (beritaId && AppState.news && AppState.news.length) {
+                    var found = AppState.news.find(function(x) { return String(x.id) === String(beritaId); });
+                    if (found) {
+                        setTimeout(function() { window.openNewsDetail(beritaId); }, 300);
+                    }
+                }
+            }
+        };
+        // Tangani tombol back/forward browser
+        window.addEventListener('popstate', function(e) {
+            var hash = window.location.hash;
+            if (hash && hash.startsWith('#berita-')) {
+                var beritaId = hash.replace('#berita-', '');
+                if (beritaId) window.openNewsDetail(beritaId);
+            } else {
+                // Hash hilang → tutup modal jika terbuka
+                var modal = document.getElementById('newsModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
 
         window.closeNewsModal = function() {
             const modal = document.getElementById('newsModal');
             modal.classList.add('hidden');
             document.body.style.overflow = '';
+            // Kembali ke URL utama (hapus hash)
+            if (window.location.hash.startsWith('#berita-')) {
+                history.pushState(null, '', window.location.pathname);
+            }
         };
 
         window.renderPublicFinanceTable = function() {
