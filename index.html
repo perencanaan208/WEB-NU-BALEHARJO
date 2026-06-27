@@ -507,7 +507,8 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch z-10 w-full">
+        <div class="relative max-w-7xl mx-auto px-4 py-5 flex flex-col gap-4 z-10 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch">
 
             <!-- ── Kolom 1: Teks Hero ── -->
             <div class="flex flex-col justify-center space-y-4 text-center lg:text-left">
@@ -595,8 +596,38 @@
                     <p class="text-[9px] text-white/30 text-center">Diperbarui setiap kunjungan</p>
                 </div>
             </div>
+        </div><!-- end baris-1 -->
 
-        </div>
+        <!-- ── Baris 2: Slider Pengurus ── -->
+        <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
+                    <i class="fas fa-users text-xs"></i>Pengurus PRNU Baleharjo
+                </h3>
+                <a href="#" onclick="showPage('pengurus');return false;" class="text-[9px] text-white/50 hover:text-nuGold-300 flex items-center gap-1 transition">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></a>
+            </div>
+            <div class="relative">
+                <div class="overflow-hidden" id="pengurusSliderWrap">
+                    <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out gap-3">
+                        <!-- Diisi JS -->
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                        <div class="shrink-0 w-28 animate-pulse bg-white/10 rounded-xl h-28"></div>
+                    </div>
+                </div>
+                <button onclick="pengurusSlide(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-nuGreen-900/80 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button onclick="pengurusSlide(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-nuGreen-900/80 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div><!-- end baris-2 -->
+
+        </div><!-- end flex col wrapper -->
     </section>
 
     <section id="profil" class="page-section py-20 bg-white">
@@ -3744,6 +3775,7 @@
         function renderAllPublicComponents() {
             try { renderSiteSettings(); } catch(e) {}
             try { renderBerandaBerita(); } catch(e) {}
+            try { renderBerandaPengurus(); } catch(e) {}
             try { renderBerandaGaleri(); } catch(e) {}
             try { preloadPentaFotos().then(function(){ renderPentasyarufanGaleri(); renderAdminPentaList(); }); } catch(e) {}
             try { renderAdminPentaList(); } catch(e) {}
@@ -4179,6 +4211,66 @@
             document.body.style.overflow = 'hidden';
             // Set hash agar URL bisa dibagikan langsung ke berita ini
             history.pushState({ beritaId: id }, '', '#berita-' + id);
+        };
+
+        // ══════════════════════════════════════════════
+        // SLIDER PENGURUS DI BERANDA
+        // ══════════════════════════════════════════════
+        var _pengurusSlider = { idx: 0, perView: 6, total: 0 };
+
+        function pengurusSlide(dir) {
+            var track = document.getElementById('pengurusSliderTrack');
+            var wrap  = document.getElementById('pengurusSliderWrap');
+            if (!track || !wrap) return;
+            // Hitung perView berdasarkan lebar wrap
+            var cardW = 120; // px (w-28 + gap)
+            var perView = Math.max(1, Math.floor(wrap.offsetWidth / (cardW + 12)));
+            _pengurusSlider.perView = perView;
+            var maxIdx = Math.max(0, _pengurusSlider.total - perView);
+            _pengurusSlider.idx = Math.min(maxIdx, Math.max(0, _pengurusSlider.idx + dir));
+            track.style.transform = 'translateX(-' + (_pengurusSlider.idx * (cardW + 12)) + 'px)';
+        }
+
+        window.renderBerandaPengurus = function() {
+            var track = document.getElementById('pengurusSliderTrack');
+            if (!track) return;
+            var list = (AppState.pengurus || []);
+            if (list.length === 0) {
+                track.innerHTML = '<div class="text-white/40 text-xs italic py-4 px-2">Data pengurus belum tersedia.</div>';
+                return;
+            }
+            _pengurusSlider.total = list.length;
+            _pengurusSlider.idx   = 0;
+
+            // Warna badge per group
+            var groupColor = {
+                'Pengurus NU': 'bg-nuGold-500 text-nuGreen-950',
+                'Muslimat':    'bg-emerald-400 text-emerald-950',
+                'Fatayat':     'bg-teal-400 text-teal-950',
+                'Ansor':       'bg-amber-400 text-amber-950',
+                'IPNU':        'bg-blue-400 text-blue-950',
+                'IPPNU':       'bg-pink-400 text-pink-950',
+                'UPZISNU':     'bg-lime-400 text-lime-950',
+                'KOKAM':       'bg-red-400 text-red-950',
+                'Pagar Nusa':  'bg-orange-400 text-orange-950',
+            };
+
+            track.innerHTML = list.map(function(p) {
+                var gc = groupColor[p.group] || 'bg-white/20 text-white';
+                var hasFoto = p.foto && p.foto.length > 50;
+                var avatarHtml = hasFoto
+                    ? '<img src="' + p.foto + '" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">' +
+                      '<div class="w-full h-full hidden items-center justify-center text-nuGold-400 text-xl font-bold font-serif">' + (p.nama||'?')[0] + '</div>'
+                    : '<div class="w-full h-full flex items-center justify-center text-nuGold-400 text-xl font-bold font-serif">' + (p.nama||'?')[0] + '</div>';
+                return '<div class="shrink-0 w-28 flex flex-col items-center gap-1.5 cursor-pointer group" onclick="showPage('pengurus')">' +
+                    '<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 group-hover:border-nuGold-400 transition bg-nuGreen-800 relative">' +
+                        avatarHtml +
+                    '</div>' +
+                    '<span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full ' + gc + ' text-center leading-tight">' + (p.group||'') + '</span>' +
+                    '<p class="text-[9px] font-semibold text-white text-center leading-tight line-clamp-2 w-full">' + (p.nama||'') + '</p>' +
+                    '<p class="text-[8px] text-white/50 text-center leading-tight line-clamp-1 w-full">' + (p.jabatan||'') + '</p>' +
+                '</div>';
+            }).join('');
         };
 
         // ── Hash Router: buka berita dari URL hash ──
