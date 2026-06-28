@@ -587,22 +587,22 @@
 
             <!-- Kolom 1: Slider Pengurus -->
             <div class="flex flex-col">
-                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col h-full" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
                     <i class="fas fa-users text-xs"></i>Pengurus PRNU Baleharjo
                 </h3>
                 <a href="#" onclick="showPage('pengurus');return false;" class="text-[9px] text-white/50 hover:text-nuGold-300 flex items-center gap-1 transition">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></a>
             </div>
-            <div class="relative overflow-hidden" id="pengurusSliderWrap" style="max-height:220px">
+            <div class="relative overflow-hidden flex-1" id="pengurusSliderWrap">
                 <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out">
                     <div class="pengurus-slide shrink-0 w-full flex gap-3">
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
-                        <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
+                        <div class="animate-pulse bg-white/10 rounded-xl w-full h-full min-h-[160px]"></div>
                     </div>
                 </div>
                 <button onclick="bsMovePengurus(-1)" class="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 border border-white/20 text-white w-7 h-7 rounded-full flex items-center justify-center hover:bg-nuGold-500 hover:text-nuGreen-950 transition text-xs z-10"><i class="fas fa-chevron-left"></i></button>
@@ -4117,15 +4117,14 @@
             track.innerHTML = list.map(function(p) {
                 var badge = gc[p.group]||'bg-white/20 text-white';
                 var foto  = p.photo||('https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0]));
-                return '<div class="bs-slide-hero shrink-0 w-full">' +
-                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 flex flex-col" onclick="showPage(\'pengurus\')">' +
-                        '<div class="relative overflow-hidden" style="height:140px">' +
-                            '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src=\'https://placehold.co/400x300/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
-                            '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
-                        '</div>' +
-                        '<div class="p-2.5">' +
-                            '<h3 class="font-bold text-white text-[11px] leading-snug group-hover:text-nuGold-300">'+(p.name||'')+'</h3>' +
-                            '<p class="text-[10px] text-white/60 mt-0.5">'+(p.role||'')+'</p>' +
+                return '<div class="bs-slide-hero shrink-0 w-full h-full">' +
+                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 h-full relative" onclick="showPage(\'pengurus\')">' +
+                        '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" ' +
+                            'onerror="this.src=\'https://placehold.co/400x300/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
+                        '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
+                        '<div class="absolute bottom-0 left-0 right-0 px-3 py-2" style="background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.3) 60%,transparent 100%)">' +
+                            '<p class="text-white font-bold text-[10px] leading-tight">'+(p.name||'')+'</p>' +
+                            '<p class="text-white/70 text-[9px] leading-tight mt-0.5">'+(p.role||'')+'</p>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
