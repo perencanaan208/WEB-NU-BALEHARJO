@@ -2107,6 +2107,11 @@
                         </span>
                         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
                         <span id="newsModalCategoryInline" class="text-xs font-bold uppercase tracking-wider text-nuGreen-700"></span>
+                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                        <span id="newsModalViews" class="flex items-center gap-1.5 text-slate-400">
+                            <i class="fas fa-eye text-nuGreen-700"></i>
+                            <span class="font-medium">...</span>
+                        </span>
                     </div>
                 </div>
 
@@ -4006,7 +4011,17 @@
             // ── Metadata ──
             const cat  = article.category || '';
             const auth = article.author   || 'PRNU Baleharjo';
-            const dt   = article.date     || '';
+            // Format tanggal: hapus format raw ISO, tampilkan tanggal Indonesia
+            var dtRaw = article.date || '';
+            var dtFormatted = (function(raw) {
+                if (!raw) return '';
+                // Coba parse berbagai format
+                var d = new Date(raw);
+                if (isNaN(d.getTime())) return raw; // fallback ke string asli jika tidak bisa parse
+                var bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                return d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear();
+            })(dtRaw);
+
             ['newsModalCategoryBadge','newsModalCategoryInline','newsModalCategoryOverlay'].forEach(function(elId) {
                 var el = document.getElementById(elId);
                 if (el) el.textContent = cat;
@@ -4014,9 +4029,36 @@
             var authorEl = document.getElementById('newsModalAuthor');
             if (authorEl) authorEl.querySelector('span').textContent = auth;
             var dateEl = document.getElementById('newsModalDate');
-            if (dateEl) dateEl.querySelector('span').textContent = dt;
+            if (dateEl) dateEl.querySelector('span').textContent = dtFormatted;
             var dateTopEl = document.getElementById('newsModalDateTop');
-            if (dateTopEl) dateTopEl.textContent = dt;
+            if (dateTopEl) dateTopEl.textContent = dtFormatted;
+
+            // ── Counter baca: tampilkan dulu dari cache, lalu increment via GAS ──
+            var viewsEl = document.getElementById('newsModalViews');
+            if (viewsEl) {
+                var cachedViews = AppState._newsViews && AppState._newsViews[String(id)];
+                viewsEl.querySelector('span').textContent = cachedViews
+                    ? cachedViews.toLocaleString('id-ID') + ' kali dibaca'
+                    : '...';
+            }
+            // Increment view di background (tidak tunggu hasil)
+            if (window.google && google.script) {
+                google.script.run
+                    .withSuccessHandler(function(result) {
+                        try {
+                            var data = JSON.parse(result);
+                            if (!AppState._newsViews) AppState._newsViews = {};
+                            AppState._newsViews[String(id)] = data.views;
+                            var ve = document.getElementById('newsModalViews');
+                            if (ve) ve.querySelector('span').textContent = Number(data.views).toLocaleString('id-ID') + ' kali dibaca';
+                        } catch(e) {}
+                    })
+                    .withFailureHandler(function() {
+                        var ve = document.getElementById('newsModalViews');
+                        if (ve) ve.querySelector('span').textContent = '';
+                    })
+                    .incrementNewsView(String(id));
+            }
 
             // ── Share WhatsApp ──
             window.shareNewsWA = function() {
