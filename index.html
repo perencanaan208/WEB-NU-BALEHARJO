@@ -1540,10 +1540,59 @@
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">Penulis/Organisasi</label>
                                     <input type="text" id="newNewsAuthor" placeholder="Misal: LDNU, LazisNU, Ansor" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800">
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Upload Foto Berita (Maksimal 4 Foto)</label>
-                                    <input type="file" id="newNewsImgs" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-nuGreen-800 hover:file:bg-emerald-100 transition">
-                                    <span class="text-[10px] text-slate-400 block mt-1" id="newsImgCount">Maksimal dapat memilih 4 file gambar sekaligus</span>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-2">Upload Foto Berita</label>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <!-- Foto 1: Utama -->
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[10px] font-bold text-nuGreen-700 uppercase tracking-wide">📷 Foto Utama <span class="text-rose-500">*</span></span>
+                                            <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-nuGreen-300 hover:border-nuGreen-500 rounded-xl cursor-pointer bg-white transition overflow-hidden" style="height:90px">
+                                                <img id="prevNewsImg0" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden">
+                                                <div id="prevNewsImg0Placeholder" class="flex flex-col items-center justify-center gap-1 z-10">
+                                                    <i class="fas fa-image text-nuGreen-400 text-xl"></i>
+                                                    <span class="text-[9px] text-slate-400">Klik pilih foto</span>
+                                                </div>
+                                                <input type="file" id="newNewsImg0" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewNewsImg(this,0)">
+                                            </label>
+                                        </div>
+                                        <!-- Foto 2 -->
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Foto 2</span>
+                                            <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-nuGreen-400 rounded-xl cursor-pointer bg-white transition overflow-hidden" style="height:90px">
+                                                <img id="prevNewsImg1" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden">
+                                                <div id="prevNewsImg1Placeholder" class="flex flex-col items-center justify-center gap-1 z-10">
+                                                    <i class="fas fa-plus text-slate-300 text-xl"></i>
+                                                    <span class="text-[9px] text-slate-300">Opsional</span>
+                                                </div>
+                                                <input type="file" id="newNewsImg1" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewNewsImg(this,1)">
+                                            </label>
+                                        </div>
+                                        <!-- Foto 3 -->
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Foto 3</span>
+                                            <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-nuGreen-400 rounded-xl cursor-pointer bg-white transition overflow-hidden" style="height:90px">
+                                                <img id="prevNewsImg2" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden">
+                                                <div id="prevNewsImg2Placeholder" class="flex flex-col items-center justify-center gap-1 z-10">
+                                                    <i class="fas fa-plus text-slate-300 text-xl"></i>
+                                                    <span class="text-[9px] text-slate-300">Opsional</span>
+                                                </div>
+                                                <input type="file" id="newNewsImg2" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewNewsImg(this,2)">
+                                            </label>
+                                        </div>
+                                        <!-- Foto 4 -->
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Foto 4</span>
+                                            <label class="relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-nuGreen-400 rounded-xl cursor-pointer bg-white transition overflow-hidden" style="height:90px">
+                                                <img id="prevNewsImg3" class="absolute inset-0 w-full h-full object-cover rounded-xl hidden">
+                                                <div id="prevNewsImg3Placeholder" class="flex flex-col items-center justify-center gap-1 z-10">
+                                                    <i class="fas fa-plus text-slate-300 text-xl"></i>
+                                                    <span class="text-[9px] text-slate-300">Opsional</span>
+                                                </div>
+                                                <input type="file" id="newNewsImg3" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewNewsImg(this,3)">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span id="newsImgCount" class="text-[10px] text-slate-400 block mt-1">Foto utama wajib diisi, foto 2-4 opsional</span>
                                 </div>
                                 <div class="sm:col-span-2">
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">Isi Berita Lengkap</label>
@@ -2219,7 +2268,7 @@
     ============================================================ -->
     <script>
         // >>> GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT ANDA <<<
-        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
+        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbzwPXgjX-NgzuLmYG41aBGYnq8TWTteUGiDomvq4d_KAswnx6SY86JAho5lC8CMPe14/exec";
     </script>
     <script>
         (function () {
@@ -4233,6 +4282,32 @@
                 }
             }
         });
+
+        // Preview foto berita saat dipilih
+        window.previewNewsImg = function(input, idx) {
+            var img = document.getElementById('prevNewsImg' + idx);
+            var ph  = document.getElementById('prevNewsImg' + idx + 'Placeholder');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    if (img) { img.src = e.target.result; img.classList.remove('hidden'); }
+                    if (ph) ph.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        // Reset semua preview foto berita
+        window.resetNewsImgPreviews = function() {
+            for (var i = 0; i < 4; i++) {
+                var img = document.getElementById('prevNewsImg' + i);
+                var ph  = document.getElementById('prevNewsImg' + i + 'Placeholder');
+                var inp = document.getElementById('newNewsImg' + i);
+                if (img) { img.src = ''; img.classList.add('hidden'); }
+                if (ph) ph.style.display = '';
+                if (inp) inp.value = '';
+            }
+        };
         window.closeNewsModal = function() {
             const modal = document.getElementById('newsModal');
             modal.classList.add('hidden');
@@ -5018,8 +5093,6 @@
             const cat     = document.getElementById('newNewsCat').value;
             const author  = document.getElementById('newNewsAuthor').value.trim();
             const content = document.getElementById('newNewsContent').innerHTML.trim();
-            const imgsInput = document.getElementById('newNewsImgs');
-
             // Generate summary otomatis dari 150 karakter pertama konten
             const summary = content.replace(/\n+/g, ' ').substring(0, 150) + (content.length > 150 ? '…' : '');
 
@@ -5086,21 +5159,23 @@
                 }
                 
                 document.getElementById('addNewsForm').reset();
+                if(window.resetNewsImgPreviews) resetNewsImgPreviews();
                 toggleAddNewsForm();
             };
 
-            if (imgsInput.files.length > 0) {
-                if (imgsInput.files.length > 4) {
-                    showToast("Maksimal hanya boleh memilih 4 foto saja!");
-                    return;
-                }
-                
-                let loadedImgs = [];
-                let filesCount = imgsInput.files.length;
-                let filesProcessed = 0;
+            // Kumpulkan file dari 4 input terpisah
+            const newsImgFiles = [];
+            for (let i = 0; i < 4; i++) {
+                const inp = document.getElementById('newNewsImg' + i);
+                if (inp && inp.files && inp.files[0]) newsImgFiles.push(inp.files[0]);
+            }
 
+            if (newsImgFiles.length > 0) {
+                let loadedImgs = [];
+                let filesCount = newsImgFiles.length;
+                let filesProcessed = 0;
                 for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(imgsInput.files[i], 1000, 750, 0.82, function(compressedBase64) {
+                    compressAndReadFile(newsImgFiles[i], 1000, 750, 0.82, function(compressedBase64) {
                         loadedImgs.push(compressedBase64);
                         filesProcessed++;
                         if (filesProcessed === filesCount) {
