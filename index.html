@@ -582,19 +582,19 @@
             </div>
         </div><!-- end baris-1 -->
 
-        <!-- ── Baris 2: Pengurus (2/3) + Statistik (1/3) ── -->
+        <!-- ── Baris 2: grid 3 kolom (Pengurus | Statistik | kosong) ── -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
 
-            <!-- Pengurus: 2/3 lebar -->
-            <div class="lg:col-span-2">
-<div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
+            <!-- Kolom 1: Slider Pengurus -->
+            <div class="flex flex-col">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
                     <i class="fas fa-users text-xs"></i>Pengurus PRNU Baleharjo
                 </h3>
                 <a href="#" onclick="showPage('pengurus');return false;" class="text-[9px] text-white/50 hover:text-nuGold-300 flex items-center gap-1 transition">Lihat Semua <i class="fas fa-arrow-right text-[8px]"></i></a>
             </div>
-            <div class="relative overflow-hidden" id="pengurusSliderWrap">
+            <div class="relative overflow-hidden" id="pengurusSliderWrap" style="max-height:220px">
                 <div id="pengurusSliderTrack" class="flex transition-transform duration-500 ease-out">
                     <div class="pengurus-slide shrink-0 w-full flex gap-3">
                         <div class="flex-1 animate-pulse bg-white/10 rounded-xl h-36"></div>
@@ -612,7 +612,7 @@
         </div>
             </div>
 
-            <!-- Statistik Pengunjung: 1/3 lebar -->
+            <!-- Kolom 2: Statistik Pengunjung -->
             <div class="flex flex-col">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
@@ -627,6 +627,9 @@
                     <p class="text-[9px] text-white/30 text-center">Diperbarui setiap kunjungan</p>
                 </div>
             </div>
+
+            <!-- Kolom 3: kosong (simetris dengan baris 1) -->
+            <div class="hidden lg:block"></div>
 
         </div><!-- end baris-2 -->
 
@@ -4116,7 +4119,7 @@
                 var foto  = p.photo||('https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0]));
                 return '<div class="bs-slide-hero shrink-0 w-full">' +
                     '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 flex flex-col" onclick="showPage(\'pengurus\')">' +
-                        '<div class="relative overflow-hidden" style="aspect-ratio:4/3">' +
+                        '<div class="relative overflow-hidden" style="height:140px">' +
                             '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src=\'https://placehold.co/400x300/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
                             '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
                         '</div>' +
