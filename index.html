@@ -2770,6 +2770,14 @@
                     }
                 })
                 .withFailureHandler(function(e) {
+                    var errMsg = String(e && (e.message || e));
+                    // Abaikan error dari fungsi lain (visitor stats, dll) yang bukan loadAllData
+                    if (errMsg.indexOf('not defined') !== -1 && errMsg.indexOf('loadAllData') === -1) {
+                        console.info('[loadAllData] Error dari fungsi lain, diabaikan:', errMsg);
+                        // Tetap panggil callback dengan null agar splash bisa ditutup
+                        callback(null);
+                        return;
+                    }
                     console.warn('loadAllData gagal, retry dalam 2 detik:', e);
                     // Retry sekali setelah 2 detik
                     setTimeout(function() {
@@ -4119,12 +4127,33 @@
         }
         function trackAndLoadVisitorStats() {
             if (!window.google || !google.script) return;
-            if (sessionStorage.getItem('_prnu_visited')) {
-                google.script.run.withSuccessHandler(function(r){ try{renderVisitorStats(JSON.parse(r));}catch(e){} }).withFailureHandler(function(){}).getVisitorStats();
-                return;
-            }
-            sessionStorage.setItem('_prnu_visited','1');
-            google.script.run.withSuccessHandler(function(r){ try{renderVisitorStats(JSON.parse(r));}catch(e){} }).withFailureHandler(function(){}).trackVisit();
+            // Delay agar tidak mengganggu loadAllData yang baru selesai
+            setTimeout(function() {
+                try {
+                    if (sessionStorage.getItem('_prnu_visited')) {
+                        google.script.run
+                            .withSuccessHandler(function(r) {
+                                try { renderVisitorStats(JSON.parse(r)); } catch(e) {}
+                            })
+                            .withFailureHandler(function(e) {
+                                console.info('[Visitor] getVisitorStats tidak tersedia:', e);
+                            })
+                            .getVisitorStats();
+                    } else {
+                        sessionStorage.setItem('_prnu_visited', '1');
+                        google.script.run
+                            .withSuccessHandler(function(r) {
+                                try { renderVisitorStats(JSON.parse(r)); } catch(e) {}
+                            })
+                            .withFailureHandler(function(e) {
+                                console.info('[Visitor] trackVisit tidak tersedia:', e);
+                            })
+                            .trackVisit();
+                    }
+                } catch(e) {
+                    console.info('[Visitor] Stats tidak tersedia:', e);
+                }
+            }, 1500);
         }
 
         // ══ Slider Pengurus ══
