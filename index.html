@@ -2268,7 +2268,7 @@
     ============================================================ -->
     <script>
         // >>> GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT ANDA <<<
-        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
+        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbzwPXgjX-NgzuLmYG41aBGYnq8TWTteUGiDomvq4d_KAswnx6SY86JAho5lC8CMPe14/exec";
     </script>
     <script>
         (function () {
@@ -5098,12 +5098,22 @@
 
             // Load foto existing ke preview
             resetNewsImgPreviews && resetNewsImgPreviews();
-            var existImgs = item.imgs || (item.img ? [item.img] : []);
+            // Gunakan imgs array jika ada, fallback ke [img]
+            var existImgs = [];
+            if (item.imgs && Array.isArray(item.imgs) && item.imgs.length > 0) {
+                existImgs = item.imgs;
+            } else if (item.img) {
+                existImgs = [item.img];
+            }
             existImgs.forEach(function(src, i) {
-                if (i >= 4 || !src) return;
+                if (i >= 4 || !src || src.length < 10) return;
                 var imgEl = document.getElementById('prevNewsImg' + i);
                 var ph    = document.getElementById('prevNewsImg' + i + 'Placeholder');
-                if (imgEl) { imgEl.src = src; imgEl.classList.remove('hidden'); }
+                if (imgEl) {
+                    imgEl.src = src;
+                    imgEl.classList.remove('hidden');
+                    imgEl.setAttribute('data-existing', 'true'); // tandai sebagai foto existing
+                }
                 if (ph) ph.style.display = 'none';
             });
 
@@ -5230,8 +5240,23 @@
                 }
             } else {
                 if (editingNewsId !== null) {
-                    const currentItem = AppState.news.find(x => x.id === editingNewsId);
-                    saveNews(currentItem && currentItem.imgs ? currentItem.imgs : (currentItem ? [currentItem.img] : []));
+                    // Tidak ada file baru → ambil dari preview img yang tampil (data existing)
+                    const existingImgs = [];
+                    for (let i = 0; i < 4; i++) {
+                        const imgEl = document.getElementById('prevNewsImg' + i);
+                        if (imgEl && !imgEl.classList.contains('hidden') && imgEl.src && imgEl.src.length > 10) {
+                            existingImgs.push(imgEl.src);
+                        }
+                    }
+                    if (existingImgs.length > 0) {
+                        saveNews(existingImgs);
+                    } else {
+                        // Fallback ke AppState
+                        const currentItem = AppState.news.find(x => x.id === editingNewsId);
+                        saveNews(currentItem && currentItem.imgs && currentItem.imgs.length > 0
+                            ? currentItem.imgs
+                            : (currentItem && currentItem.img ? [currentItem.img] : []));
+                    }
                 } else {
                     saveNews([]);
                 }
