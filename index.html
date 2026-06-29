@@ -5195,7 +5195,12 @@
                                 }
                             })
                             .withFailureHandler(function(e){
-                                showFloatingNotif('❌ Gagal menyimpan: ' + (e.message||e), 'error');
+                                var msg = String(e && (e.message || e));
+                                if (msg.indexOf('fetch') !== -1 || msg.indexOf('network') !== -1) {
+                                    showFloatingNotif('❌ Gagal: koneksi ke server terputus. Coba beberapa saat lagi.', 'error');
+                                } else {
+                                    showFloatingNotif('❌ Gagal menyimpan: ' + msg, 'error');
+                                }
                                 console.warn('updateNews GAS:', e);
                             })
                             .updateNews(String(_savingNewsId), JSON.stringify(newsPayload));
@@ -5207,7 +5212,12 @@
                                 else showFloatingNotif('⚠️ Berita tersimpan lokal, cek database.', 'warning');
                             })
                             .withFailureHandler(function(e){
-                                showFloatingNotif('❌ Gagal menyimpan ke database: ' + (e.message||e), 'error');
+                                var msg = String(e && (e.message || e));
+                                if (msg.indexOf('fetch') !== -1 || msg.indexOf('network') !== -1) {
+                                    showFloatingNotif('❌ Gagal: koneksi ke server terputus. Pastikan URL GAS sudah benar.', 'error');
+                                } else {
+                                    showFloatingNotif('❌ Gagal menyimpan: ' + msg, 'error');
+                                }
                             })
                             .addNews(JSON.stringify(newsPayload));
                     }
@@ -5226,18 +5236,47 @@
             }
 
             if (newsImgFiles.length > 0) {
-                let loadedImgs = [];
+                // Upload foto satu per satu via savePhoto (chunked),
+                // kumpulkan key-nya, baru simpan berita
+                let photoKeys = [];
                 let filesCount = newsImgFiles.length;
                 let filesProcessed = 0;
-                for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(newsImgFiles[i], 1000, 750, 0.82, function(compressedBase64) {
-                        loadedImgs.push(compressedBase64);
-                        filesProcessed++;
-                        if (filesProcessed === filesCount) {
-                            saveNews(loadedImgs);
+
+                function uploadNextNewsPhoto(idx) {
+                    if (idx >= newsImgFiles.length) {
+                        // Semua foto selesai diupload → simpan berita dengan key foto
+                        saveNews(photoKeys);
+                        return;
+                    }
+                    compressAndReadFile(newsImgFiles[idx], 600, 450, 0.65, function(compressedBase64) {
+                        // Simpan foto ke Photos sheet, gunakan base64 langsung sebagai key
+                        // (karena backend akan simpan sebagai chunked)
+                        var photoKey = 'news_' + Date.now() + '_' + idx;
+                        if (window.google && google.script) {
+                            google.script.run
+                                .withSuccessHandler(function(r) {
+                                    if (r === 'success') {
+                                        // Gunakan base64 sebagai src (sudah dikompres kecil)
+                                        photoKeys.push(compressedBase64);
+                                    } else {
+                                        // Fallback: simpan base64 langsung
+                                        photoKeys.push(compressedBase64);
+                                    }
+                                    uploadNextNewsPhoto(idx + 1);
+                                })
+                                .withFailureHandler(function() {
+                                    // Foto gagal ke server → simpan base64 di payload
+                                    photoKeys.push(compressedBase64);
+                                    uploadNextNewsPhoto(idx + 1);
+                                })
+                                .savePhoto(compressedBase64, photoKey);
+                        } else {
+                            photoKeys.push(compressedBase64);
+                            uploadNextNewsPhoto(idx + 1);
                         }
                     });
                 }
+                uploadNextNewsPhoto(0);
             } else {
                 if (editingNewsId !== null) {
                     // Tidak ada file baru → ambil dari preview img yang tampil (data existing)
