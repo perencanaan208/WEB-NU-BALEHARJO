@@ -2268,7 +2268,7 @@
     ============================================================ -->
     <script>
         // >>> GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT ANDA <<<
-        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
+        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbzwPXgjX-NgzuLmYG41aBGYnq8TWTteUGiDomvq4d_KAswnx6SY86JAho5lC8CMPe14/exec";
     </script>
     <script>
         (function () {
@@ -5078,6 +5078,17 @@
             document.querySelector('#addNewsForm h5').innerText = "Edit Kabar Berita";
             document.querySelector('#addNewsForm button[type="submit"]').innerText = "Simpan Perubahan";
 
+            // Load foto existing ke preview
+            resetNewsImgPreviews && resetNewsImgPreviews();
+            var existImgs = item.imgs || (item.img ? [item.img] : []);
+            existImgs.forEach(function(src, i) {
+                if (i >= 4 || !src) return;
+                var imgEl = document.getElementById('prevNewsImg' + i);
+                var ph    = document.getElementById('prevNewsImg' + i + 'Placeholder');
+                if (imgEl) { imgEl.src = src; imgEl.classList.remove('hidden'); }
+                if (ph) ph.style.display = 'none';
+            });
+
             const form = document.getElementById('addNewsForm');
             const toggleBtn = document.getElementById('btnAddNewsToggle');
             if (form.classList.contains('hidden')) {
@@ -5108,7 +5119,8 @@
                         AppState.news[idx].summary = summary;
                         AppState.news[idx].content = content;
                         AppState.news[idx].author = author;
-                        if (imgsInput.files.length > 0) {
+                        // Selalu update foto jika imgList tidak kosong
+                        if (imgList.length > 0) {
                             AppState.news[idx].imgs = finalImgs;
                             AppState.news[idx].img = finalImgs[0];
                         }
@@ -5139,7 +5151,9 @@
                     const newsPayload = {
                         title: title, summary: summary, content: content,
                         category: cat, date: new Date().toLocaleDateString('id-ID'),
-                        author: author, img: finalImgs[0] || ''
+                        author: author,
+                        img: finalImgs[0] || '',
+                        imgs: JSON.stringify(finalImgs)
                     };
                     if (_savingNewsId !== null) {
                         google.script.run
@@ -6566,8 +6580,10 @@
                 '<span class="text-slate-500 text-sm">' + (itemName || 'data') + ' akan diperbarui.</span>',
                 onConfirm
             );
-            // Ganti ikon dan warna tombol konfirmasi jadi hijau (bukan merah)
+            // Ganti judul, ikon, dan warna tombol konfirmasi jadi hijau (bukan merah)
             setTimeout(function() {
+                var title = document.getElementById('deleteConfirmTitle');
+                if (title) title.textContent = 'Simpan Perubahan';
                 var btn = document.getElementById('deleteConfirmBtn');
                 if (btn) {
                     btn.className = btn.className.replace('from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700', 'from-nuGreen-700 to-nuGreen-800 hover:from-nuGreen-800 hover:to-nuGreen-900');
@@ -6586,6 +6602,8 @@
         function resetDeleteConfirmStyle() {
             // Kembalikan ke style hapus (merah) setelah modal ditutup
             setTimeout(function() {
+                var title = document.getElementById('deleteConfirmTitle');
+                if (title) title.textContent = 'Konfirmasi Hapus';
                 var btn = document.getElementById('deleteConfirmBtn');
                 if (btn) {
                     btn.className = btn.className
@@ -6831,7 +6849,7 @@
                         <i class="fas fa-trash-alt text-2xl text-rose-500"></i>
                     </div>
                 </div>
-                <h3 class="text-center text-lg font-bold text-slate-800 mb-1">Konfirmasi Hapus</h3>
+                <h3 id="deleteConfirmTitle" class="text-center text-lg font-bold text-slate-800 mb-1">Konfirmasi Hapus</h3>
                 <p id="deleteConfirmMsg" class="text-center text-sm text-slate-500 leading-relaxed mb-6">Yakin ingin menghapus data ini?<br>Data tidak dapat dikembalikan.</p>
                 <div class="flex gap-3">
                     <button id="deleteCancelBtn" onclick="closeDeleteConfirm()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2">
