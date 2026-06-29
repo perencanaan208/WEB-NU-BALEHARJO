@@ -4103,9 +4103,12 @@
             var viewsEl = document.getElementById('newsModalViews');
             if (viewsEl) {
                 var cachedViews = AppState._newsViews && AppState._newsViews[String(id)];
-                viewsEl.querySelector('span').textContent = cachedViews
-                    ? cachedViews.toLocaleString('id-ID') + ' kali dibaca'
-                    : '...';
+                var spanEl = viewsEl.querySelector('span');
+                if (spanEl) {
+                    spanEl.textContent = cachedViews
+                        ? Number(cachedViews).toLocaleString('id-ID') + ' kali dibaca'
+                        : '0 kali dibaca';
+                }
             }
             // Increment view di background (tidak tunggu hasil)
             if (window.google && google.script) {
@@ -4114,14 +4117,20 @@
                         try {
                             var data = JSON.parse(result);
                             if (!AppState._newsViews) AppState._newsViews = {};
-                            AppState._newsViews[String(id)] = data.views;
+                            AppState._newsViews[String(id)] = data.views || 0;
                             var ve = document.getElementById('newsModalViews');
-                            if (ve) ve.querySelector('span').textContent = Number(data.views).toLocaleString('id-ID') + ' kali dibaca';
-                        } catch(e) {}
+                            if (ve) {
+                                var sp = ve.querySelector('span');
+                                if (sp) sp.textContent = Number(data.views || 0).toLocaleString('id-ID') + ' kali dibaca';
+                            }
+                        } catch(e) {
+                            var ve = document.getElementById('newsModalViews');
+                            if (ve) { var sp = ve.querySelector('span'); if(sp) sp.textContent = '- kali dibaca'; }
+                        }
                     })
                     .withFailureHandler(function() {
                         var ve = document.getElementById('newsModalViews');
-                        if (ve) ve.querySelector('span').textContent = '';
+                        if (ve) { var sp = ve.querySelector('span'); if(sp) sp.textContent = '- kali dibaca'; }
                     })
                     .incrementNewsView(String(id));
             }
@@ -5167,16 +5176,29 @@
                     if (_savingNewsId !== null) {
                         google.script.run
                             .withSuccessHandler(function(r){
-                                if(r === 'success') showToast('Berita berhasil diperbarui!');
-                                else if(r === 'not_found') showToast('Gagal: data tidak ditemukan di database. Coba reload halaman.');
+                                if(r === 'success') {
+                                    showFloatingNotif('✅ Perubahan berita berhasil disimpan!', 'success');
+                                } else if(r === 'not_found') {
+                                    showFloatingNotif('❌ Gagal: data tidak ditemukan. Coba reload halaman.', 'error');
+                                } else {
+                                    showFloatingNotif('⚠️ Respon tidak dikenali: ' + r, 'warning');
+                                }
                             })
-                            .withFailureHandler(function(e){ console.warn('updateNews GAS:', e); })
+                            .withFailureHandler(function(e){
+                                showFloatingNotif('❌ Gagal menyimpan: ' + (e.message||e), 'error');
+                                console.warn('updateNews GAS:', e);
+                            })
                             .updateNews(String(_savingNewsId), JSON.stringify(newsPayload));
                     } else {
                         // INSERT baru
                         google.script.run
-                            .withSuccessHandler(function(r){ if(r==='success') showToast('Berita tersimpan ke database!'); })
-                            .withFailureHandler(function(e){ console.warn('addNews GAS:', e); })
+                            .withSuccessHandler(function(r){
+                                if(r==='success') showFloatingNotif('✅ Berita baru berhasil dipublikasi!', 'success');
+                                else showFloatingNotif('⚠️ Berita tersimpan lokal, cek database.', 'warning');
+                            })
+                            .withFailureHandler(function(e){
+                                showFloatingNotif('❌ Gagal menyimpan ke database: ' + (e.message||e), 'error');
+                            })
                             .addNews(JSON.stringify(newsPayload));
                     }
                 }
