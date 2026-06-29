@@ -2914,7 +2914,16 @@
                         date: r.DATE || '',
                         author: r.AUTHOR || '',
                         img: r.IMG || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600',
-                        imgs: r.IMG ? [r.IMG] : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600']
+                        imgs: (function() {
+                            // IMGS dari backend sudah diparsing oleh getNews() di GAS
+                            if (r.IMGS && Array.isArray(r.IMGS) && r.IMGS.length > 0) return r.IMGS;
+                            // Fallback: parse string JSON jika belum diparsing
+                            if (r.IMGS && typeof r.IMGS === 'string') {
+                                try { var a = JSON.parse(r.IMGS); if (Array.isArray(a) && a.length > 0) return a; } catch(e) {}
+                            }
+                            // Fallback ke IMG tunggal
+                            return r.IMG ? [r.IMG] : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
+                        })()
                     };
                 });
             }
