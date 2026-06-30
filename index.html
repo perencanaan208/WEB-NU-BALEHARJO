@@ -2274,7 +2274,8 @@
         (function () {
             var API_URL = window.GAS_API_URL;
 
-            function callBackend(fnName, args, onSuccess, onFail) {
+            function callBackend(fnName, args, onSuccess, onFail, _retryCount) {
+                _retryCount = _retryCount || 0;
                 if (!API_URL || API_URL.indexOf('PASTE_URL') !== -1) {
                     console.warn('[GAS Shim] GAS_API_URL belum diatur. Fungsi "' + fnName + '" dibatalkan.');
                     if (onFail) onFail('GAS_API_URL belum diatur di index.html');
@@ -2296,7 +2297,18 @@
                         }
                     })
                     .catch(function (err) {
-                        if (onFail) onFail(err);
+                        // Retry otomatis maksimal 2x untuk error jaringan/CORS transient
+                        // (sering terjadi sesaat setelah redeploy GAS atau payload besar)
+                        var msg = String(err && (err.message || err));
+                        var isNetworkErr = msg.indexOf('fetch') !== -1 || msg.indexOf('CORS') !== -1 || msg.indexOf('Failed') !== -1;
+                        if (isNetworkErr && _retryCount < 2) {
+                            console.warn('[GAS Shim] ' + fnName + ' gagal (percobaan ' + (_retryCount+1) + '), retry dalam 1.5 detik...');
+                            setTimeout(function() {
+                                callBackend(fnName, args, onSuccess, onFail, _retryCount + 1);
+                            }, 1500);
+                        } else {
+                            if (onFail) onFail(err);
+                        }
                     });
             }
 
@@ -5233,7 +5245,7 @@
                 let filesCount = newsImgFiles.length;
                 let filesProcessed = 0;
                 for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(newsImgFiles[i], 600, 450, 0.65, function(compressedBase64) {
+                    compressAndReadFile(newsImgFiles[i], 400, 300, 0.5, function(compressedBase64) {
                         loadedImgs.push(compressedBase64);
                         filesProcessed++;
                         if (filesProcessed === filesCount) {
@@ -6653,7 +6665,7 @@
                     icon.className = 'fas fa-save text-2xl text-nuGreen-600';
                     icon.closest('.w-16').className = 'w-16 h-16 rounded-full bg-nuGreen-50 border-2 border-nuGreen-100 flex items-center justify-center';
                 }
-                var strip = document.querySelector('#deleteConfirmModal .h-1\.5');
+                var strip = document.querySelector('#deleteConfirmModal [class*="h-1.5"]');
                 if (strip) strip.className = strip.className.replace('from-rose-500 to-rose-400', 'from-nuGreen-600 to-nuGreen-500');
             }, 50);
         }
