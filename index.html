@@ -3295,7 +3295,7 @@
                         }
                         return result;
                     };
-                    resolve(tryCompress(maxW || 600, quality || 0.5));
+                    resolve(tryCompress(maxW || 700, quality || 0.7));
                 };
                 img.onerror = function() { resolve(base64); };
                 img.src = base64;
@@ -5240,19 +5240,31 @@
             }
 
             if (newsImgFiles.length > 0) {
-                // Kompres semua foto lalu simpan base64 langsung di imgs
-                let loadedImgs = [];
-                let filesCount = newsImgFiles.length;
-                let filesProcessed = 0;
-                for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(newsImgFiles[i], 900, 675, 0.82, function(compressedBase64) {
-                        loadedImgs.push(compressedBase64);
-                        filesProcessed++;
-                        if (filesProcessed === filesCount) {
-                            saveNews(loadedImgs);
-                        }
+                // Upload foto satu per satu via savePhoto (chunked),
+                // agar setiap request ke GAS kecil & tidak timeout
+                let uploadedKeys = [];
+                function uploadNewsPhotoSeq(idx) {
+                    if (idx >= newsImgFiles.length) {
+                        saveNews(uploadedKeys);
+                        return;
+                    }
+                    compressAndReadFile(newsImgFiles[idx], 800, 600, 0.75, function(b64) {
+                        var key = 'news_' + Date.now() + '_' + idx;
+                        google.script.run
+                            .withSuccessHandler(function(r) {
+                                // Simpan key jika berhasil, atau base64 langsung sebagai fallback
+                                uploadedKeys.push(r === 'success' ? '__newsphoto__' + key : b64);
+                                uploadNewsPhotoSeq(idx + 1);
+                            })
+                            .withFailureHandler(function() {
+                                // Fallback: simpan base64 langsung
+                                uploadedKeys.push(b64);
+                                uploadNewsPhotoSeq(idx + 1);
+                            })
+                            .savePhoto(b64, key);
                     });
                 }
+                uploadNewsPhotoSeq(0);
             } else {
                 if (editingNewsId !== null) {
                     // Tidak ada file baru → ambil dari preview img yang tampil (data existing)
