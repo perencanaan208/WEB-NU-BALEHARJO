@@ -2274,7 +2274,8 @@
         (function () {
             var API_URL = window.GAS_API_URL;
 
-            function callBackend(fnName, args, onSuccess, onFail) {
+            function callBackend(fnName, args, onSuccess, onFail, _retryCount) {
+                _retryCount = _retryCount || 0;
                 if (!API_URL || API_URL.indexOf('PASTE_URL') !== -1) {
                     console.warn('[GAS Shim] GAS_API_URL belum diatur. Fungsi "' + fnName + '" dibatalkan.');
                     if (onFail) onFail('GAS_API_URL belum diatur di index.html');
@@ -2296,7 +2297,18 @@
                         }
                     })
                     .catch(function (err) {
-                        if (onFail) onFail(err);
+                        // Retry otomatis maksimal 2x untuk error jaringan/CORS transient
+                        // (sering terjadi sesaat setelah redeploy GAS atau payload besar)
+                        var msg = String(err && (err.message || err));
+                        var isNetworkErr = msg.indexOf('fetch') !== -1 || msg.indexOf('CORS') !== -1 || msg.indexOf('Failed') !== -1;
+                        if (isNetworkErr && _retryCount < 2) {
+                            console.warn('[GAS Shim] ' + fnName + ' gagal (percobaan ' + (_retryCount+1) + '), retry dalam 1.5 detik...');
+                            setTimeout(function() {
+                                callBackend(fnName, args, onSuccess, onFail, _retryCount + 1);
+                            }, 1500);
+                        } else {
+                            if (onFail) onFail(err);
+                        }
                     });
             }
 
@@ -5098,12 +5110,22 @@
 
             // Load foto existing ke preview
             resetNewsImgPreviews && resetNewsImgPreviews();
-            var existImgs = item.imgs || (item.img ? [item.img] : []);
+            // Gunakan imgs array jika ada, fallback ke [img]
+            var existImgs = [];
+            if (item.imgs && Array.isArray(item.imgs) && item.imgs.length > 0) {
+                existImgs = item.imgs;
+            } else if (item.img) {
+                existImgs = [item.img];
+            }
             existImgs.forEach(function(src, i) {
-                if (i >= 4 || !src) return;
+                if (i >= 4 || !src || src.length < 10) return;
                 var imgEl = document.getElementById('prevNewsImg' + i);
                 var ph    = document.getElementById('prevNewsImg' + i + 'Placeholder');
-                if (imgEl) { imgEl.src = src; imgEl.classList.remove('hidden'); }
+                if (imgEl) {
+                    imgEl.src = src;
+                    imgEl.classList.remove('hidden');
+                    imgEl.setAttribute('data-existing', 'true'); // tandai sebagai foto existing
+                }
                 if (ph) ph.style.display = 'none';
             });
 
@@ -5185,8 +5207,9 @@
                                 }
                             })
                             .withFailureHandler(function(e){
-                                showFloatingNotif('❌ Gagal menyimpan: ' + (e.message||e), 'error');
+                                var msg = String(e && (e.message || e));
                                 console.warn('updateNews GAS:', e);
+                                showFloatingNotif('❌ Gagal menyimpan berita: ' + msg, 'error');
                             })
                             .updateNews(String(_savingNewsId), JSON.stringify(newsPayload));
                     } else {
@@ -5197,7 +5220,8 @@
                                 else showFloatingNotif('⚠️ Berita tersimpan lokal, cek database.', 'warning');
                             })
                             .withFailureHandler(function(e){
-                                showFloatingNotif('❌ Gagal menyimpan ke database: ' + (e.message||e), 'error');
+                                console.warn('addNews GAS:', e);
+                                showFloatingNotif('❌ Gagal publish berita: ' + (e.message||e), 'error');
                             })
                             .addNews(JSON.stringify(newsPayload));
                     }
@@ -5216,11 +5240,12 @@
             }
 
             if (newsImgFiles.length > 0) {
+                // Kompres semua foto lalu simpan base64 langsung di imgs
                 let loadedImgs = [];
                 let filesCount = newsImgFiles.length;
                 let filesProcessed = 0;
                 for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(newsImgFiles[i], 1000, 750, 0.82, function(compressedBase64) {
+                    compressAndReadFile(newsImgFiles[i], 400, 300, 0.5, function(compressedBase64) {
                         loadedImgs.push(compressedBase64);
                         filesProcessed++;
                         if (filesProcessed === filesCount) {
@@ -5230,8 +5255,23 @@
                 }
             } else {
                 if (editingNewsId !== null) {
-                    const currentItem = AppState.news.find(x => x.id === editingNewsId);
-                    saveNews(currentItem && currentItem.imgs ? currentItem.imgs : (currentItem ? [currentItem.img] : []));
+                    // Tidak ada file baru → ambil dari preview img yang tampil (data existing)
+                    const existingImgs = [];
+                    for (let i = 0; i < 4; i++) {
+                        const imgEl = document.getElementById('prevNewsImg' + i);
+                        if (imgEl && !imgEl.classList.contains('hidden') && imgEl.src && imgEl.src.length > 10) {
+                            existingImgs.push(imgEl.src);
+                        }
+                    }
+                    if (existingImgs.length > 0) {
+                        saveNews(existingImgs);
+                    } else {
+                        // Fallback ke AppState
+                        const currentItem = AppState.news.find(x => x.id === editingNewsId);
+                        saveNews(currentItem && currentItem.imgs && currentItem.imgs.length > 0
+                            ? currentItem.imgs
+                            : (currentItem && currentItem.img ? [currentItem.img] : []));
+                    }
                 } else {
                     saveNews([]);
                 }
@@ -6625,7 +6665,7 @@
                     icon.className = 'fas fa-save text-2xl text-nuGreen-600';
                     icon.closest('.w-16').className = 'w-16 h-16 rounded-full bg-nuGreen-50 border-2 border-nuGreen-100 flex items-center justify-center';
                 }
-                var strip = document.querySelector('#deleteConfirmModal .h-1\.5');
+                var strip = document.querySelector('#deleteConfirmModal [class*="h-1.5"]');
                 if (strip) strip.className = strip.className.replace('from-rose-500 to-rose-400', 'from-nuGreen-600 to-nuGreen-500');
             }, 50);
         }
