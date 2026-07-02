@@ -5245,7 +5245,7 @@
                 let filesCount = newsImgFiles.length;
                 let filesProcessed = 0;
                 for (let i = 0; i < filesCount; i++) {
-                    compressAndReadFile(newsImgFiles[i], 400, 300, 0.5, function(compressedBase64) {
+                    compressAndReadFile(newsImgFiles[i], 900, 675, 0.82, function(compressedBase64) {
                         loadedImgs.push(compressedBase64);
                         filesProcessed++;
                         if (filesProcessed === filesCount) {
