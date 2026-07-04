@@ -4,6 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PRNU Baleharjo Sragen - Official Website</title>
+
+    <!-- ══ SEO & Share Preview (Open Graph / Twitter Card) ══ -->
+    <!-- Catatan: karena web ini SPA (satu file HTML), preview WhatsApp/Facebook
+         akan selalu menampilkan meta tag DEFAULT ini untuk SEMUA link, termasuk
+         link berita spesifik (#berita-xxx) - bot share tidak menjalankan JavaScript
+         sehingga tidak bisa membaca judul/foto berita yang di-render secara dinamis. -->
+    <meta name="description" content="Portal resmi Pengurus Ranting Nahdlatul Ulama (PRNU) Desa Baleharjo, Sukodono, Sragen — berita, kegiatan, kepengurusan, dan layanan Koin NU.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PRNU Baleharjo Sragen - Official Website">
+    <meta property="og:description" content="Portal resmi Pengurus Ranting Nahdlatul Ulama Desa Baleharjo, Sukodono, Sragen.">
+    <meta property="og:image" content="https://nubaleharjo.vercel.app/og-image.jpg">
+    <meta property="og:url" content="https://nubaleharjo.vercel.app">
+    <meta property="og:site_name" content="PRNU Baleharjo Sragen">
+    <meta property="og:locale" content="id_ID">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PRNU Baleharjo Sragen - Official Website">
+    <meta name="twitter:description" content="Portal resmi Pengurus Ranting Nahdlatul Ulama Desa Baleharjo, Sukodono, Sragen.">
+    <meta name="twitter:image" content="https://nubaleharjo.vercel.app/og-image.jpg">
+
+    <!-- ══ PWA (Installable / Add to Home Screen) ══ -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#14532d">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PRNU Baleharjo">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -570,7 +598,12 @@
                     <div class="relative flex-1">
                         <div class="bs-track-wrap h-full">
                             <div id="beritaTrack" class="bs-track h-full">
-                                <div class="bs-slide-hero"><div class="text-white/40 text-xs italic text-center pt-8">Memuat berita...</div></div>
+                                <div class="bs-slide-hero animate-pulse space-y-2 p-1">
+                                    <div class="bg-white/10 rounded-lg w-full" style="height:100px"></div>
+                                    <div class="bg-white/10 rounded h-3 w-4/5"></div>
+                                    <div class="bg-white/10 rounded h-3 w-3/5"></div>
+                                    <div class="bg-white/10 rounded h-2.5 w-2/5"></div>
+                                </div>
                             </div>
                             <button class="bs-arrow left" onclick="bsMove('berita',-1)" style="top:40%"><i class="fas fa-chevron-left"></i></button>
                             <button class="bs-arrow right" onclick="bsMove('berita',1)" style="top:40%"><i class="fas fa-chevron-right"></i></button>
@@ -937,7 +970,12 @@
                     <p class="text-slate-500 mt-4 text-sm">Dokumentasi nyata penyaluran dana UPZISNU kepada yang berhak</p>
                 </div>
                 <div id="pentasyarufanGaleri">
-                    <div class="text-center py-16 text-slate-400 text-sm italic">Memuat data...</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
+                        <div class="bg-slate-200 rounded-xl" style="aspect-ratio:4/3"></div>
+                        <div class="bg-slate-200 rounded-xl" style="aspect-ratio:4/3"></div>
+                        <div class="bg-slate-200 rounded-xl" style="aspect-ratio:4/3"></div>
+                        <div class="bg-slate-200 rounded-xl" style="aspect-ratio:4/3"></div>
+                    </div>
                 </div>
             </div>
 
@@ -6941,6 +6979,16 @@
             </div>
         </div>
     </div>
+    <!-- Registrasi Service Worker untuk PWA (Add to Home Screen) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').catch(function (e) {
+                    console.warn('SW registration failed:', e);
+                });
+            });
+        }
+    </script>
 
 </body>
 </html>
