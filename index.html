@@ -4263,12 +4263,12 @@
             track.innerHTML = list.map(function(p) {
                 var badge = gc[p.group]||'bg-white/20 text-white';
                 var foto  = p.photo||('https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0]));
-                return '<div class="bs-slide-hero shrink-0 w-full">' +
-                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-nuGreen-900 relative" style="height:280px" onclick="showPage(\'pengurus\')">' +
+                return '<div class="bs-slide-hero shrink-0 w-full" style="height:260px">' +
+                    '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-nuGreen-900 relative h-full" onclick="showPage(\'pengurus\')">' +
                         '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" ' +
                             'onerror="this.src=\'https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
                         '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
-                        '<div class="absolute bottom-0 left-0 right-0 px-3 py-2.5" style="background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.45) 60%,transparent 100%)">' +
+                        '<div class="absolute bottom-0 left-0 right-0 px-3 py-2" style="background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.45) 60%,transparent 100%)">' +
                             '<p class="text-white font-bold text-[12px] leading-tight">'+(p.name||'')+'</p>' +
                             '<p class="text-nuGold-300 text-[10px] font-semibold uppercase tracking-wide leading-tight mt-0.5">'+(p.role||'')+'</p>' +
                         '</div>' +
