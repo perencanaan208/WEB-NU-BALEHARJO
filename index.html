@@ -666,8 +666,7 @@
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
                         <i class="fas fa-chart-bar text-xs"></i>Statistik Pengunjung
                     </h3>
-                    <div id="visitorStatsGrid" class="grid grid-cols-2 gap-2 flex-1">
-                        <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
+                    <div id="visitorStatsGrid" class="grid grid-cols-3 gap-2 flex-1">
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
                         <div class="animate-pulse bg-white/10 rounded-xl h-16"></div>
@@ -4260,10 +4259,9 @@
             var grid = document.getElementById('visitorStatsGrid');
             if (!grid) return;
             var cards = [
-                { label:'Hari Ini',   icon:'fa-sun',          color:'gold',   val: stats.today||0 },
-                { label:'Minggu Ini', icon:'fa-calendar-week',color:'blue',   val: stats.week||0  },
-                { label:'Bulan Ini',  icon:'fa-calendar-alt', color:'green',  val: stats.month||0 },
-                { label:'Total',      icon:'fa-users',         color:'purple', val: stats.total||0 }
+                { label:'Hari Ini', icon:'fa-sun',          color:'gold',   val: stats.today||0 },
+                { label:'Kemarin',  icon:'fa-calendar-day', color:'blue',   val: stats.yesterday||0 },
+                { label:'Total',    icon:'fa-users',        color:'purple', val: stats.total||0 }
             ];
             var ic = { gold:'text-nuGold-400', blue:'text-blue-300', green:'text-emerald-400', purple:'text-purple-300' };
             var nc = { gold:'text-nuGold-300', blue:'text-blue-200', green:'text-emerald-300', purple:'text-purple-200' };
