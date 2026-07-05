@@ -599,6 +599,10 @@
                         <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-nuGold-400 animate-pulse"></span><span class="text-[10px] font-semibold text-nuGold-300">Menuju <span id="nextPrayerName">---</span></span></div>
                         <span id="nextPrayerCountdown" class="text-sm font-bold text-nuGold-400 tabular-nums">--:--:--</span>
                     </div>
+                    <div id="islamicNextEventBox" class="rounded-lg border border-emerald-700/40 bg-emerald-900/30 px-3 py-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-moon text-nuGold-300 text-[9px] shrink-0"></i>
+                        <span id="islamicNextEvent" class="text-[10px] font-medium text-white/80 leading-tight">Memuat kalender hijriah...</span>
+                    </div>
                     <div class="flex-1">
                         <span class="text-[9px] uppercase font-bold text-nuGold-400 tracking-widest">Agenda Terdekat</span>
                         <div class="mt-1.5 bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-900/60 flex items-start gap-2">
@@ -2682,6 +2686,8 @@
             document.getElementById('maghrib').innerText = calculated.maghrib;
             document.getElementById('isya').innerText = calculated.isya;
 
+            try { setIslamicCalendar(); } catch(e) {}
+
             // Mulai countdown real-time ke sholat berikutnya
             try { startPrayerCountdown(); } catch(e) {}
 
@@ -2772,41 +2778,83 @@
                 String(ss).padStart(2,'0');
         }
 
-        function getHijriDate() {
+        function computeHijriDate() {
             // Algoritma konversi Gregorian → Hijriah (Tabular Islamic Calendar)
             // Akurat ±1 hari, bekerja di semua browser termasuk Android lama
+            const today = new Date();
+            const D = today.getDate();
+            const M = today.getMonth() + 1;
+            const Y = today.getFullYear();
+
+            // Julian Day Number dari tanggal Gregorian
+            const A = Math.floor((14 - M) / 12);
+            const Yg = Y + 4800 - A;
+            const Mg = M + 12 * A - 3;
+            let JD = D + Math.floor((153 * Mg + 2) / 5) + 365 * Yg
+                   + Math.floor(Yg / 4) - Math.floor(Yg / 100)
+                   + Math.floor(Yg / 400) - 32045;
+
+            // Konversi JD → Hijriah (algoritma Fatimid/Tabular)
+            const L  = JD - 1948440 + 10632;
+            const N  = Math.floor((L - 1) / 10631);
+            const L2 = L - 10631 * N + 354;
+            const J  = Math.floor((10985 - L2) / 5316) * Math.floor((50 * L2) / 17719)
+                     + Math.floor(L2 / 5670) * Math.floor((43 * L2) / 15238);
+            const L3 = L2 - Math.floor((30 - J) / 15) * Math.floor((17719 * J) / 50)
+                     - Math.floor(J / 16) * Math.floor((15238 * J) / 43) + 29;
+            const Hm = Math.floor(24 * L3 / 709);
+            const Hd = L3 - Math.floor(709 * Hm / 24);
+            const Hy = 30 * N + J - 30;
+
+            return { JD: JD, Hy: Hy, Hm: Hm, Hd: Hd };
+        }
+
+        // Konversi Hijriah (tahun,bulan,tanggal) -> Julian Day - pasangan invers dari computeHijriDate()
+        function hijriToJD(Hy, Hm, Hd) {
+            return Hd + Math.ceil(29.5 * (Hm - 1)) + (Hy - 1) * 354
+                 + Math.floor((3 + 11 * Hy) / 30) + 1948440 - 1;
+        }
+
+        // Daftar hari besar Islam berdasarkan penanggalan Hijriah tabular (perkiraan ±1 hari,
+        // bisa berbeda dengan penetapan resmi Kemenag/NU yang memakai rukyatul hilal)
+        const HARI_BESAR_ISLAM = [
+            { bulan: 1,  tanggal: 1,  nama: 'Tahun Baru Islam' },
+            { bulan: 1,  tanggal: 10, nama: 'Hari Asyura' },
+            { bulan: 3,  tanggal: 12, nama: 'Maulid Nabi Muhammad ﷺ' },
+            { bulan: 7,  tanggal: 27, nama: "Isra Mi'raj" },
+            { bulan: 8,  tanggal: 15, nama: "Nisfu Sya'ban" },
+            { bulan: 9,  tanggal: 1,  nama: 'Awal Ramadhan' },
+            { bulan: 9,  tanggal: 17, nama: "Nuzulul Qur'an" },
+            { bulan: 10, tanggal: 1,  nama: 'Idul Fitri' },
+            { bulan: 12, tanggal: 10, nama: 'Idul Adha' }
+        ];
+
+        function getNextIslamicEvent() {
             try {
-                const today = new Date();
-                const D = today.getDate();
-                const M = today.getMonth() + 1;
-                const Y = today.getFullYear();
+                const h = computeHijriDate();
+                let best = null;
+                HARI_BESAR_ISLAM.forEach(function (ev) {
+                    [h.Hy, h.Hy + 1].forEach(function (tahun) {
+                        const jd = hijriToJD(tahun, ev.bulan, ev.tanggal);
+                        const sisa = jd - h.JD;
+                        if (sisa >= 0 && (best === null || sisa < best.sisa)) {
+                            best = { nama: ev.nama, sisa: sisa };
+                        }
+                    });
+                });
+                return best;
+            } catch (e) { return null; }
+        }
 
-                // Julian Day Number dari tanggal Gregorian
-                const A = Math.floor((14 - M) / 12);
-                const Yg = Y + 4800 - A;
-                const Mg = M + 12 * A - 3;
-                let JD = D + Math.floor((153 * Mg + 2) / 5) + 365 * Yg
-                       + Math.floor(Yg / 4) - Math.floor(Yg / 100)
-                       + Math.floor(Yg / 400) - 32045;
-
-                // Konversi JD → Hijriah (algoritma Fatimid/Tabular)
-                const L  = JD - 1948440 + 10632;
-                const N  = Math.floor((L - 1) / 10631);
-                const L2 = L - 10631 * N + 354;
-                const J  = Math.floor((10985 - L2) / 5316) * Math.floor((50 * L2) / 17719)
-                         + Math.floor(L2 / 5670) * Math.floor((43 * L2) / 15238);
-                const L3 = L2 - Math.floor((30 - J) / 15) * Math.floor((17719 * J) / 50)
-                         - Math.floor(J / 16) * Math.floor((15238 * J) / 43) + 29;
-                const Hm = Math.floor(24 * L3 / 709);
-                const Hd = L3 - Math.floor(709 * Hm / 24);
-                const Hy = 30 * N + J - 30;
-
+        function getHijriDate() {
+            try {
+                const h = computeHijriDate();
                 const bulanHijri = [
                     'Muharram','Shafar','Rabiul Awal','Rabiul Akhir',
                     'Jumadil Awal','Jumadil Akhir','Rajab','Sya\'ban',
                     'Ramadhan','Syawal','Dzulqa\'dah','Dzulhijjah'
                 ];
-                return `${Hd} ${bulanHijri[Hm - 1]} ${Hy} H`;
+                return `${h.Hd} ${bulanHijri[h.Hm - 1]} ${h.Hy} H`;
             } catch(e) {
                 return '';
             }
@@ -2821,6 +2869,18 @@
             const el = document.getElementById('islamicDate');
             if (el) {
                 el.innerText = `${masehi} | ${hijri}`;
+            }
+
+            const evEl = document.getElementById('islamicNextEvent');
+            if (evEl) {
+                const ev = getNextIslamicEvent();
+                if (!ev) {
+                    evEl.innerText = 'Kalender hijriah tidak tersedia';
+                } else if (ev.sisa === 0) {
+                    evEl.innerText = `Hari ini: ${ev.nama}`;
+                } else {
+                    evEl.innerText = `${ev.nama} — ${ev.sisa} hari lagi`;
+                }
             }
         }
 
