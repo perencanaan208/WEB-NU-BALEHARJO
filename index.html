@@ -1779,8 +1779,8 @@
                                 <div id="pentaDropZone"
                                      class="relative border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-nuGreen-500 rounded-2xl p-6 text-center cursor-pointer transition bg-white dark:bg-slate-900"
                                      onclick="document.getElementById('pentaFileInput').click()"
-                                     ondragover="event.preventDefault();this.classList.add('border-nuGreen-500','bg-nuGreen-50')"
-                                     ondragleave="this.classList.remove('border-nuGreen-500','bg-nuGreen-50')"
+                                     ondragover="event.preventDefault();this.classList.add('border-nuGreen-500', 'bg-nuGreen-50')"
+                                     ondragleave="this.classList.remove('border-nuGreen-500', 'bg-nuGreen-50')"
                                      ondrop="pentaHandleDrop(event)">
                                     <input type="file" id="pentaFileInput" accept="image/*" multiple class="hidden"
                                            onchange="pentaHandleFiles(this.files)">
@@ -3117,10 +3117,10 @@
         function syncDarkModeIcons() {
             var isDark = document.documentElement.classList.contains('dark');
             ['darkModeSunIcon','darkModeSunIconMobile'].forEach(function(id){
-                var el = document.getElementById(id); if (el) el.classList.toggle('hidden', isDark);
+                var el = document.getElementById(id); if (el) el.classList.toggle('hidden');
             });
             ['darkModeMoonIcon','darkModeMoonIconMobile'].forEach(function(id){
-                var el = document.getElementById(id); if (el) el.classList.toggle('hidden', !isDark);
+                var el = document.getElementById(id); if (el) el.classList.toggle('hidden');
             });
         }
         window.toggleDarkMode = function() {
@@ -3246,12 +3246,12 @@
         window.switchBerandaTab = function(tab, btn) {
             document.querySelectorAll('.bs-tab-btn').forEach(function(b){ b.classList.remove('active'); });
             btn.classList.add('active');
-            document.getElementById('bsBerita').classList.toggle('active', tab === 'berita');
-            document.getElementById('bsGaleri').classList.toggle('active', tab === 'galeri');
-            document.getElementById('bsLihatBerita').classList.toggle('hidden', tab !== 'berita');
-            document.getElementById('bsLihatBerita').classList.toggle('flex', tab === 'berita');
-            document.getElementById('bsLihatGaleri').classList.toggle('hidden', tab !== 'galeri');
-            document.getElementById('bsLihatGaleri').classList.toggle('flex', tab === 'galeri');
+            document.getElementById('bsBerita').classList.toggle('active', 'berita');
+            document.getElementById('bsGaleri').classList.toggle('active', 'galeri');
+            document.getElementById('bsLihatBerita').classList.toggle('hidden', 'berita');
+            document.getElementById('bsLihatBerita').classList.toggle('flex', 'berita');
+            document.getElementById('bsLihatGaleri').classList.toggle('hidden', 'galeri');
+            document.getElementById('bsLihatGaleri').classList.toggle('flex', 'galeri');
         };
 
         window.bsMove = function(type, dir) {
@@ -3268,7 +3268,7 @@
             var track = document.getElementById('beritaTrack');
             if (track) track.style.transform = 'translateX(-' + (idx * 100) + '%)';
             document.querySelectorAll('#beritaDots .bs-dot').forEach(function(d,i){
-                d.classList.toggle('active', i === idx);
+                d.classList.toggle('active');
             });
             _bsState.berita.idx = idx;
         }
@@ -3671,7 +3671,7 @@
         window.pentaHandleDrop = function(e) {
             e.preventDefault();
             var zone = document.getElementById('pentaDropZone');
-            if (zone) zone.classList.remove('border-nuGreen-500','bg-nuGreen-50');
+            if (zone) zone.classList.remove('border-nuGreen-500', 'bg-nuGreen-50');
             var files = e.dataTransfer.files;
             pentaHandleFiles(files);
         };
@@ -4856,14 +4856,14 @@
 
             // Reset semua tombol sidebar ke state default
             document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.classList.remove('bg-nuGreen-800','text-white','shadow-sm','active');
-                btn.classList.add('text-slate-600 dark:text-slate-400','hover:bg-slate-50 dark:hover:bg-slate-800');
+                btn.classList.remove('bg-nuGreen-800', 'text-white', 'shadow-sm', 'active');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
                 const sp = btn.querySelector('span.rounded-lg');
                 if (sp) {
                     sp.classList.remove('bg-white/20');
-                    sp.classList.add('bg-slate-100 dark:bg-slate-900');
+                    sp.classList.add('bg-slate-100', 'dark:bg-slate-900');
                     const ic = sp.querySelector('i');
-                    if (ic) { ic.classList.remove('text-white'); ic.classList.add('text-slate-500 dark:text-slate-400'); }
+                    if (ic) { ic.classList.remove('text-white'); ic.classList.add('text-slate-500', 'dark:text-slate-400'); }
                 }
             });
 
@@ -4872,14 +4872,14 @@
 
             const activeBtn = document.getElementById('btn-admin-' + tabName);
             if (activeBtn) {
-                activeBtn.classList.remove('text-slate-600 dark:text-slate-400','hover:bg-slate-50 dark:hover:bg-slate-800');
-                activeBtn.classList.add('bg-nuGreen-800','text-white','shadow-sm','active');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+                activeBtn.classList.add('bg-nuGreen-800', 'text-white', 'shadow-sm', 'active');
                 const sp = activeBtn.querySelector('span.rounded-lg');
                 if (sp) {
-                    sp.classList.remove('bg-slate-100 dark:bg-slate-900');
+                    sp.classList.remove('bg-slate-100', 'dark:bg-slate-900');
                     sp.classList.add('bg-white/20');
                     const ic = sp.querySelector('i');
-                    if (ic) { ic.classList.remove('text-slate-500 dark:text-slate-400'); ic.classList.add('text-white'); }
+                    if (ic) { ic.classList.remove('text-slate-500', 'dark:text-slate-400'); ic.classList.add('text-white'); }
                 }
             }
 
@@ -6024,21 +6024,21 @@
             // ── Desktop nav: update active pill ──
             document.querySelectorAll('.nav-link-item').forEach(function(link) {
                 link.classList.remove('nav-active', 'text-white');
-                link.classList.add('text-slate-600 dark:text-slate-400');
+                link.classList.add('text-slate-600', 'dark:text-slate-400');
             });
             document.querySelectorAll('.nav-link-item[data-page="' + pageId + '"]').forEach(function(link) {
                 link.classList.add('nav-active');
-                link.classList.remove('text-slate-600 dark:text-slate-400');
+                link.classList.remove('text-slate-600', 'dark:text-slate-400');
             });
 
             // ── Mobile nav: update active pill ──
             document.querySelectorAll('.mobile-nav-link').forEach(function(link) {
                 link.classList.remove('mobile-active', 'text-white');
-                link.classList.add('text-slate-600 dark:text-slate-400');
+                link.classList.add('text-slate-600', 'dark:text-slate-400');
             });
             document.querySelectorAll('.mobile-nav-link[data-page="' + pageId + '"]').forEach(function(link) {
                 link.classList.add('mobile-active');
-                link.classList.remove('text-slate-600 dark:text-slate-400');
+                link.classList.remove('text-slate-600', 'dark:text-slate-400');
             });
 
             // Tutup mobile drawer
@@ -6379,7 +6379,7 @@
             if (icon) {
                 icon.className = isHidden ? 'fas fa-eye-slash text-sm' : 'fas fa-eye text-sm';
             }
-            if (hint) hint.classList.toggle('hidden', !isHidden);
+            if (hint) hint.classList.toggle('hidden');
             // Auto-hide setelah 5 detik untuk keamanan
             if (isHidden) {
                 clearTimeout(window._passHideTimer);
@@ -6678,8 +6678,8 @@
             var list = AppState.galeri || [];
 
             if (counter) counter.textContent = list.length + ' foto';
-            if (btnHapus) btnHapus.classList.toggle('hidden', list.length === 0);
-            if (empty)    empty.classList.toggle('hidden', list.length > 0);
+            if (btnHapus) btnHapus.classList.toggle('hidden');
+            if (empty)    empty.classList.toggle('hidden');
 
             list.forEach(function(item, idx) {
                 var wrap = document.createElement('div');
