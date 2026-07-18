@@ -1094,27 +1094,27 @@
                 </div>
                 <!-- Nav items -->
                 <div class="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-                    <button id="btn-admin-siteconfig" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-siteconfig" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Pengaturan Situs</span>
                     </button>
-                    <button id="btn-admin-beranda-settings" class="admin-tab-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition bg-nuGreen-800 text-white shadow-sm">
+                    <button id="btn-admin-beranda-settings" data-role="superadmin" class="admin-tab-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition bg-nuGreen-800 text-white shadow-sm">
                         <span class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0"><i class="fas fa-home text-xs"></i></span>
                         <span>Kelola Beranda</span>
                     </button>
-                    <button id="btn-admin-profil-settings" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-profil-settings" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-id-card text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Profil</span>
                     </button>
-                    <button id="btn-admin-layanan-settings" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-layanan-settings" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-hand-holding-heart text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Layanan</span>
                     </button>
-                    <button id="btn-admin-banom-settings" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-banom-settings" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Banom/Lembaga</span>
                     </button>
-                    <button id="btn-admin-shalat" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-shalat" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-clock text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Waktu Shalat</span>
                     </button>
@@ -1123,24 +1123,28 @@
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-newspaper text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Berita</span>
                     </button>
-                    <button id="btn-admin-galeri" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-galeri" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-images text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Galeri</span>
                     </button>
-                    <button id="btn-admin-keuangan" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-keuangan" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-file-invoice-dollar text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Keuangan UPZISNU</span>
                     </button>
-                    <button id="btn-admin-pengurus-manage" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-pengurus-manage" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Pengurus</span>
                     </button>
                     <div class="px-3 py-1.5"><div class="h-px bg-slate-100 dark:bg-slate-900"></div></div>
-                    <button id="btn-admin-inbox" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-users" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-user-shield text-xs text-slate-500 dark:text-slate-400"></i></span>
+                        <span>Kelola Admin</span>
+                    </button>
+                    <button id="btn-admin-inbox" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-envelope-open-text text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Pesan Masuk</span>
                     </button>
-                    <button id="btn-admin-kontak" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <button id="btn-admin-kontak" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-address-card text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Kontak</span>
                     </button>
@@ -1157,18 +1161,19 @@
             <div class="flex-1 flex flex-col overflow-hidden">
                 <!-- Tab bar mobile -->
                 <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex gap-1.5 overflow-x-auto shrink-0">
-                    <button id="btn-mob-admin-siteconfig" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Situs</button>
-                    <button id="btn-mob-admin-beranda" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Beranda</button>
-                    <button id="btn-mob-admin-profil" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Profil</button>
-                    <button id="btn-mob-admin-layanan" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Layanan</button>
-                    <button id="btn-mob-admin-banom" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Banom</button>
-                    <button id="btn-mob-admin-shalat" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Shalat</button>
+                    <button id="btn-mob-admin-siteconfig" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Situs</button>
+                    <button id="btn-mob-admin-beranda" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Beranda</button>
+                    <button id="btn-mob-admin-profil" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Profil</button>
+                    <button id="btn-mob-admin-layanan" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Layanan</button>
+                    <button id="btn-mob-admin-banom" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Banom</button>
+                    <button id="btn-mob-admin-shalat" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Shalat</button>
                     <button id="btn-mob-admin-berita" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Berita</button>
-                    <button id="btn-mob-admin-galeri" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Galeri</button>
-                    <button id="btn-mob-admin-keuangan" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Keuangan</button>
-                    <button id="btn-mob-admin-pengurus" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pengurus</button>
-                    <button id="btn-mob-admin-inbox" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pesan</button>
-                    <button id="btn-mob-admin-kontak" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Kontak</button>
+                    <button id="btn-mob-admin-galeri" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Galeri</button>
+                    <button id="btn-mob-admin-keuangan" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Keuangan</button>
+                    <button id="btn-mob-admin-pengurus" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pengurus</button>
+                    <button id="btn-mob-admin-users" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Admin</button>
+                    <button id="btn-mob-admin-inbox" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pesan</button>
+                    <button id="btn-mob-admin-kontak" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Kontak</button>
                     <button id="adminLogoutBtnMobile" class="text-xs text-rose-600 bg-rose-50 border border-rose-100 px-3 py-2 rounded-lg font-bold shrink-0">Logout</button>
                 </div>
 
@@ -1741,6 +1746,7 @@
                                     <tr class="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
                                         <th class="p-3">Judul Berita</th>
                                         <th class="p-3">Kategori</th>
+                                        <th class="p-3">Status</th>
                                         <th class="p-3">Tanggal</th>
                                         <th class="p-3">Penulis</th>
                                         <th class="p-3 text-right">Aksi</th>
@@ -1751,6 +1757,10 @@
                                 </tbody>
                             </table>
                         </div>
+                        <p id="beritaKontributorNote" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                            <i class="fas fa-circle-info mr-1"></i>
+                            Berita yang Anda kirim akan berstatus <b>Menunggu Verifikasi</b> dan baru tayang di website setelah disetujui Admin Utama.
+                        </p>
                     </div>
 
                     <!-- TAB: Keuangan UPZISNU → Kelola Pentasyarufan -->
@@ -1954,6 +1964,66 @@
                         </div>
                     </div>
 
+                    <!-- TAB: Kelola Admin (Manajemen User & Kontributor Berita) -->
+                    <div id="admin-tab-users" class="admin-panel-content space-y-6 hidden">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <h4 class="text-lg font-serif font-bold text-slate-900 dark:text-slate-100">Kelola Admin</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Atur akun Admin Utama & Admin Kontributor Berita.</p>
+                            </div>
+                            <button id="btnAddUserToggle" onclick="window.toggleAddUserForm()" class="bg-nuGreen-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-nuGreen-900 transition">
+                                + Tambah Akun
+                            </button>
+                        </div>
+
+                        <form id="addUserForm" onsubmit="window.handleAddUserSubmit(event)" class="hidden bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/60 space-y-4">
+                            <h5 class="text-sm font-bold text-slate-800 dark:text-slate-200">Tambah Akun Admin</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Username</label>
+                                    <input type="text" id="newUserUsername" required autocomplete="off"
+                                        class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nama Tampilan</label>
+                                    <input type="text" id="newUserNama" placeholder="Contoh: Sekretaris PRNU"
+                                        class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Password</label>
+                                    <input type="text" id="newUserPassword" required autocomplete="off" placeholder="Isi untuk set/ganti password"
+                                        class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Peran (Role)</label>
+                                    <select id="newUserRole" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                                        <option value="kontributor">Admin Kontributor Berita (hanya Kelola Berita, wajib verifikasi)</option>
+                                        <option value="superadmin">Admin Utama (akses penuh + verifikasi berita)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 justify-end">
+                                <button type="button" id="btnCancelAddUser" onclick="window.toggleAddUserForm()" class="bg-slate-200 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold">Batal</button>
+                                <button type="submit" class="bg-nuGreen-800 text-white px-4 py-2 rounded-xl text-xs font-bold">Simpan Akun</button>
+                            </div>
+                        </form>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs bg-white dark:bg-slate-900 rounded-xl shadow-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="p-3">Username</th>
+                                        <th class="p-3">Nama</th>
+                                        <th class="p-3">Peran</th>
+                                        <th class="p-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminUsersTableBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     <div id="admin-tab-galeri" class="admin-panel-content space-y-5 hidden">
 
@@ -2408,8 +2478,40 @@
         let editingNewsId = null;
         let editingFinanceId = null;
 
+        // Ubah satu baris data News dari backend (GAS) menjadi bentuk yang dipakai frontend.
+        // Dipakai baik untuk daftar berita publik (getNews) maupun tabel admin (getNewsAdmin).
+        function mapNewsRow(r) {
+            return {
+                id: Number(r.ID),
+                title: r.TITLE || '',
+                summary: r.SUMMARY || '',
+                content: r.CONTENT || '',
+                category: (r.CATEGORY || 'kegiatan').toLowerCase(),
+                date: r.DATE || '',
+                author: r.AUTHOR || '',
+                status: r.STATUS || 'Published',
+                submittedBy: r.SUBMITTEDBY || '',
+                rejectReason: r.ALASAN_TOLAK || '',
+                img: r.IMG || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600',
+                imgs: (function() {
+                    // IMGS dari backend sudah diparsing oleh getNews()/getNewsAdmin() di GAS
+                    if (r.IMGS && Array.isArray(r.IMGS) && r.IMGS.length > 0) return r.IMGS;
+                    // Fallback: parse string JSON jika belum diparsing
+                    if (r.IMGS && typeof r.IMGS === 'string') {
+                        try { var a = JSON.parse(r.IMGS); if (Array.isArray(a) && a.length > 0) return a; } catch(e) {}
+                    }
+                    // Fallback ke IMG tunggal
+                    return r.IMG ? [r.IMG] : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
+                })()
+            };
+        }
+
         const AppState = {
             isAdminLoggedIn: false,
+            adminRole: '',       // 'superadmin' | 'kontributor'
+            adminUsername: '',
+            adminNama: '',
+            newsAdmin: [],       // daftar berita LENGKAP (semua status) khusus panel admin
             homepageSettings: {
                 heroTitle: "Merawat Jagat <br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow\">Membangun Peradaban</span> <br>di Bumi Baleharjo",
                 heroSubtitle: "Meneguhkan Aqidah Islam Ahlussunnah wal Jama'ah An-Nahdliyah, mengokohkan ukhuwah islamiyah, wathaniyah, dan basyariyah di wilayah Baleharjo, Sukodono, Sragen.",
@@ -3029,28 +3131,7 @@
 
             // News — SELALU timpa AppState
             if (data.news !== undefined) {
-                AppState.news = (data.news || []).map(function(r) {
-                    return {
-                        id: Number(r.ID),
-                        title: r.TITLE || '',
-                        summary: r.SUMMARY || '',
-                        content: r.CONTENT || '',
-                        category: (r.CATEGORY || 'kegiatan').toLowerCase(),
-                        date: r.DATE || '',
-                        author: r.AUTHOR || '',
-                        img: r.IMG || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600',
-                        imgs: (function() {
-                            // IMGS dari backend sudah diparsing oleh getNews() di GAS
-                            if (r.IMGS && Array.isArray(r.IMGS) && r.IMGS.length > 0) return r.IMGS;
-                            // Fallback: parse string JSON jika belum diparsing
-                            if (r.IMGS && typeof r.IMGS === 'string') {
-                                try { var a = JSON.parse(r.IMGS); if (Array.isArray(a) && a.length > 0) return a; } catch(e) {}
-                            }
-                            // Fallback ke IMG tunggal
-                            return r.IMG ? [r.IMG] : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
-                        })()
-                    };
-                });
+                AppState.news = (data.news || []).map(mapNewsRow);
             }
 
             // Finance — SELALU timpa AppState
@@ -4706,8 +4787,13 @@
 
             submitBtn.innerHTML = `<i class="fas fa-spinner animate-spin mr-2"></i> Memproses...`;
 
-            const successAuth = () => {
+            const successAuth = (authInfo) => {
+                authInfo = authInfo || {};
                 AppState.isAdminLoggedIn = true;
+                AppState.adminRole = authInfo.role === 'kontributor' ? 'kontributor' : 'superadmin';
+                AppState.adminUsername = authInfo.username || user;
+                AppState.adminNama = authInfo.nama || user;
+
                 document.getElementById('adminBtnText').innerText = "Panel Admin";
                 document.getElementById('mobileAdminBtnText').innerText = "Panel Admin";
                 
@@ -4718,7 +4804,7 @@
                 if (icon) icon.className = "fas fa-desktop text-nuGreen-800";
                 
                 closeLoginModal();
-                showToast("Selamat Datang, Admin NU Baleharjo!");
+                showToast("Selamat Datang, " + AppState.adminNama + "!");
 
                 // Prep initial fields
                 document.getElementById('editHeroTitle').value = AppState.homepageSettings.heroTitle;
@@ -4735,13 +4821,20 @@
 
                 loadLayananToForm();
                 loadBanomToForm();
-                
-                renderAdminNewsTable();
+
+                applyAdminRoleUI(AppState.adminRole);
+                loadAdminNewsList();
+                if (AppState.adminRole === 'superadmin') loadUsersAdmin();
+
                 renderAdminFinanceTable();
                 renderAdminPengurusTable();
                 renderInbox();
                 
-                setTimeout(() => { openAdminPanelModal(); }, 400);
+                setTimeout(() => {
+                    openAdminPanelModal();
+                    // Kontributor langsung diarahkan ke Kelola Berita (satu-satunya menu yang bisa diakses)
+                    switchAdminTab(AppState.adminRole === 'kontributor' ? 'berita-manage' : 'beranda-settings');
+                }, 400);
             };
 
             const failAuth = () => {
@@ -4750,23 +4843,23 @@
             };
 
             if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(function(isValid) {
-                    if (isValid) {
-                        successAuth();
+                google.script.run.withSuccessHandler(function(authResult) {
+                    if (authResult && authResult.ok) {
+                        successAuth(authResult);
                     } else {
                         failAuth();
                     }
                 }).withFailureHandler(function() {
                     // Failback local
                     if (user === 'admin' && (pass === 'aswaja1926' || pass === 'admin')) {
-                        successAuth();
+                        successAuth({ ok:true, role:'superadmin', nama:'Admin Utama', username:'admin' });
                     } else {
                         failAuth();
                     }
                 }).checkAdminCredentials(user, pass);
             } else {
                 if (user === 'admin' && (pass === 'aswaja1926' || pass === 'admin')) {
-                    successAuth();
+                    successAuth({ ok:true, role:'superadmin', nama:'Admin Utama', username:'admin' });
                 } else {
                     failAuth();
                 }
@@ -4852,6 +4945,12 @@
         };
 
         window.switchAdminTab = function(tabName) {
+            // Pengaman: Kontributor hanya boleh mengakses tab Kelola Berita,
+            // walau mencoba memanggil switchAdminTab lain secara manual.
+            if (AppState.adminRole === 'kontributor' && tabName !== 'berita-manage') {
+                tabName = 'berita-manage';
+            }
+
             document.querySelectorAll('.admin-panel-content').forEach(el => el.classList.add('hidden'));
 
             // Reset semua tombol sidebar ke state default
@@ -4893,6 +4992,17 @@
             if (tabName === 'beranda-settings') { try { populateHomepageForm(); } catch(e) {} }
             if (tabName === 'kontak') { setupKontakAdminForm(); }
             if (tabName === 'pengurus-manage') { setupPengurusHeaderForm(); }
+            if (tabName === 'berita-manage') { loadAdminNewsList(); }
+            if (tabName === 'users') { loadUsersAdmin(); }
+        }
+
+        // Sembunyikan menu & tab yang bukan haknya Admin Kontributor Berita.
+        // Kontributor hanya boleh melihat menu "Kelola Berita" + Logout.
+        window.applyAdminRoleUI = function(role) {
+            const isKontributor = role === 'kontributor';
+            document.querySelectorAll('[data-role="superadmin"]').forEach(function(el) {
+                el.style.display = isKontributor ? 'none' : '';
+            });
         }
 
         window.handleHomepageSettingsUpdate = function(event) {
@@ -5209,25 +5319,36 @@
             }
         }
 
+        // Label tombol submit berita: Admin Utama publish langsung, Kontributor wajib kirim untuk diverifikasi
+        function newsSubmitLabel() {
+            return AppState.adminRole === 'kontributor' ? 'Kirim untuk Diverifikasi' : 'Publish Berita';
+        }
+
         window.toggleAddNewsForm = function() {
             const form = document.getElementById('addNewsForm');
             const toggleBtn = document.getElementById('btnAddNewsToggle');
             if (form.classList.contains('hidden')) {
                 form.classList.remove('hidden');
                 toggleBtn.innerText = "Tutup Form";
+                document.querySelector('#addNewsForm h5').innerText = "Tulis Berita Baru";
+                document.querySelector('#addNewsForm button[type="submit"]').innerText = newsSubmitLabel();
             } else {
                 form.classList.add('hidden');
                 toggleBtn.innerText = "+ Tulis Berita Baru";
                 editingNewsId = null;
                 document.getElementById('addNewsForm').reset();
                 document.querySelector('#addNewsForm h5').innerText = "Tulis Berita Baru";
-                document.querySelector('#addNewsForm button[type="submit"]').innerText = "Publish Berita";
+                document.querySelector('#addNewsForm button[type="submit"]').innerText = newsSubmitLabel();
             }
         }
 
         window.editNews = function(id) {
-            const item = AppState.news.find(x => x.id === id);
+            const item = (AppState.newsAdmin || AppState.news).find(x => x.id === id);
             if (!item) return;
+            if (AppState.adminRole === 'kontributor' && item.submittedBy && item.submittedBy !== AppState.adminUsername) {
+                showToast("Anda hanya bisa mengedit berita yang Anda kirim sendiri.");
+                return;
+            }
 
             editingNewsId = id;
             document.getElementById('newNewsTitle').value = item.title;
@@ -5281,60 +5402,31 @@
                 const finalImgs = imgList.length > 0 ? imgList : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
                 
                 const _savingNewsId = editingNewsId;
-                if (_savingNewsId !== null) {
-                    const idx = AppState.news.findIndex(x => x.id === editingNewsId);
-                    if (idx !== -1) {
-                        AppState.news[idx].title = title;
-                        AppState.news[idx].category = cat;
-                        AppState.news[idx].summary = summary;
-                        AppState.news[idx].content = content;
-                        AppState.news[idx].author = author;
-                        // Selalu update foto jika imgList tidak kosong
-                        if (imgList.length > 0) {
-                            AppState.news[idx].imgs = finalImgs;
-                            AppState.news[idx].img = finalImgs[0];
-                        }
-                    }
-                    showToast("Kabar berita berhasil diperbarui!");
-                    editingNewsId = null;
-                } else {
-                    const newArticle = {
-                        id: Date.now(),
-                        title: title,
-                        category: cat,
-                        date: "Hari Ini",
-                        summary: summary,
-                        content: content,
-                        author: author,
-                        imgs: finalImgs,
-                        img: finalImgs[0]
-                    };
-                    AppState.news.unshift(newArticle);
-                    showToast("Kabar berita baru berhasil dipublikasi!");
-                }
+                const isKontributor = AppState.adminRole === 'kontributor';
+                editingNewsId = null;
 
-                renderNewsList();
-                renderAdminNewsTable();
-                syncStateToBackend();
-                // Simpan ke GAS Spreadsheet
+                // Simpan ke GAS Spreadsheet — usernameLogin dipakai backend untuk cek ulang
+                // role pengirim (Admin Utama = langsung tayang, Kontributor = menunggu verifikasi).
                 if (GAS) {
                     const newsPayload = {
                         title: title, summary: summary, content: content,
                         category: cat, date: new Date().toLocaleDateString('id-ID'),
                         author: author,
                         img: finalImgs[0] || '',
-                        imgs: JSON.stringify(finalImgs)
+                        imgs: JSON.stringify(finalImgs),
+                        usernameLogin: AppState.adminUsername
                     };
                     if (_savingNewsId !== null) {
                         google.script.run
                             .withSuccessHandler(function(r){
                                 if(r === 'success') {
-                                    showFloatingNotif('✅ Perubahan berita berhasil disimpan!', 'success');
+                                    showFloatingNotif(isKontributor ? '✅ Perubahan dikirim, menunggu verifikasi Admin Utama.' : '✅ Perubahan berita berhasil disimpan!', 'success');
                                 } else if(r === 'not_found') {
                                     showFloatingNotif('❌ Gagal: data tidak ditemukan. Coba reload halaman.', 'error');
                                 } else {
                                     showFloatingNotif('⚠️ Respon tidak dikenali: ' + r, 'warning');
                                 }
+                                refreshAdminAndPublicNews();
                             })
                             .withFailureHandler(function(e){
                                 var msg = String(e && (e.message || e));
@@ -5346,15 +5438,18 @@
                         // INSERT baru
                         google.script.run
                             .withSuccessHandler(function(r){
-                                if(r==='success') showFloatingNotif('✅ Berita baru berhasil dipublikasi!', 'success');
-                                else showFloatingNotif('⚠️ Berita tersimpan lokal, cek database.', 'warning');
+                                if(r==='success') showFloatingNotif(isKontributor ? '✅ Berita terkirim, menunggu verifikasi Admin Utama.' : '✅ Berita baru berhasil dipublikasi!', 'success');
+                                else showFloatingNotif('⚠️ Gagal menyimpan berita, cek koneksi.', 'warning');
+                                refreshAdminAndPublicNews();
                             })
                             .withFailureHandler(function(e){
                                 console.warn('addNews GAS:', e);
-                                showFloatingNotif('❌ Gagal publish berita: ' + (e.message||e), 'error');
+                                showFloatingNotif('❌ Gagal mengirim berita: ' + (e.message||e), 'error');
                             })
                             .addNews(JSON.stringify(newsPayload));
                     }
+                } else {
+                    showToast("Mode lokal (tanpa GAS): perubahan tidak tersimpan permanen.");
                 }
                 
                 document.getElementById('addNewsForm').reset();
@@ -5409,7 +5504,7 @@
                         saveNews(existingImgs);
                     } else {
                         // Fallback ke AppState
-                        const currentItem = AppState.news.find(x => x.id === editingNewsId);
+                        const currentItem = (AppState.newsAdmin || AppState.news).find(x => x.id === editingNewsId);
                         saveNews(currentItem && currentItem.imgs && currentItem.imgs.length > 0
                             ? currentItem.imgs
                             : (currentItem && currentItem.img ? [currentItem.img] : []));
@@ -5421,42 +5516,174 @@
         }
 
         window.deleteNews = function(id) {
+            const item = (AppState.newsAdmin || AppState.news).find(x => x.id === id);
+            if (item && AppState.adminRole === 'kontributor' && item.submittedBy && item.submittedBy !== AppState.adminUsername) {
+                showToast("Anda hanya bisa menghapus berita yang Anda kirim sendiri.");
+                return;
+            }
             showDeleteConfirm(
                 'Yakin hapus berita ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
                 function() {
-                    AppState.news = AppState.news.filter(x => x.id !== id);
-                    renderNewsList();
-                    renderAdminNewsTable();
-                    syncStateToBackend();
                     if (GAS) {
                         google.script.run
-                            .withSuccessHandler(function(r){ showToast('Berita dihapus dari database.'); })
+                            .withSuccessHandler(function(r){ showToast('Berita dihapus dari database.'); refreshAdminAndPublicNews(); })
                             .withFailureHandler(function(e){ console.warn('deleteNews GAS:', e); })
                             .deleteNews(String(id));
                     } else {
+                        AppState.news = AppState.news.filter(x => x.id !== id);
+                        AppState.newsAdmin = (AppState.newsAdmin || []).filter(x => x.id !== id);
+                        renderNewsList();
+                        renderAdminNewsTable();
                         showToast("Berita berhasil dihapus.");
                     }
                 }
             );
         }
 
+        // Admin Utama menyetujui berita kontributor → tayang di web publik
+        window.approveNewsItem = function(id) {
+            if (!GAS) { showToast("Fitur ini butuh koneksi ke backend."); return; }
+            google.script.run
+                .withSuccessHandler(function(r){
+                    if (r === 'success') showFloatingNotif('✅ Berita disetujui & tayang di website.', 'success');
+                    else showFloatingNotif('❌ Gagal menyetujui: ' + r, 'error');
+                    refreshAdminAndPublicNews();
+                })
+                .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal menyetujui berita: ' + (e.message||e), 'error'); })
+                .approveNews(String(id));
+        }
+
+        // Admin Utama menolak berita kontributor (opsional beri alasan)
+        window.rejectNewsItem = function(id) {
+            const alasan = prompt("Alasan penolakan (opsional, akan terlihat kontributor):", "") || "";
+            google.script.run
+                .withSuccessHandler(function(r){
+                    if (r === 'success') showFloatingNotif('🚫 Berita ditolak.', 'warning');
+                    else showFloatingNotif('❌ Gagal menolak: ' + r, 'error');
+                    refreshAdminAndPublicNews();
+                })
+                .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal menolak berita: ' + (e.message||e), 'error'); })
+                .rejectNews(String(id), alasan);
+        }
+
+        // Ambil data berita LENGKAP (semua status) untuk tabel admin
+        window.loadAdminNewsList = function() {
+            if (!GAS) { AppState.newsAdmin = AppState.news.slice(); renderAdminNewsTable(); return; }
+            google.script.run
+                .withSuccessHandler(function(raw){
+                    try { AppState.newsAdmin = (JSON.parse(raw||'[]')).map(mapNewsRow); }
+                    catch(e) { AppState.newsAdmin = []; }
+                    renderAdminNewsTable();
+                })
+                .withFailureHandler(function(e){ console.warn('getNewsAdmin GAS:', e); })
+                .getNewsAdmin();
+        }
+
+        // Refresh tabel admin (semua status) + daftar publik (hanya Published) sekaligus dari backend
+        function refreshAdminAndPublicNews() {
+            if (!GAS) return;
+            loadAdminNewsList();
+            google.script.run
+                .withSuccessHandler(function(raw){
+                    try { AppState.news = (JSON.parse(raw||'[]')).map(mapNewsRow); } catch(e) {}
+                    renderNewsList();
+                })
+                .withFailureHandler(function(e){ console.warn('getNews GAS:', e); })
+                .getNews();
+        }
+
+        var STATUS_BADGE = {
+            'Published': '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">TAYANG</span>',
+            'Pending':   '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">MENUNGGU VERIFIKASI</span>',
+            'Rejected':  '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">DITOLAK</span>'
+        };
+
         function renderAdminNewsTable() {
             const tbody = document.getElementById('adminNewsTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
-            
-            AppState.news.forEach(item => {
-                const row = `
-                    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-sans">
-                        <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 max-w-xs truncate">${item.title}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.category === 'dakwah' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.category.toUpperCase()}</span></td>
-                        <td class="p-3 text-slate-500 dark:text-slate-400">${item.date}</td>
-                        <td class="p-3 text-slate-600 dark:text-slate-400">${item.author}</td>
-                        <td class="p-3 text-right flex justify-end gap-1.5">
+
+            const isSuperadmin = AppState.adminRole !== 'kontributor';
+            let list = AppState.newsAdmin && AppState.newsAdmin.length ? AppState.newsAdmin : AppState.news;
+            // Kontributor hanya melihat berita yang ia kirim sendiri
+            if (!isSuperadmin) {
+                list = list.filter(item => !item.submittedBy || item.submittedBy === AppState.adminUsername);
+            }
+
+            const note = document.getElementById('beritaKontributorNote');
+            if (note) note.classList.toggle('hidden', isSuperadmin);
+
+            list.forEach(item => {
+                const status = item.status || 'Published';
+                const badge = STATUS_BADGE[status] || STATUS_BADGE['Published'];
+                const canEditDelete = isSuperadmin || !item.submittedBy || item.submittedBy === AppState.adminUsername;
+                let actionBtns = '';
+                if (canEditDelete) {
+                    actionBtns += `
                             <button onclick="window.editNews(${item.id})" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
                                 <i class="fas fa-edit text-[10px]"></i> Edit
                             </button>
                             <button onclick="window.deleteNews(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-trash-alt text-[10px]"></i> Hapus
+                            </button>`;
+                }
+                if (isSuperadmin && status === 'Pending') {
+                    actionBtns += `
+                            <button onclick="window.approveNewsItem(${item.id})" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-check text-[10px]"></i> Setujui
+                            </button>
+                            <button onclick="window.rejectNewsItem(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-times text-[10px]"></i> Tolak
+                            </button>`;
+                }
+                const row = `
+                    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-sans">
+                        <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 max-w-xs truncate">${item.title}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.category === 'dakwah' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.category.toUpperCase()}</span></td>
+                        <td class="p-3">${badge}</td>
+                        <td class="p-3 text-slate-500 dark:text-slate-400">${item.date}</td>
+                        <td class="p-3 text-slate-600 dark:text-slate-400">${item.author}</td>
+                        <td class="p-3 text-right flex justify-end gap-1.5 flex-wrap">
+                            ${actionBtns}
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // ================== KELOLA ADMIN (User & Kontributor) ==================
+        window.loadUsersAdmin = function() {
+            if (AppState.adminRole !== 'superadmin') return;
+            if (!GAS) { renderUsersTable([{username:'admin', role:'superadmin', nama:'Admin Utama (lokal)'}]); return; }
+            google.script.run
+                .withSuccessHandler(function(raw){
+                    let list = [];
+                    try { list = JSON.parse(raw || '[]'); } catch(e) {}
+                    renderUsersTable(list);
+                })
+                .withFailureHandler(function(e){ console.warn('getUsers GAS:', e); })
+                .getUsers();
+        }
+
+        function renderUsersTable(list) {
+            const tbody = document.getElementById('adminUsersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            (list || []).forEach(u => {
+                const roleLabel = u.role === 'kontributor'
+                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">KONTRIBUTOR</span>'
+                    : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">ADMIN UTAMA</span>';
+                const row = `
+                    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-sans">
+                        <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${u.username}</td>
+                        <td class="p-3 text-slate-600 dark:text-slate-400">${u.nama || '-'}</td>
+                        <td class="p-3">${roleLabel}</td>
+                        <td class="p-3 text-right flex justify-end gap-1.5">
+                            <button onclick="window.editUserRow('${u.username}', '${u.role}', '${(u.nama||'').replace(/'/g,"&#39;")}')" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
+                                <i class="fas fa-edit text-[10px]"></i> Edit
+                            </button>
+                            <button onclick="window.deleteUserRow('${u.username}')" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
                                 <i class="fas fa-trash-alt text-[10px]"></i> Hapus
                             </button>
                         </td>
@@ -5464,6 +5691,90 @@
                 `;
                 tbody.innerHTML += row;
             });
+        }
+
+        let editingUsername = null;
+
+        window.toggleAddUserForm = function() {
+            const form = document.getElementById('addUserForm');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+            } else {
+                form.classList.add('hidden');
+                editingUsername = null;
+                document.getElementById('addUserForm').reset();
+                document.getElementById('newUserUsername').removeAttribute('disabled');
+                document.querySelector('#addUserForm h5').innerText = "Tambah Akun Admin";
+                document.getElementById('newUserPassword').setAttribute('required', 'required');
+                document.getElementById('newUserPassword').placeholder = "Isi untuk set/ganti password";
+            }
+        }
+
+        window.editUserRow = function(username, role, nama) {
+            editingUsername = username;
+            document.getElementById('newUserUsername').value = username;
+            document.getElementById('newUserUsername').setAttribute('disabled', 'disabled');
+            document.getElementById('newUserNama').value = nama || '';
+            document.getElementById('newUserRole').value = role || 'kontributor';
+            document.getElementById('newUserPassword').value = '';
+            document.getElementById('newUserPassword').removeAttribute('required');
+            document.getElementById('newUserPassword').placeholder = "Kosongkan jika tidak ganti password";
+            document.querySelector('#addUserForm h5').innerText = "Edit Akun: " + username;
+            const form = document.getElementById('addUserForm');
+            if (form.classList.contains('hidden')) form.classList.remove('hidden');
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        window.handleAddUserSubmit = function(event) {
+            event.preventDefault();
+            const username = document.getElementById('newUserUsername').value.trim();
+            const nama     = document.getElementById('newUserNama').value.trim();
+            const password = document.getElementById('newUserPassword').value;
+            const role     = document.getElementById('newUserRole').value;
+
+            if (!GAS) { showToast("Fitur ini butuh koneksi ke backend (GAS)."); return; }
+
+            if (editingUsername) {
+                const payload = { role: role, nama: nama };
+                if (password) payload.password = password;
+                google.script.run
+                    .withSuccessHandler(function(r){
+                        if (r === 'success') { showFloatingNotif('✅ Akun berhasil diperbarui.', 'success'); }
+                        else if (r === 'not_found') { showFloatingNotif('❌ Akun tidak ditemukan.', 'error'); }
+                        else { showFloatingNotif('⚠️ ' + r, 'warning'); }
+                        loadUsersAdmin();
+                        toggleAddUserForm();
+                    })
+                    .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal memperbarui akun: ' + (e.message||e), 'error'); })
+                    .updateUser(editingUsername, JSON.stringify(payload));
+            } else {
+                if (!password) { showToast("Password wajib diisi untuk akun baru."); return; }
+                const payload = { username: username, password: password, role: role, nama: nama };
+                google.script.run
+                    .withSuccessHandler(function(r){
+                        if (r === 'success') { showFloatingNotif('✅ Akun admin baru berhasil dibuat.', 'success'); loadUsersAdmin(); toggleAddUserForm(); }
+                        else if (r === 'exists') { showToast('Username sudah dipakai, pilih username lain.'); }
+                        else { showFloatingNotif('⚠️ ' + r, 'warning'); }
+                    })
+                    .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal membuat akun: ' + (e.message||e), 'error'); })
+                    .addUser(JSON.stringify(payload));
+            }
+        }
+
+        window.deleteUserRow = function(username) {
+            showDeleteConfirm(
+                'Yakin hapus akun <b>' + username + '</b>?<br><span class="text-rose-500 font-semibold">Akun ini tidak akan bisa login lagi.</span>',
+                function() {
+                    google.script.run
+                        .withSuccessHandler(function(r){
+                            if (r === 'deleted') showToast('Akun dihapus.');
+                            else showToast(String(r));
+                            loadUsersAdmin();
+                        })
+                        .withFailureHandler(function(e){ console.warn('deleteUser GAS:', e); })
+                        .deleteUser(username);
+                }
+            );
         }
 
         window.toggleAddFinanceForm = function() {
@@ -6889,6 +7200,7 @@
             safeBind('btn-admin-berita-manage', 'click', () => switchAdminTab('berita-manage'));
             safeBind('btn-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
             safeBind('btn-admin-pengurus-manage', 'click', () => switchAdminTab('pengurus-manage'));
+            safeBind('btn-admin-users', 'click', () => switchAdminTab('users'));
             safeBind('btn-admin-inbox', 'click', () => switchAdminTab('inbox'));
             
             // Mobile Admin tabs
@@ -6902,6 +7214,7 @@
             safeBind('btn-mob-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
             safeBind('btn-mob-admin-pengurus', 'click', () => switchAdminTab('pengurus-manage'));
             safeBind('btn-mob-admin-inbox', 'click', () => switchAdminTab('inbox'));
+            safeBind('btn-mob-admin-users', 'click', () => switchAdminTab('users'));
             safeBind('btn-mob-admin-kontak', 'click', () => switchAdminTab('kontak'));
             safeBind('btn-admin-kontak', 'click', () => switchAdminTab('kontak'));
             safeBind('formKontakSettings', 'submit', handleKontakSettingsUpdate);
