@@ -1760,6 +1760,7 @@
                         <p id="beritaKontributorNote" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
                             <i class="fas fa-circle-info mr-1"></i>
                             Berita yang Anda kirim akan berstatus <b>Menunggu Verifikasi</b> dan baru tayang di website setelah disetujui Admin Utama.
+                            Anda tidak bisa mengedit atau menghapus berita yang sudah terkirim — kecuali berita yang <b>Ditolak</b>, yang bisa Anda perbaiki dan kirim ulang.
                         </p>
                     </div>
 
@@ -5345,9 +5346,15 @@
         window.editNews = function(id) {
             const item = (AppState.newsAdmin || AppState.news).find(x => x.id === id);
             if (!item) return;
-            if (AppState.adminRole === 'kontributor' && item.submittedBy && item.submittedBy !== AppState.adminUsername) {
-                showToast("Anda hanya bisa mengedit berita yang Anda kirim sendiri.");
-                return;
+            if (AppState.adminRole === 'kontributor') {
+                if (item.submittedBy && item.submittedBy !== AppState.adminUsername) {
+                    showToast("Anda hanya bisa mengedit berita yang Anda kirim sendiri.");
+                    return;
+                }
+                if (item.status !== 'Rejected') {
+                    showToast("Berita yang sudah tayang/menunggu verifikasi tidak bisa diedit. Hanya berita yang Ditolak yang bisa diperbaiki.");
+                    return;
+                }
             }
 
             editingNewsId = id;
@@ -5516,9 +5523,8 @@
         }
 
         window.deleteNews = function(id) {
-            const item = (AppState.newsAdmin || AppState.news).find(x => x.id === id);
-            if (item && AppState.adminRole === 'kontributor' && item.submittedBy && item.submittedBy !== AppState.adminUsername) {
-                showToast("Anda hanya bisa menghapus berita yang Anda kirim sendiri.");
+            if (AppState.adminRole === 'kontributor') {
+                showToast("Kontributor tidak memiliki akses hapus berita.");
                 return;
             }
             showDeleteConfirm(
@@ -5528,7 +5534,7 @@
                         google.script.run
                             .withSuccessHandler(function(r){ showToast('Berita dihapus dari database.'); refreshAdminAndPublicNews(); })
                             .withFailureHandler(function(e){ console.warn('deleteNews GAS:', e); })
-                            .deleteNews(String(id));
+                            .deleteNews(String(id), AppState.adminUsername);
                     } else {
                         AppState.news = AppState.news.filter(x => x.id !== id);
                         AppState.newsAdmin = (AppState.newsAdmin || []).filter(x => x.id !== id);
@@ -5616,16 +5622,27 @@
             list.forEach(item => {
                 const status = item.status || 'Published';
                 const badge = STATUS_BADGE[status] || STATUS_BADGE['Published'];
-                const canEditDelete = isSuperadmin || !item.submittedBy || item.submittedBy === AppState.adminUsername;
+                const isOwnItem = !item.submittedBy || item.submittedBy === AppState.adminUsername;
+                // Superadmin: bebas edit & hapus semua berita.
+                // Kontributor: TIDAK bisa hapus sama sekali; hanya bisa edit berita miliknya
+                // sendiri yang statusnya Ditolak (untuk diperbaiki & dikirim ulang).
+                const canEdit = isSuperadmin ? true : (isOwnItem && status === 'Rejected');
+                const canDelete = isSuperadmin;
                 let actionBtns = '';
-                if (canEditDelete) {
+                if (canEdit) {
                     actionBtns += `
                             <button onclick="window.editNews(${item.id})" class="text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 bg-emerald-50 hover:bg-emerald-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
-                                <i class="fas fa-edit text-[10px]"></i> Edit
-                            </button>
+                                <i class="fas fa-edit text-[10px]"></i> ${status === 'Rejected' ? 'Perbaiki' : 'Edit'}
+                            </button>`;
+                }
+                if (canDelete) {
+                    actionBtns += `
                             <button onclick="window.deleteNews(${item.id})" class="text-rose-600 hover:text-rose-900 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded transition text-[11px] flex inline-flex items-center gap-1">
                                 <i class="fas fa-trash-alt text-[10px]"></i> Hapus
                             </button>`;
+                }
+                if (!canEdit && !canDelete) {
+                    actionBtns += `<span class="text-[10px] text-slate-400 italic">Tidak ada aksi</span>`;
                 }
                 if (isSuperadmin && status === 'Pending') {
                     actionBtns += `
