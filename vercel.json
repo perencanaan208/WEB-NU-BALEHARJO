@@ -7,3 +7,8 @@
     }
   ]
 }
+{
+  "rewrites": [
+    { "source": "/berita/:id", "destination": "/api/berita/:id" }
+  ]
+}
