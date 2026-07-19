@@ -1159,23 +1159,79 @@
 
             <!-- KONTEN UTAMA -->
             <div class="flex-1 flex flex-col overflow-hidden">
-                <!-- Tab bar mobile -->
-                <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex gap-1.5 overflow-x-auto shrink-0">
-                    <button id="btn-mob-admin-siteconfig" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Situs</button>
-                    <button id="btn-mob-admin-beranda" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Beranda</button>
-                    <button id="btn-mob-admin-profil" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Profil</button>
-                    <button id="btn-mob-admin-layanan" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Layanan</button>
-                    <button id="btn-mob-admin-banom" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Banom</button>
-                    <button id="btn-mob-admin-shalat" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Shalat</button>
-                    <button id="btn-mob-admin-berita" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Berita</button>
-                    <button id="btn-mob-admin-galeri" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Galeri</button>
-                    <button id="btn-mob-admin-keuangan" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Keuangan</button>
-                    <button id="btn-mob-admin-pengurus" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pengurus</button>
-                    <button id="btn-mob-admin-users" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Admin</button>
-                    <button id="btn-mob-admin-inbox" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Pesan</button>
-                    <button id="btn-mob-admin-kontak" data-role="superadmin" class="text-xs bg-slate-100 dark:bg-slate-900 px-3 py-2 rounded-lg font-bold shrink-0 text-slate-700 dark:text-slate-300">Kontak</button>
-                    <button id="adminLogoutBtnMobile" class="text-xs text-rose-600 bg-rose-50 border border-rose-100 px-3 py-2 rounded-lg font-bold shrink-0">Logout</button>
+                <!-- Menu Admin mobile: HAMBURGER -->
+                <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex items-center justify-between shrink-0 relative z-20">
+                    <button id="mobAdminMenuToggle" class="flex items-center gap-2.5 text-sm font-bold text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+                        <i class="fas fa-bars"></i>
+                        <span id="mobAdminActiveTabLabel">Menu</span>
+                        <i class="fas fa-chevron-down text-[10px] text-slate-400"></i>
+                    </button>
+                    <button id="adminLogoutBtnMobile" class="text-xs text-rose-600 bg-rose-50 border border-rose-100 px-3 py-2 rounded-lg font-bold shrink-0">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div id="mobAdminMenuDropdown" class="hidden absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-xl max-h-[75vh] overflow-y-auto">
+                        <div class="p-2 space-y-0.5">
+                            <button id="btn-mob-admin-siteconfig" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Pengaturan Situs</span>
+                            </button>
+                            <button id="btn-mob-admin-beranda" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-home text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Beranda</span>
+                            </button>
+                            <button id="btn-mob-admin-profil" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-id-card text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Profil</span>
+                            </button>
+                            <button id="btn-mob-admin-layanan" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-hand-holding-heart text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Layanan</span>
+                            </button>
+                            <button id="btn-mob-admin-banom" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Banom/Lembaga</span>
+                            </button>
+                            <button id="btn-mob-admin-shalat" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-clock text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Waktu Shalat</span>
+                            </button>
+                            <div data-role="superadmin" class="px-3 py-1.5"><div class="h-px bg-slate-100 dark:bg-slate-900"></div></div>
+                            <button id="btn-mob-admin-berita" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-newspaper text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Berita</span>
+                            </button>
+                            <button id="btn-mob-admin-galeri" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-images text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Galeri</span>
+                            </button>
+                            <button id="btn-mob-admin-keuangan" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-file-invoice-dollar text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Keuangan UPZISNU</span>
+                            </button>
+                            <button id="btn-mob-admin-pengurus" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Pengurus</span>
+                            </button>
+                            <div data-role="superadmin" class="px-3 py-1.5"><div class="h-px bg-slate-100 dark:bg-slate-900"></div></div>
+                            <button id="btn-mob-admin-users" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-user-shield text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Admin</span>
+                            </button>
+                            <button id="btn-mob-admin-inbox" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-envelope-open-text text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Pesan Masuk</span>
+                            </button>
+                            <button id="btn-mob-admin-kontak" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-address-card text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Kontak</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <!-- Overlay penutup dropdown mobile (klik di luar untuk menutup) -->
+                <div id="mobAdminMenuOverlay" class="hidden md:hidden fixed inset-0 z-10 bg-black/20"></div>
 
                 <!-- Area konten scroll -->
                 <div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8" id="adminContentArea">
@@ -4945,6 +5001,41 @@
             document.body.style.overflow = '';
         };
 
+        // Label tab untuk ditampilkan di tombol hamburger mobile
+        var ADMIN_TAB_LABELS = {
+            'siteconfig': 'Pengaturan Situs', 'beranda-settings': 'Kelola Beranda',
+            'profil-settings': 'Kelola Profil', 'layanan-settings': 'Kelola Layanan',
+            'banom-settings': 'Kelola Banom/Lembaga', 'shalat': 'Waktu Shalat',
+            'berita-manage': 'Kelola Berita', 'galeri': 'Kelola Galeri',
+            'keuangan': 'Keuangan UPZISNU', 'pengurus-manage': 'Kelola Pengurus',
+            'users': 'Kelola Admin', 'inbox': 'Pesan Masuk', 'kontak': 'Kelola Kontak'
+        };
+        // Tab name → id tombol versi mobile (beberapa berbeda dari pola "btn-mob-admin-"+tabName)
+        var ADMIN_TAB_MOBILE_ID = {
+            'siteconfig': 'btn-mob-admin-siteconfig', 'beranda-settings': 'btn-mob-admin-beranda',
+            'profil-settings': 'btn-mob-admin-profil', 'layanan-settings': 'btn-mob-admin-layanan',
+            'banom-settings': 'btn-mob-admin-banom', 'shalat': 'btn-mob-admin-shalat',
+            'berita-manage': 'btn-mob-admin-berita', 'galeri': 'btn-mob-admin-galeri',
+            'keuangan': 'btn-mob-admin-keuangan', 'pengurus-manage': 'btn-mob-admin-pengurus',
+            'users': 'btn-mob-admin-users', 'inbox': 'btn-mob-admin-inbox', 'kontak': 'btn-mob-admin-kontak'
+        };
+
+        window.closeMobAdminMenu = function() {
+            const dd = document.getElementById('mobAdminMenuDropdown');
+            const ov = document.getElementById('mobAdminMenuOverlay');
+            if (dd) dd.classList.add('hidden');
+            if (ov) ov.classList.add('hidden');
+        }
+
+        window.toggleMobAdminMenu = function() {
+            const dd = document.getElementById('mobAdminMenuDropdown');
+            const ov = document.getElementById('mobAdminMenuOverlay');
+            if (!dd) return;
+            const willOpen = dd.classList.contains('hidden');
+            if (willOpen) { dd.classList.remove('hidden'); if (ov) ov.classList.remove('hidden'); }
+            else { closeMobAdminMenu(); }
+        }
+
         window.switchAdminTab = function(tabName) {
             // Pengaman: Kontributor hanya boleh mengakses tab Kelola Berita,
             // walau mencoba memanggil switchAdminTab lain secara manual.
@@ -4954,9 +5045,21 @@
 
             document.querySelectorAll('.admin-panel-content').forEach(el => el.classList.add('hidden'));
 
-            // Reset semua tombol sidebar ke state default
+            // Reset semua tombol sidebar (desktop) ke state default
             document.querySelectorAll('.admin-tab-btn').forEach(btn => {
                 btn.classList.remove('bg-nuGreen-800', 'text-white', 'shadow-sm', 'active');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+                const sp = btn.querySelector('span.rounded-lg');
+                if (sp) {
+                    sp.classList.remove('bg-white/20');
+                    sp.classList.add('bg-slate-100', 'dark:bg-slate-900');
+                    const ic = sp.querySelector('i');
+                    if (ic) { ic.classList.remove('text-white'); ic.classList.add('text-slate-500', 'dark:text-slate-400'); }
+                }
+            });
+            // Reset semua tombol menu hamburger (mobile) ke state default
+            document.querySelectorAll('.mob-admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-nuGreen-800', 'text-white', 'shadow-sm');
                 btn.classList.add('text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
                 const sp = btn.querySelector('span.rounded-lg');
                 if (sp) {
@@ -4982,6 +5085,24 @@
                     if (ic) { ic.classList.remove('text-slate-500', 'dark:text-slate-400'); ic.classList.add('text-white'); }
                 }
             }
+
+            // Highlight tombol yang sama di menu hamburger mobile + update label aktif
+            const mobBtn = document.getElementById(ADMIN_TAB_MOBILE_ID[tabName] || ('btn-mob-admin-' + tabName));
+            if (mobBtn) {
+                mobBtn.classList.remove('text-slate-600', 'dark:text-slate-400', 'hover:bg-slate-50', 'dark:hover:bg-slate-800');
+                mobBtn.classList.add('bg-nuGreen-800', 'text-white', 'shadow-sm');
+                const sp = mobBtn.querySelector('span.rounded-lg');
+                if (sp) {
+                    sp.classList.remove('bg-slate-100', 'dark:bg-slate-900');
+                    sp.classList.add('bg-white/20');
+                    const ic = sp.querySelector('i');
+                    if (ic) { ic.classList.remove('text-slate-500', 'dark:text-slate-400'); ic.classList.add('text-white'); }
+                }
+            }
+            const labelEl = document.getElementById('mobAdminActiveTabLabel');
+            if (labelEl) labelEl.innerText = ADMIN_TAB_LABELS[tabName] || 'Menu';
+            // Tutup dropdown menu hamburger setiap kali pindah tab
+            closeMobAdminMenu();
 
             // Scroll konten ke atas
             const ca = document.getElementById('adminContentArea');
@@ -7233,6 +7354,8 @@
             safeBind('btn-mob-admin-inbox', 'click', () => switchAdminTab('inbox'));
             safeBind('btn-mob-admin-users', 'click', () => switchAdminTab('users'));
             safeBind('btn-mob-admin-kontak', 'click', () => switchAdminTab('kontak'));
+            safeBind('mobAdminMenuToggle', 'click', () => toggleMobAdminMenu());
+            safeBind('mobAdminMenuOverlay', 'click', () => closeMobAdminMenu());
             safeBind('btn-admin-kontak', 'click', () => switchAdminTab('kontak'));
             safeBind('formKontakSettings', 'submit', handleKontakSettingsUpdate);
 
