@@ -2372,7 +2372,7 @@
                                 <button onclick="window.shareNewsWA && window.shareNewsWA()" class="flex-1 flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs py-2.5 rounded-xl transition border border-green-100">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('✅ Link berita disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200 dark:border-slate-700">
+                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.currentNewsShareUrl || window.location.href).then(()=>showToast('✅ Link berita disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200 dark:border-slate-700">
                                     <i class="fas fa-link"></i> Salin Link
                                 </button>
                             </div>
@@ -2405,7 +2405,7 @@
                                 <button onclick="window.shareNewsWA && window.shareNewsWA()" class="flex-1 flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs py-2.5 rounded-xl transition border border-green-100">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </button>
-                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200 dark:border-slate-700">
+                                <button onclick="navigator.clipboard && navigator.clipboard.writeText(window.currentNewsShareUrl || window.location.href).then(()=>showToast('Link disalin!'))" class="flex-1 flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-bold text-xs py-2.5 rounded-xl transition border border-slate-200 dark:border-slate-700">
                                     <i class="fas fa-link"></i> Salin Link
                                 </button>
                             </div>
@@ -4415,9 +4415,14 @@
                     .incrementNewsView(String(id));
             }
 
+            // ── URL berbagi: pakai path /berita/ID (bukan hash #berita-ID) supaya
+            // link yang dibagikan bisa menampilkan preview foto & judul berita
+            // lewat serverless function di /api/berita/[id].js
+            window.currentNewsShareUrl = window.location.origin + '/berita/' + id;
+
             // ── Share WhatsApp ──
             window.shareNewsWA = function() {
-                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + window.location.href;
+                var text = '📰 *' + (article.title || '') + '*\n\n' + (article.summary || '').substring(0, 120) + '...\n\n🌐 ' + window.currentNewsShareUrl;
                 var url  = 'https://wa.me/?text=' + encodeURIComponent(text);
                 window.open(url, '_blank');
             };
