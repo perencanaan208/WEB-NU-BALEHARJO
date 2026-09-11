@@ -2003,10 +2003,17 @@
                             </div>
                         </form>
 
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="pengurusSearchInput" oninput="window.filterAdminPengurusTable(this.value)" placeholder="Cari nama pengurus..." autocomplete="off"
+                                class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                        </div>
+
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                                        <th class="p-3">Urutan</th>
                                         <th class="p-3">Foto</th>
                                         <th class="p-3">Nama Pengurus</th>
                                         <th class="p-3">Jabatan</th>
@@ -6278,14 +6285,49 @@
             );
         }
 
-        function renderAdminPengurusTable() {
+        function renderAdminPengurusTable(filterText) {
             const tbody = document.getElementById('adminPengurusTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            AppState.pengurus.forEach(item => {
+            if (filterText === undefined) {
+                const searchEl = document.getElementById('pengurusSearchInput');
+                filterText = searchEl ? searchEl.value : '';
+            }
+            const q = (filterText || '').trim().toLowerCase();
+
+            if (AppState.pengurus.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-400 dark:text-slate-500 italic">Belum ada data pengurus.</td></tr>`;
+                return;
+            }
+
+            const list = q ? AppState.pengurus.filter(item => (item.name || '').toLowerCase().includes(q)) : AppState.pengurus;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-400 dark:text-slate-500 italic">Nama pengurus "${filterText}" tidak ditemukan.</td></tr>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const idx = AppState.pengurus.findIndex(x => x.id === item.id);
+                let isFirst = true, isLast = true;
+                for (let i = idx - 1; i >= 0; i--) { if (AppState.pengurus[i].group === item.group) { isFirst = false; break; } }
+                for (let i = idx + 1; i < AppState.pengurus.length; i++) { if (AppState.pengurus[i].group === item.group) { isLast = false; break; } }
+
                 const row = `
                     <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
+                        <td class="p-3">
+                            <div class="flex flex-col gap-0.5">
+                                <button onclick="window.movePengurus(${item.id}, 'up')" ${isFirst ? 'disabled' : ''} title="Geser ke atas"
+                                    class="w-6 h-6 flex items-center justify-center rounded ${isFirst ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'} transition">
+                                    <i class="fas fa-chevron-up text-[10px]"></i>
+                                </button>
+                                <button onclick="window.movePengurus(${item.id}, 'down')" ${isLast ? 'disabled' : ''} title="Geser ke bawah"
+                                    class="w-6 h-6 flex items-center justify-center rounded ${isLast ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'} transition">
+                                    <i class="fas fa-chevron-down text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
                         <td class="p-3">
                             <div class="w-11 h-11 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900">
                                 <img src="${item.photo}" onerror="this.src='https://placehold.co/500x500/14532d/ffffff?text=PRNU'" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
@@ -6307,6 +6349,40 @@
                 tbody.innerHTML += row;
             });
         }
+
+        window.filterAdminPengurusTable = function(query) {
+            renderAdminPengurusTable(query);
+        };
+
+        window.movePengurus = function(id, direction) {
+            const idx = AppState.pengurus.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            const group = AppState.pengurus[idx].group;
+            let swapIdx = -1;
+
+            if (direction === 'up') {
+                for (let i = idx - 1; i >= 0; i--) { if (AppState.pengurus[i].group === group) { swapIdx = i; break; } }
+            } else {
+                for (let i = idx + 1; i < AppState.pengurus.length; i++) { if (AppState.pengurus[i].group === group) { swapIdx = i; break; } }
+            }
+            if (swapIdx === -1) return;
+
+            const tmp = AppState.pengurus[idx];
+            AppState.pengurus[idx] = AppState.pengurus[swapIdx];
+            AppState.pengurus[swapIdx] = tmp;
+
+            renderAdminPengurusTable();
+            renderPublicPengurus();
+            syncStateToBackend();
+
+            if (GAS) {
+                const idsUrut = AppState.pengurus.map(x => String(x.id));
+                google.script.run
+                    .withSuccessHandler(function(r){ if (r === 'success') showToast('Urutan pengurus tersimpan!'); })
+                    .withFailureHandler(function(e){ console.warn('reorderPengurus GAS:', e); })
+                    .reorderPengurus(JSON.stringify(idsUrut));
+            }
+        };
 
         function renderInbox() {
             const container = document.getElementById('adminInboxContainer');
