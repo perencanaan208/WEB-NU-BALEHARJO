@@ -2058,6 +2058,7 @@
                                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Password</label>
                                     <input type="text" id="newUserPassword" required autocomplete="off" placeholder="Isi untuk set/ganti password"
                                         class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-nuGreen-500 text-slate-800 dark:text-slate-200">
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Min. 8 karakter, kombinasi huruf besar, huruf kecil, dan angka/simbol.</p>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Peran (Role)</label>
@@ -5890,11 +5891,10 @@
                 if (password) payload.password = password;
                 google.script.run
                     .withSuccessHandler(function(r){
-                        if (r === 'success') { showFloatingNotif('✅ Akun berhasil diperbarui.', 'success'); }
+                        if (r === 'success') { showFloatingNotif('✅ Akun berhasil diperbarui.', 'success'); loadUsersAdmin(); toggleAddUserForm(); }
                         else if (r === 'not_found') { showFloatingNotif('❌ Akun tidak ditemukan.', 'error'); }
-                        else { showFloatingNotif('⚠️ ' + r, 'warning'); }
-                        loadUsersAdmin();
-                        toggleAddUserForm();
+                        else if (typeof r === 'string' && r.indexOf('error:') === 0) { showFloatingNotif('❌ ' + r.replace('error:','').trim(), 'error'); }
+                        else { showFloatingNotif('⚠️ ' + r, 'warning'); loadUsersAdmin(); toggleAddUserForm(); }
                     })
                     .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal memperbarui akun: ' + (e.message||e), 'error'); })
                     .updateUser(editingUsername, JSON.stringify(payload));
@@ -5905,6 +5905,7 @@
                     .withSuccessHandler(function(r){
                         if (r === 'success') { showFloatingNotif('✅ Akun admin baru berhasil dibuat.', 'success'); loadUsersAdmin(); toggleAddUserForm(); }
                         else if (r === 'exists') { showToast('Username sudah dipakai, pilih username lain.'); }
+                        else if (typeof r === 'string' && r.indexOf('error:') === 0) { showFloatingNotif('❌ ' + r.replace('error:','').trim(), 'error'); }
                         else { showFloatingNotif('⚠️ ' + r, 'warning'); }
                     })
                     .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal membuat akun: ' + (e.message||e), 'error'); })
