@@ -33,37 +33,87 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PRNU Baleharjo">
 
-    <!-- ══ BOOT CEPAT: ambil data server & baca cache lokal sedini mungkin ══
-         Request loadAllData dikirim langsung dari <head> (paralel dengan
-         download Tailwind/HTML), dan data kunjungan sebelumnya dibaca dari
-         cache lokal agar dashboard langsung tampil dengan data asli. -->
+    <!-- ══ BOOT CEPAT: data dipecah "core" (ringan) + "media" (foto) ══
+         • core  : teks ringan → kecil, cepat, menentukan tampilan awal
+         • media : foto per bagian, dimuat SETELAH core agar tidak berebut sinyal
+         Semua dibaca lebih dulu dari cache perangkat (tampil instan), lalu disegarkan. -->
     <script>
         (function () {
             var URL_ = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
-            var CK = 'prnu_data_cache_v1';
             window.GAS_API_URL = URL_;
-            var P = window.PRNU_BOOT = { cache: null };
-            try { P.cache = localStorage.getItem(CK); } catch (e) {}
-            function fetchOnce() {
+            var PARTS = ['news', 'settings', 'pengurus', 'galeri', 'penta'];
+            var P = window.PRNU_BOOT = { cache: null, mediaCache: {}, media: {} };
+            try { localStorage.removeItem('prnu_data_cache_v1'); } catch (e) {}
+            try { P.cache = localStorage.getItem('prnu_core_v2'); } catch (e) {}
+            PARTS.forEach(function (k) {
+                try { P.mediaCache[k] = localStorage.getItem('prnu_media_v2_' + k); } catch (e) {}
+            });
+
+            function timedFetch(url, opts, ms) {
                 var ctl = ('AbortController' in window) ? new AbortController() : null;
-                var to = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
-                return fetch(URL_, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ fn: 'loadAllData', args: [] }),
-                    signal: ctl ? ctl.signal : undefined
-                }).then(function (r) { return r.json(); }).then(function (d) {
+                var to = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
+                opts = opts || {};
+                if (ctl) opts.signal = ctl.signal;
+                return fetch(url, opts).then(function (r) {
                     clearTimeout(to);
-                    if (d && d.ok && d.result) return d.result;
-                    throw new Error('bad response');
+                    if (!r.ok) throw new Error('http ' + r.status);
+                    return r.json();
                 }, function (e) { clearTimeout(to); throw e; });
             }
-            P.fetch = function () { return fetchOnce().catch(function () { return null; }); };
-            P.network = fetchOnce().catch(function () {
-                return new Promise(function (r) { setTimeout(r, 1500); }).then(fetchOnce);
-            }).catch(function () { return null; });
-            P.save = function (str) {
-                try { localStorage.setItem(CK, str); } catch (e) { try { localStorage.removeItem(CK); } catch (_) {} }
+            function okResult(d) {
+                if (d && d.ok && d.result) return d.result;
+                throw new Error('bad response');
+            }
+            // Jalur 1 (cepat): /api/data — disajikan dari CDN Vercel
+            function viaEdge(part) {
+                return timedFetch('/api/data?part=' + encodeURIComponent(part), { method: 'GET' }, 15000).then(okResult);
+            }
+            // Jalur 2 (cadangan): langsung ke Apps Script
+            function viaGas(part) {
+                var body = (part === 'core')
+                    ? { fn: 'loadCoreData', args: [] }
+                    : { fn: 'loadMedia', args: [part] };
+                return timedFetch(URL_, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(body)
+                }, 25000).then(okResult);
+            }
+            function fetchPart(part) {
+                return viaEdge(part).catch(function () { return viaGas(part); });
+            }
+            function fetchRetry(part) {
+                return fetchPart(part).catch(function () {
+                    return new Promise(function (r) { setTimeout(r, 1500); }).then(function () { return fetchPart(part); });
+                }).catch(function () { return null; });
+            }
+
+            // CORE — langsung dikirim sekarang
+            P.fetchCore = function () { return fetchPart('core').catch(function () { return null; }); };
+            P.core = fetchRetry('core');
+
+            // MEDIA — dijalankan setelah core selesai (berhasil/gagal); 3 permintaan paralel
+            var deferred = {};
+            PARTS.forEach(function (k) {
+                P.media[k] = new Promise(function (res) { deferred[k] = res; });
+            });
+            var started = false;
+            P.startMedia = function () {
+                if (started) return; started = true;
+                var queue = PARTS.slice(), active = 0;
+                (function pump() {
+                    while (active < 3 && queue.length) {
+                        (function (k) {
+                            active++;
+                            fetchRetry(k).then(function (raw) { deferred[k](raw); active--; pump(); });
+                        })(queue.shift());
+                    }
+                })();
+            };
+            P.refetchMedia = function (k) { return fetchRetry(k); };
+
+            P.save = function (key, str) {
+                try { localStorage.setItem(key, str); } catch (e) { try { localStorage.removeItem(key); } catch (_) {} }
             };
         })();
     </script>
@@ -2514,7 +2564,7 @@
                     // Pakai text/plain agar browser TIDAK mengirim preflight OPTIONS
                     // (Apps Script Web App tidak bisa menjawab preflight CORS).
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ fn: fnName, args: args })
+                    body: JSON.stringify({ fn: fnName, args: args, token: window.PRNU_ADMIN_TOKEN || undefined })
                 })
                     .then(function (res) { return res.json(); })
                     .then(function (data) {
@@ -3318,13 +3368,15 @@
             setupStickyNav();
 
             // ══ BOOT CEPAT ══
-            // Sapaan selamat datang maks ~2 detik sejak halaman dibuka.
-            // Dashboard tampil dengan data terakhir (cache) lalu disegarkan
-            // diam-diam dari server; sinyal lemah tidak menahan tampilan.
+            // 1) Tampilkan data terakhir dari cache perangkat → langsung data asli.
+            // 2) Splash tutup paling lambat ~2 detik sejak halaman dibuka.
+            // 3) Ambil "core" (ringan) dari server, lalu foto ("media") bertahap.
             var MIN_SHOW = 500;    // sapaan minimal tampil (ms) agar tidak berkedip
             var MAX_AT   = 1700;   // batas splash mulai menutup (ms sejak halaman dibuka)
-            var BOOT = window.PRNU_BOOT || { cache: null, network: Promise.resolve(null), fetch: function(){ return Promise.resolve(null); }, save: function(){} };
+            var BOOT = window.PRNU_BOOT || { cache: null, mediaCache: {}, media: {}, core: Promise.resolve(null), fetchCore: function(){ return Promise.resolve(null); }, startMedia: function(){}, refetchMedia: function(){ return Promise.resolve(null); }, save: function(){} };
             var splashDone = false, dataShown = false, minDone = false, failed = false, syncing = false;
+            var MEDIA = {};        // part -> data foto (sudah di-parse)
+            var MEDIA_PARTS = ['news', 'settings', 'pengurus', 'galeri', 'penta'];
 
             function setBadge(text, onTap) {
                 var b = document.getElementById('syncBadge');
@@ -3359,8 +3411,57 @@
                 if (!raw) return null;
                 try { return typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { return null; }
             }
+
+            // ── Foto (media) ──
+            function applyMedia(part, d) {
+                if (!d || d.error) return;
+                if (part === 'settings') {
+                    applySpreadsheetData({ settings: d });
+                } else if (part === 'news' && Array.isArray(d)) {
+                    d.forEach(function(m) {
+                        var it = AppState.news.find(function(n) { return n.id === Number(m.ID); });
+                        if (!it) return;
+                        if (m.IMG) it.img = m.IMG;
+                        if (m.IMGS && m.IMGS.length) it.imgs = m.IMGS;
+                    });
+                } else if (part === 'pengurus' && Array.isArray(d)) {
+                    d.forEach(function(m) {
+                        var it = AppState.pengurus.find(function(x) { return x.id === Number(m.ID); });
+                        if (it && m.FOTO) it.photo = m.FOTO;
+                    });
+                } else if (part === 'galeri') {
+                    applySpreadsheetData({ galeri: d });
+                } else if (part === 'penta') {
+                    applySpreadsheetData({ pentasyarufan: d });
+                }
+            }
+            function applyAllMedia() {
+                MEDIA_PARTS.forEach(function(k) { if (MEDIA[k]) applyMedia(k, MEDIA[k]); });
+            }
+            var renderTimer = null;
+            function scheduleRender() {
+                clearTimeout(renderTimer);
+                renderTimer = setTimeout(function() { renderAllPublicComponents(); }, 120);
+            }
+            function syncMedia(part, promise) {
+                promise.then(function(raw) {
+                    if (!raw) return;
+                    var str = typeof raw === 'string' ? raw : JSON.stringify(raw);
+                    if (MEDIA[part] && str === BOOT.mediaCache[part]) return;   // sama dengan yang sudah tampil
+                    var d = parseData(raw);
+                    if (!d || d.error) return;
+                    BOOT.mediaCache[part] = str;
+                    BOOT.save('prnu_media_v2_' + part, str);
+                    MEDIA[part] = d;
+                    applyMedia(part, d);
+                    scheduleRender();
+                });
+            }
+
+            // ── Core (teks) ──
             function showData(data) {
                 applySpreadsheetData(data);
+                applyAllMedia();
                 AppState.isAdminLoggedIn = false;
                 renderAllPublicComponents();
                 if (window._checkBeritaHash) _checkBeritaHash();
@@ -3368,28 +3469,35 @@
             function maybeHide() {
                 if (minDone && dataShown) { clearTimeout(capTimer); hideSplash(); }
             }
-            function sync(promise) {
+            function syncCore(promise) {
                 syncing = true;
                 promise.then(function(raw) {
                     syncing = false;
                     var fresh = parseData(raw);
-                    if (!fresh) { failed = true; refreshBadge(); return; }
+                    if (!fresh || fresh.error) {
+                        failed = true; refreshBadge();
+                        BOOT.startMedia();      // tetap coba foto (mungkin dari cache/jalur lain)
+                        return;
+                    }
                     failed = false;
                     var str = typeof raw === 'string' ? raw : JSON.stringify(raw);
                     var changed = str !== BOOT.cache;
                     BOOT.cache = str;
-                    BOOT.save(str);
+                    BOOT.save('prnu_core_v2', str);
                     // Jangan menimpa tampilan bila admin sedang login & mengedit
                     if (!AppState.isAdminLoggedIn && (!dataShown || changed)) showData(fresh);
                     dataShown = true;
                     setBadge(null);
                     maybeHide();
+                    // Core sudah beres → baru muat foto (tidak berebut sinyal dengan core)
+                    BOOT.startMedia();
+                    MEDIA_PARTS.forEach(function(k) { syncMedia(k, BOOT.media[k]); });
                 });
             }
             function retrySync() {
                 if (syncing) return;
                 failed = false; refreshBadge();
-                sync(BOOT.fetch());
+                syncCore(BOOT.fetchCore());
             }
 
             var capTimer;
@@ -3398,9 +3506,13 @@
                 renderAllPublicComponents();
                 setTimeout(hideSplash, 800);
             } else {
-                // 1) Tampilkan data terakhir dari cache (bila ada) — langsung data asli
+                // 1) Data terakhir dari cache (bila ada) — teks + foto
+                MEDIA_PARTS.forEach(function(k) {
+                    var d = parseData(BOOT.mediaCache[k]);
+                    if (d && !d.error) MEDIA[k] = d;
+                });
                 var cached = parseData(BOOT.cache);
-                if (cached) { showData(cached); dataShown = true; }
+                if (cached && !cached.error) { showData(cached); dataShown = true; }
                 else { renderAllPublicComponents(); }
 
                 // 2) Jadwal tutup splash: paling cepat MIN_SHOW, paling lambat ~MAX_AT
@@ -3408,7 +3520,7 @@
                 capTimer = setTimeout(hideSplash, Math.max(MIN_SHOW, MAX_AT - performance.now()));
 
                 // 3) Segarkan dari server di latar belakang
-                sync(BOOT.network);
+                syncCore(BOOT.core);
                 window.addEventListener('online', function() {
                     if (!dataShown && !syncing) retrySync();
                 });
@@ -4922,6 +5034,7 @@
 
             const successAuth = (authInfo) => {
                 authInfo = authInfo || {};
+                window.PRNU_ADMIN_TOKEN = authInfo.token || '';
                 AppState.isAdminLoggedIn = true;
                 AppState.adminRole = authInfo.role === 'kontributor' ? 'kontributor' : 'superadmin';
                 AppState.adminUsername = authInfo.username || user;
@@ -4962,6 +5075,21 @@
                 renderAdminFinanceTable();
                 renderAdminPengurusTable();
                 renderInbox();
+                // Inbox tidak ada di data publik — muat setelah login (butuh token admin)
+                try {
+                    google.script.run
+                        .withSuccessHandler(function(r) {
+                            try {
+                                var rows = JSON.parse(r) || [];
+                                AppState.messages = rows.map(function(x) {
+                                    return { id: Number(x.ID), sender: x.NAMA || '', phone: x.WA || '', category: 'Pesan Masuk', message: x.PESAN || '' };
+                                });
+                                renderInbox();
+                            } catch(e) {}
+                        })
+                        .withFailureHandler(function(){})
+                        .getInbox();
+                } catch(e) {}
                 
                 setTimeout(() => {
                     openAdminPanelModal();
@@ -5001,6 +5129,7 @@
 
         // Tampilkan modal konfirmasi logout
         window.handleLogout = function() {
+            window.PRNU_ADMIN_TOKEN = '';
             const modal = document.getElementById('logoutConfirmModal');
             const dialog = document.getElementById('logoutDialog');
             if (!modal || !dialog) { doLogout(); return; }
