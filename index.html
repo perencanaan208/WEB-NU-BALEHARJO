@@ -2474,20 +2474,14 @@
                     if (onFail) onFail('GAS_API_URL belum diatur di index.html');
                     return;
                 }
-                // AbortController: batasi tiap percobaan maks 12 detik supaya di sinyal
-                // lemah request yang "menggantung" tidak menahan retry berikutnya.
-                var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-                var abortTimer = controller ? setTimeout(function(){ controller.abort(); }, 12000) : null;
-
                 fetch(API_URL, {
                     method: 'POST',
                     // Pakai text/plain agar browser TIDAK mengirim preflight OPTIONS
                     // (Apps Script Web App tidak bisa menjawab preflight CORS).
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ fn: fnName, args: args }),
-                    signal: controller ? controller.signal : undefined
+                    body: JSON.stringify({ fn: fnName, args: args })
                 })
-                    .then(function (res) { if (abortTimer) clearTimeout(abortTimer); return res.json(); })
+                    .then(function (res) { return res.json(); })
                     .then(function (data) {
                         if (data && data.ok) {
                             if (onSuccess) onSuccess(data.result);
@@ -2496,22 +2490,15 @@
                         }
                     })
                     .catch(function (err) {
-                        if (abortTimer) clearTimeout(abortTimer);
-                        if (err && err.name === 'AbortError') { err = new Error('timeout: request dibatalkan (koneksi terlalu lambat)'); }
-                        // Retry otomatis dengan backoff bertahap untuk error jaringan/sinyal lemah/CORS
-                        // transient (sering terjadi di koneksi lambat, sesaat setelah redeploy GAS,
-                        // atau payload besar). Maks 5x percobaan sebelum benar-benar menyerah.
+                        // Retry otomatis maksimal 2x untuk error jaringan/CORS transient
+                        // (sering terjadi sesaat setelah redeploy GAS atau payload besar)
                         var msg = String(err && (err.message || err));
-                        var isNetworkErr = msg.indexOf('fetch') !== -1 || msg.indexOf('CORS') !== -1 ||
-                            msg.indexOf('Failed') !== -1 || msg.indexOf('NetworkError') !== -1 ||
-                            msg.indexOf('timeout') !== -1 || msg.indexOf('abort') !== -1;
-                        var maxRetry = 5;
-                        if (isNetworkErr && _retryCount < maxRetry) {
-                            var delay = Math.min(1500 * Math.pow(1.6, _retryCount), 8000); // backoff bertahap, maks 8 detik
-                            console.warn('[GAS Shim] ' + fnName + ' gagal (percobaan ' + (_retryCount+1) + '/' + maxRetry + '), retry dalam ' + Math.round(delay) + 'ms (sinyal lemah?)...');
+                        var isNetworkErr = msg.indexOf('fetch') !== -1 || msg.indexOf('CORS') !== -1 || msg.indexOf('Failed') !== -1;
+                        if (isNetworkErr && _retryCount < 2) {
+                            console.warn('[GAS Shim] ' + fnName + ' gagal (percobaan ' + (_retryCount+1) + '), retry dalam 1.5 detik...');
                             setTimeout(function() {
                                 callBackend(fnName, args, onSuccess, onFail, _retryCount + 1);
-                            }, delay);
+                            }, 1500);
                         } else {
                             if (onFail) onFail(err);
                         }
@@ -3111,61 +3098,40 @@
         }
 
         // Muat semua data dari Spreadsheet GAS
-        // Memuat data dari Spreadsheet dengan retry bertahap agar di sinyal lemah/tidak
-        // stabil, situs tetap berusaha menghubungkan data asli alih-alih diam-diam
-        // membiarkan konten default (statis) tampil selamanya.
-        // onData dipanggil setiap kali data berhasil didapat (bisa lebih dari sekali jika
-        // percobaan pertama gagal lalu berhasil belakangan). onGiveUp dipanggil hanya
-        // sekali, setelah semua percobaan habis dan tetap gagal.
         function loadFromSpreadsheet(callback) {
             if (!GAS) { callback(null); return; }
-
-            var MAX_ATTEMPTS = 6; // total ~ sampai 1 menit-an percobaan di sinyal buruk
-            var attempt = 0;
-            var delivered = false; // callback sukses sudah pernah dipanggil?
-
-            function attemptLoad() {
-                attempt++;
-                google.script.run
-                    .withSuccessHandler(function(result) {
-                        if (!result) { scheduleRetryOrGiveUp('Hasil kosong dari server'); return; }
-                        try {
-                            var data = JSON.parse(result);
-                            delivered = true;
-                            callback(data);
-                        } catch(e) {
-                            console.error('Parse error loadAllData:', e);
-                            scheduleRetryOrGiveUp('Gagal parse data: ' + e);
-                        }
-                    })
-                    .withFailureHandler(function(e) {
-                        var errMsg = String(e && (e.message || e));
-                        // Abaikan error dari fungsi lain (visitor stats, dll) yang bukan loadAllData
-                        if (errMsg.indexOf('not defined') !== -1 && errMsg.indexOf('loadAllData') === -1) {
-                            console.info('[loadAllData] Error dari fungsi lain, diabaikan:', errMsg);
-                            if (!delivered) callback(null);
-                            return;
-                        }
-                        scheduleRetryOrGiveUp(errMsg);
-                    })
-                    .loadAllData();
-            }
-
-            function scheduleRetryOrGiveUp(reason) {
-                if (delivered) return; // sudah pernah dapat data asli, tidak perlu apa-apa lagi
-                if (attempt >= MAX_ATTEMPTS) {
-                    console.warn('[loadAllData] Menyerah setelah ' + attempt + 'x percobaan (' + reason + '). Sinyal mungkin terlalu lemah/terputus.');
-                    callback(null);
-                    return;
-                }
-                var delay = Math.min(2000 * attempt, 10000); // backoff bertahap, maks 10 detik antar percobaan
-                console.warn('[loadAllData] Gagal (' + reason + '), percobaan ' + attempt + '/' + MAX_ATTEMPTS + ', retry dalam ' + delay + 'ms...');
-                var statusEl = document.getElementById('splashStatusText');
-                if (statusEl) statusEl.textContent = 'Sinyal lemah, mencoba lagi… (' + attempt + '/' + MAX_ATTEMPTS + ')';
-                setTimeout(attemptLoad, delay);
-            }
-
-            attemptLoad();
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (!result) { callback(null); return; }
+                    try {
+                        var data = JSON.parse(result);
+                        callback(data);
+                    } catch(e) {
+                        console.error('Parse error loadAllData:', e);
+                        callback(null);
+                    }
+                })
+                .withFailureHandler(function(e) {
+                    var errMsg = String(e && (e.message || e));
+                    // Abaikan error dari fungsi lain (visitor stats, dll) yang bukan loadAllData
+                    if (errMsg.indexOf('not defined') !== -1 && errMsg.indexOf('loadAllData') === -1) {
+                        console.info('[loadAllData] Error dari fungsi lain, diabaikan:', errMsg);
+                        // Tetap panggil callback dengan null agar splash bisa ditutup
+                        callback(null);
+                        return;
+                    }
+                    console.warn('loadAllData gagal, retry dalam 2 detik:', e);
+                    // Retry sekali setelah 2 detik
+                    setTimeout(function() {
+                        google.script.run
+                            .withSuccessHandler(function(result) {
+                                try { callback(result ? JSON.parse(result) : null); } catch(ex) { callback(null); }
+                            })
+                            .withFailureHandler(function() { callback(null); })
+                            .loadAllData();
+                    }, 2000);
+                })
+                .loadAllData();
         }
 
         // Terapkan data dari Spreadsheet ke AppState
@@ -3344,12 +3310,8 @@
             // Render default dulu (konten statis) — splash tetap tampil
             renderAllPublicComponents();
 
-            // Timeout fallback: splash ditutup agar tidak menahan tampilan terlalu lama,
-            // TAPI proses sinkronisasi data asli (loadFromSpreadsheet) TETAP terus mencoba
-            // di latar belakang (lihat retry bertahap di dalamnya) — begitu berhasil,
-            // data akan langsung diterapkan meski splash sudah tertutup, sehingga
-            // konten default tidak tertinggal begitu saja di sinyal lemah.
-            var splashTimeout = setTimeout(function() { hideSplash('Sinyal lemah — data akan tersinkron otomatis'); }, 20000);
+            // Timeout fallback: jika GAS tidak respond dalam 8 detik, tutup splash tetap
+            var splashTimeout = setTimeout(function() { hideSplash('Timeout — Cek koneksi'); }, 15000);
 
             if (GAS) {
                 var statusEl2 = document.getElementById('splashStatusText');
@@ -3360,19 +3322,13 @@
                     if (!el || el.textContent.indexOf('Menerapkan') !== -1 || el.textContent.indexOf('Selesai') !== -1) {
                         clearInterval(dotInterval); return;
                     }
-                    // Jangan timpa pesan retry ("Sinyal lemah, mencoba lagi…") dengan animasi titik —
-                    // animasi titik hanya berjalan selama status masih "Menyinkronkan data...".
-                    if (el.textContent.indexOf('Menyinkronkan data') !== 0) return;
                     var base = 'Menyinkronkan data';
                     var dots = (el.textContent.match(/\.+/) || [''])[0].length;
                     el.textContent = base + '.'.repeat((dots % 3) + 1);
                 }, 600);
 
                 loadFromSpreadsheet(function(data) {
-                    var splashEl = document.getElementById('splashScreen');
-                    var splashAlreadyClosed = !splashEl || splashEl.classList.contains('hiding') || splashEl.classList.contains('hidden');
                     clearTimeout(splashTimeout);
-                    clearInterval(dotInterval);
                     if (data) {
                         if (document.getElementById('splashStatusText'))
                             document.getElementById('splashStatusText').textContent = 'Menerapkan data…';
@@ -3385,12 +3341,6 @@
                         var fotoProfilSrc = AppState.profileSettings && AppState.profileSettings.profilImg;
                         if (fotoProfilSrc && fotoProfilSrc.length > 10) {
                             updateSplashBg(fotoProfilSrc);
-                        }
-                        // Jika splash sudah keburu tertutup (mis. sinyal sangat lemah dan baru
-                        // berhasil setelah beberapa kali retry), beri tahu lewat toast supaya
-                        // pengguna tahu kontennya sudah bukan data default lagi.
-                        if (splashAlreadyClosed && typeof showToast === 'function') {
-                            showToast('Data terhubung ke server ✓');
                         }
                     }
                     // Beri sedikit jeda agar render selesai sebelum splash hilang
