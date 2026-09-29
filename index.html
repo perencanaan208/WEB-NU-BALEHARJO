@@ -33,6 +33,41 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PRNU Baleharjo">
 
+    <!-- ══ BOOT CEPAT: ambil data server & baca cache lokal sedini mungkin ══
+         Request loadAllData dikirim langsung dari <head> (paralel dengan
+         download Tailwind/HTML), dan data kunjungan sebelumnya dibaca dari
+         cache lokal agar dashboard langsung tampil dengan data asli. -->
+    <script>
+        (function () {
+            var URL_ = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
+            var CK = 'prnu_data_cache_v1';
+            window.GAS_API_URL = URL_;
+            var P = window.PRNU_BOOT = { cache: null };
+            try { P.cache = localStorage.getItem(CK); } catch (e) {}
+            function fetchOnce() {
+                var ctl = ('AbortController' in window) ? new AbortController() : null;
+                var to = setTimeout(function () { if (ctl) ctl.abort(); }, 20000);
+                return fetch(URL_, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ fn: 'loadAllData', args: [] }),
+                    signal: ctl ? ctl.signal : undefined
+                }).then(function (r) { return r.json(); }).then(function (d) {
+                    clearTimeout(to);
+                    if (d && d.ok && d.result) return d.result;
+                    throw new Error('bad response');
+                }, function (e) { clearTimeout(to); throw e; });
+            }
+            P.fetch = function () { return fetchOnce().catch(function () { return null; }); };
+            P.network = fetchOnce().catch(function () {
+                return new Promise(function (r) { setTimeout(r, 1500); }).then(fetchOnce);
+            }).catch(function () { return null; });
+            P.save = function (str) {
+                try { localStorage.setItem(CK, str); } catch (e) { try { localStorage.removeItem(CK); } catch (_) {} }
+            };
+        })();
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -318,7 +353,7 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             background: linear-gradient(135deg, #052e16 0%, #14532d 45%, #166534 100%);
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
         }
         #splashScreen.hiding { opacity: 0; visibility: hidden; }
         #splashScreen.hidden { display: none; }
@@ -2461,7 +2496,7 @@
     ============================================================ -->
     <script>
         // >>> GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT ANDA <<<
-        window.GAS_API_URL = "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
+        window.GAS_API_URL = window.GAS_API_URL || "https://script.google.com/macros/s/AKfycbwTjm0QrYNznOjsdbQ-FYqcSUoU4Y-CAGij2KP4DanJrhmSnsPTX8iM3pH3Yxeuv4hS/exec";
     </script>
     <script>
         (function () {
@@ -3282,74 +3317,101 @@
             renderPrayerTimes();
             setupStickyNav();
 
-            // ── Fungsi tutup splash screen ──
-            function hideSplash(msg) {
+            // ══ BOOT CEPAT ══
+            // Sapaan selamat datang maks ~2 detik sejak halaman dibuka.
+            // Dashboard tampil dengan data terakhir (cache) lalu disegarkan
+            // diam-diam dari server; sinyal lemah tidak menahan tampilan.
+            var MIN_SHOW = 500;    // sapaan minimal tampil (ms) agar tidak berkedip
+            var MAX_AT   = 1700;   // batas splash mulai menutup (ms sejak halaman dibuka)
+            var BOOT = window.PRNU_BOOT || { cache: null, network: Promise.resolve(null), fetch: function(){ return Promise.resolve(null); }, save: function(){} };
+            var splashDone = false, dataShown = false, minDone = false, failed = false, syncing = false;
+
+            function setBadge(text, onTap) {
+                var b = document.getElementById('syncBadge');
+                if (!text) { if (b) b.remove(); return; }
+                if (!b) {
+                    b = document.createElement('div');
+                    b.id = 'syncBadge';
+                    b.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9000;background:#14532d;color:#fff;font:600 12px Inter,sans-serif;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3);';
+                    document.body.appendChild(b);
+                }
+                b.textContent = text;
+                b.style.cursor = onTap ? 'pointer' : 'default';
+                b.onclick = onTap || null;
+            }
+            function refreshBadge() {
+                if (!splashDone || dataShown) { if (dataShown) setBadge(null); return; }
+                if (failed) setBadge('Sinyal lemah — ketuk untuk coba lagi', retrySync);
+                else setBadge('Menyinkronkan data…');
+            }
+            function hideSplash() {
+                if (splashDone) return;
+                splashDone = true;
                 var splash = document.getElementById('splashScreen');
-                if (!splash || splash.classList.contains('hidden')) return;
-                var statusEl = document.getElementById('splashStatusText');
-                if (statusEl && msg) statusEl.textContent = msg;
-                setTimeout(function() {
+                if (splash) {
                     splash.classList.add('hiding');
-                    setTimeout(function() { splash.classList.add('hidden'); }, 650);
-                }, 400);
+                    setTimeout(function() { splash.classList.add('hidden'); }, 400);
+                }
+                refreshBadge();
+                if (window.trackAndLoadVisitorStats) trackAndLoadVisitorStats();
             }
-
-            // ── Update background splash dengan foto profil ──
-            function updateSplashBg(fotoSrc) {
-                if (!fotoSrc) return;
-                var bg = document.getElementById('splashBg');
-                if (!bg) return;
-                // Preload dulu agar tidak blank saat ganti
-                var img = new Image();
-                img.onload = function() {
-                    bg.style.backgroundImage = "url('" + fotoSrc + "')";
-                };
-                img.src = fotoSrc;
+            function parseData(raw) {
+                if (!raw) return null;
+                try { return typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { return null; }
             }
-
-            // Render default dulu (konten statis) — splash tetap tampil
-            renderAllPublicComponents();
-
-            // Timeout fallback: jika GAS tidak respond dalam 8 detik, tutup splash tetap
-            var splashTimeout = setTimeout(function() { hideSplash('Timeout — Cek koneksi'); }, 15000);
-
-            if (GAS) {
-                var statusEl2 = document.getElementById('splashStatusText');
-                if (statusEl2) statusEl2.textContent = 'Menyinkronkan data dari server…';
-                // Update dots animasi saat loading
-                var dotInterval = setInterval(function() {
-                    var el = document.getElementById('splashStatusText');
-                    if (!el || el.textContent.indexOf('Menerapkan') !== -1 || el.textContent.indexOf('Selesai') !== -1) {
-                        clearInterval(dotInterval); return;
-                    }
-                    var base = 'Menyinkronkan data';
-                    var dots = (el.textContent.match(/\.+/) || [''])[0].length;
-                    el.textContent = base + '.'.repeat((dots % 3) + 1);
-                }, 600);
-
-                loadFromSpreadsheet(function(data) {
-                    clearTimeout(splashTimeout);
-                    if (data) {
-                        if (document.getElementById('splashStatusText'))
-                            document.getElementById('splashStatusText').textContent = 'Menerapkan data…';
-                        applySpreadsheetData(data);
-                        AppState.isAdminLoggedIn = false;
-                        if (document.getElementById('splashStatusText'))
-                            document.getElementById('splashStatusText').textContent = 'Menerapkan data…';
-                        renderAllPublicComponents();
-                        // ── Update splash background dengan foto profil ──
-                        var fotoProfilSrc = AppState.profileSettings && AppState.profileSettings.profilImg;
-                        if (fotoProfilSrc && fotoProfilSrc.length > 10) {
-                            updateSplashBg(fotoProfilSrc);
-                        }
-                    }
-                    // Beri sedikit jeda agar render selesai sebelum splash hilang
-                    setTimeout(function() { hideSplash('Data tersinkron ✓'); if(window._checkBeritaHash)_checkBeritaHash(); if(window.trackAndLoadVisitorStats)trackAndLoadVisitorStats(); }, 300);
+            function showData(data) {
+                applySpreadsheetData(data);
+                AppState.isAdminLoggedIn = false;
+                renderAllPublicComponents();
+                if (window._checkBeritaHash) _checkBeritaHash();
+            }
+            function maybeHide() {
+                if (minDone && dataShown) { clearTimeout(capTimer); hideSplash(); }
+            }
+            function sync(promise) {
+                syncing = true;
+                promise.then(function(raw) {
+                    syncing = false;
+                    var fresh = parseData(raw);
+                    if (!fresh) { failed = true; refreshBadge(); return; }
+                    failed = false;
+                    var str = typeof raw === 'string' ? raw : JSON.stringify(raw);
+                    var changed = str !== BOOT.cache;
+                    BOOT.cache = str;
+                    BOOT.save(str);
+                    // Jangan menimpa tampilan bila admin sedang login & mengedit
+                    if (!AppState.isAdminLoggedIn && (!dataShown || changed)) showData(fresh);
+                    dataShown = true;
+                    setBadge(null);
+                    maybeHide();
                 });
+            }
+            function retrySync() {
+                if (syncing) return;
+                failed = false; refreshBadge();
+                sync(BOOT.fetch());
+            }
+
+            var capTimer;
+            if (!GAS) {
+                // Tidak ada GAS (preview lokal)
+                renderAllPublicComponents();
+                setTimeout(hideSplash, 800);
             } else {
-                // Tidak ada GAS (preview lokal) — tutup splash setelah 1.5 detik
-                clearTimeout(splashTimeout);
-                setTimeout(function() { hideSplash('Mode Pratinjau'); }, 1500);
+                // 1) Tampilkan data terakhir dari cache (bila ada) — langsung data asli
+                var cached = parseData(BOOT.cache);
+                if (cached) { showData(cached); dataShown = true; }
+                else { renderAllPublicComponents(); }
+
+                // 2) Jadwal tutup splash: paling cepat MIN_SHOW, paling lambat ~MAX_AT
+                setTimeout(function() { minDone = true; maybeHide(); }, MIN_SHOW);
+                capTimer = setTimeout(hideSplash, Math.max(MIN_SHOW, MAX_AT - performance.now()));
+
+                // 3) Segarkan dari server di latar belakang
+                sync(BOOT.network);
+                window.addEventListener('online', function() {
+                    if (!dataShown && !syncing) retrySync();
+                });
             }
 
             setupAllEventListeners();
