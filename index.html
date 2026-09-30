@@ -27,11 +27,14 @@
     <!-- ══ PWA (Installable / Add to Home Screen) ══ -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#14532d">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/icons/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/icons/favicon-64.png" type="image/png" sizes="64x64">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PRNU Baleharjo">
+    <meta name="apple-mobile-web-app-title" content="NU Baleharjo">
 
     <!-- ══ BOOT CEPAT: data dipecah "core" (ringan) + "media" (foto) ══
          • core  : teks ringan → kecil, cepat, menentukan tampilan awal
@@ -118,42 +121,17 @@
         })();
     </script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Inter & Playfair Display for Elegant Islamic Vibe) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    colors: {
-                        nuGreen: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            800: '#166534',
-                            900: '#14532d',
-                            950: '#052e16',
-                        },
-                        nuGold: {
-                            100: '#fef3c7',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Preconnect untuk sumber eksternal -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- FontAwesome & Google Fonts: dimuat tanpa memblokir tampilan awal -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap">
+    </noscript>
 
     <!-- Dark Mode: dijalankan sedini mungkin agar tidak ada "kedipan" tema salah saat halaman dimuat -->
     <script>
@@ -458,6 +436,8 @@
             } catch(e) {}
         })();
     </script>
+    <!-- Tailwind CSS (hasil build statis: /tailwind.css — lihat README build di bawah) -->
+    <link rel="stylesheet" href="/tailwind.css">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans overflow-x-hidden">
 
@@ -7806,7 +7786,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js').catch(function (e) {
+                navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(function (e) {
                     console.warn('SW registration failed:', e);
                 });
             });
