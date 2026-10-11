@@ -3926,7 +3926,7 @@
                 }).join('');
                 var safeJudul = pentaEsc(album.judul);
                 var delJudul  = pentaEsc((album.judul||'').replace(/'/g,''));
-                return '<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm col-span-full">' +
+                return '<div data-penta-id="' + pentaEsc(album.id) + '" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm col-span-full transition-opacity">' +
                     '<div class="flex items-center justify-between gap-2 px-4 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800">' +
                         '<div class="min-w-0">' +
                             '<h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm">' + safeJudul + '</h4>' +
@@ -3948,6 +3948,85 @@
                     '</div>' +
                 '</div>';
             }).join('');
+        };
+
+        // ══ UNGGAH FOTO CEPAT ══
+        // • Kompres paralel (maks 3 foto sekaligus, agar HP tidak kehabisan memori)
+        // • Kirim per paket 3 foto (1 permintaan = 3 foto), 2 paket berjalan bersamaan
+        // • Paket yang gagal diulang otomatis (aman: key yang sama ditimpa, tidak dobel)
+        var _pcSlots = 0, _pcQueue = [];
+        function pentaCompress(dataUrl) {
+            return new Promise(function(resolve) {
+                function run() {
+                    _pcSlots++;
+                    compressImage(dataUrl, 600, 0.5).then(function(r) {
+                        _pcSlots--;
+                        var nx = _pcQueue.shift(); if (nx) nx();
+                        resolve(r);
+                    });
+                }
+                if (_pcSlots < 3) run(); else _pcQueue.push(run);
+            });
+        }
+
+        async function pentaSendBatch(items) {
+            try {
+                var r = await pentaCall('savePhotosBatch', [items]);
+                if (r !== 'success') throw new Error(String(r));
+            } catch (e) {
+                // Code.gs lama belum punya savePhotosBatch → simpan satu per satu
+                if (String((e && e.message) || e).indexOf('tidak dikenali') !== -1) {
+                    for (var i = 0; i < items.length; i++) {
+                        var r2 = await pentaCall('savePhoto', [items[i].data, items[i].key]);
+                        if (r2 !== 'success') throw new Error(String(r2));
+                    }
+                } else { throw e; }
+            }
+        }
+
+        // dataUrls: array gambar asli; makeKey(i): nama key foto ke-i.
+        // Hasil: array sejajar → {key, data} bila berhasil, atau null bila gagal.
+        async function pentaUploadPhotos(dataUrls, makeKey, onProgress) {
+            var BATCH = 3, LANES = 2, total = dataUrls.length, done = 0;
+            var out = new Array(total);
+            var starts = []; for (var i = 0; i < total; i += BATCH) starts.push(i);
+            var next = 0;
+            async function doBatch(start) {
+                var idxs = []; for (var k = start; k < Math.min(start + BATCH, total); k++) idxs.push(k);
+                var comp = await Promise.all(idxs.map(function(k) { return pentaCompress(dataUrls[k]); }));
+                var items = idxs.map(function(k, ii) { return { key: makeKey(k), data: comp[ii] }; });
+                var ok = false;
+                for (var attempt = 0; attempt < 3 && !ok; attempt++) {
+                    try { await pentaSendBatch(items); ok = true; }
+                    catch (e) {
+                        console.warn('Paket foto gagal (percobaan ' + (attempt + 1) + '):', e);
+                        if (attempt < 2) await new Promise(function(r) { setTimeout(r, 1000); });
+                    }
+                }
+                idxs.forEach(function(k, ii) { out[k] = ok ? items[ii] : null; });
+                done += idxs.length;
+                if (onProgress) onProgress(done, total);
+            }
+            async function lane() { while (next < starts.length) { await doBatch(starts[next++]); } }
+            var lanes = []; for (var l = 0; l < Math.min(LANES, starts.length); l++) lanes.push(lane());
+            await Promise.all(lanes);
+            return out;
+        }
+
+        // Notifikasi "sedang memproses" (tetap tampil sampai ditutup)
+        window.showProcessing = function(msg) {
+            var el = document.getElementById('processingNotif');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'processingNotif';
+                el.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;background:#1e3a5f;color:#fff;padding:12px 20px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.3);font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.15);max-width:90vw;';
+                document.body.appendChild(el);
+            }
+            el.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>' + msg + '</span>';
+        };
+        window.hideProcessing = function() {
+            var el = document.getElementById('processingNotif');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
         };
 
         // ══ EDIT KEGIATAN: ubah judul, hapus foto, tambah foto ══
@@ -4047,28 +4126,36 @@
             prog.classList.remove('hidden'); bar.style.width = '5%';
 
             var albumId = _pentaEdit.id;
-            var keys = _pentaEdit.existing.map(function(f) { return f.key; });
+            var finalItems = _pentaEdit.existing.map(function(f) { return { key: f.key, data: f.src }; });
             try {
                 var n = _pentaEdit.added.length;
-                for (var j = 0; j < n; j++) {
-                    txt.textContent = 'Mengunggah foto baru ' + (j + 1) + ' dari ' + n + '...';
-                    bar.style.width = Math.round(10 + (j / n) * 70) + '%';
-                    var compressed = await compressImage(_pentaEdit.added[j].dataUrl, 600, 0.5);
-                    var key = 'penta_' + albumId + '_' + Date.now() + '_' + j;
-                    var res = await pentaCall('savePhoto', [compressed, key]);
-                    if (res !== 'success') throw new Error('Foto baru ke-' + (j + 1) + ' gagal diunggah');
-                    keys.push(key);
+                if (n) {
+                    var stamp = Date.now();
+                    var results = await pentaUploadPhotos(
+                        _pentaEdit.added.map(function(a) { return a.dataUrl; }),
+                        function(j) { return 'penta_' + albumId + '_' + stamp + '_' + j; },
+                        function(d, t) {
+                            bar.style.width = Math.round(10 + (d / t) * 70) + '%';
+                            txt.textContent = 'Mengunggah foto baru ' + d + ' dari ' + t + '...';
+                        }
+                    );
+                    var okItems = results.filter(function(r) { return r; });
+                    if (okItems.length < n) showToast((n - okItems.length) + ' foto baru gagal diunggah, sisanya tetap disimpan.', 'error');
+                    okItems.forEach(function(r) { finalItems.push({ key: r.key, data: r.data }); });
                 }
+                if (finalItems.length < 1) throw new Error('Tidak ada foto yang berhasil disimpan');
                 txt.textContent = 'Menyimpan perubahan...'; bar.style.width = '85%';
-                var r2 = await pentaCall('updatePentasyarufan', [albumId, JSON.stringify({ judul: judul, photoKeys: keys })]);
+                var r2 = await pentaCall('updatePentasyarufan', [albumId, JSON.stringify({ judul: judul, photoKeys: finalItems.map(function(x) { return x.key; }) })]);
                 if (r2 !== 'success') throw new Error(String(r2));
 
-                txt.textContent = 'Memuat ulang data...'; bar.style.width = '95%';
-                try {
-                    var raw = await pentaCall('getPentasyarufan');
-                    AppState.pentasyarufan = typeof raw === 'string' ? JSON.parse(raw) : raw;
-                    try { await preloadPentaFotos(); } catch (e) {}
-                } catch (e) { console.warn('Gagal memuat ulang:', e); }
+                // Tampilkan LANGSUNG dari data di browser (tanpa menunggu muat ulang dari server)
+                var album = (AppState.pentasyarufan || []).find(function(a) { return String(a.id) === String(albumId); });
+                if (album) {
+                    album.judul = judul;
+                    album.fotos = finalItems.map(function(x) { return x.data; });
+                    album.fotoKeys = finalItems.map(function(x) { return x.key; });
+                }
+                try { preloadPentaFotos(); } catch (e) {}
                 renderAdminPentaList();
                 renderPentasyarufanGaleri();
                 bar.style.width = '100%';
@@ -4084,21 +4171,34 @@
             }
         };
 
+        var _pentaDeleting = {};
         window.adminDeletePenta = function(id, judul) {
             showDeleteConfirm(
-                'Hapus kegiatan <b>"' + (judul||'ini') + '"</b>?<br>'
+                'Hapus kegiatan <b>"' + pentaEsc(judul||'ini') + '"</b>?<br>'
                 + '<span class="text-rose-500 text-xs">Semua foto dalam kegiatan ini akan dihapus permanen.</span>',
                 function() {
-                google.script.run
-                    .withSuccessHandler(function() {
+                    if (_pentaDeleting[id]) return;                 // cegah klik ganda
+                    _pentaDeleting[id] = true;
+                    var card = document.querySelector('[data-penta-id="' + id + '"]');
+                    if (card) { card.style.opacity = '0.45'; card.style.pointerEvents = 'none'; }
+                    showProcessing('Menghapus kegiatan, mohon tunggu...');
+                    pentaCall('deletePentasyarufan', [id]).then(function(res) {
+                        hideProcessing();
+                        delete _pentaDeleting[id];
+                        res = String(res);
+                        if (res.indexOf('error') === 0) throw new Error(res);
+                        // "deleted" atau "not_found" (sudah tidak ada) → hilangkan dari daftar
                         AppState.pentasyarufan = (AppState.pentasyarufan||[]).filter(function(p){ return String(p.id) !== String(id); });
                         renderAdminPentaList();
                         renderPentasyarufanGaleri();
-                        showFloatingNotif('🗑️ Kegiatan berhasil dihapus', 'error');
-                    })
-                    .withFailureHandler(function(e){ showFloatingNotif('Gagal hapus: '+e, 'error'); })
-                    .deletePentasyarufan(id);
-            }
+                        showFloatingNotif('Kegiatan berhasil dihapus', 'success');
+                    }).catch(function(e) {
+                        hideProcessing();
+                        delete _pentaDeleting[id];
+                        if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+                        showFloatingNotif('Gagal hapus: ' + ((e && e.message) || e), 'error');
+                    });
+                }
             );
         };
 
@@ -4219,24 +4319,12 @@
                 btnSave.disabled = true;
 
                 var albumId = String(Date.now());
-                var driveUrls = [];
-                for (var j = 0; j < previews.length; j++) {
-                    progressBar.style.width = Math.round((j / previews.length) * 80) + '%';
-                    progressTxt.textContent = 'Mengunggah foto ' + (j+1) + ' dari ' + previews.length + '...';
-                    try {
-                        // Kompres foto ke max 800px sebelum simpan
-                        var compressed = await compressImage(previews[j], 600, 0.5);
-                        var photoKey = 'penta_' + albumId + '_' + j;
-                        var res = await new Promise(function(resolve, reject) {
-                            google.script.run
-                                .withSuccessHandler(resolve)
-                                .withFailureHandler(reject)
-                                .savePhoto(compressed, photoKey);
-                        });
-                        if (res === "success") driveUrls.push(photoKey);
-                        else console.warn('Gagal simpan foto '+j+':', res);
-                    } catch(e) { console.warn('Gagal upload foto '+j, e); }
-                }
+                var results = await pentaUploadPhotos(previews, function(i) { return 'penta_' + albumId + '_' + i; }, function(d, t) {
+                    progressBar.style.width = Math.round(5 + (d / t) * 80) + '%';
+                    progressTxt.textContent = 'Mengunggah foto ' + d + ' dari ' + t + '...';
+                });
+                var saved = results.filter(function(r) { return r; });
+                var driveUrls = saved.map(function(r) { return r.key; });
 
                 if (driveUrls.length === 0) {
                     progressDiv.classList.add('hidden');
@@ -4264,20 +4352,17 @@
                             _pentaFiles = [];
                             initPentaFotoSlots();
                         }, 800);
-                        // Reload data dari backend
-                        google.script.run
-                            .withSuccessHandler(function(rawData) {
-                                try {
-                                    var parsed = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
-                                    AppState.pentasyarufan = parsed;
-                                } catch(e){ AppState.pentasyarufan = []; }
-                                preloadPentaFotos().then(function(){
-                                    renderAdminPentaList();
-                                    renderPentasyarufanGaleri();
-                                });
-                            })
-                            .withFailureHandler(function(e){ console.warn("Gagal reload:", e); })
-                            .getPentasyarufan();
+                        // Tampilkan LANGSUNG dari data yang sudah ada di browser (tanpa menunggu muat ulang server)
+                        var newAlbum = {
+                            id: albumId, judul: judul,
+                            fotos: saved.map(function(r) { return r.data; }),
+                            fotoKeys: saved.map(function(r) { return r.key; }),
+                            timestamp: new Date().toLocaleString('id-ID')
+                        };
+                        AppState.pentasyarufan = [newAlbum].concat((AppState.pentasyarufan || []).filter(function(a) { return String(a.id) !== String(albumId); }));
+                        try { preloadPentaFotos(); } catch (e) {}
+                        renderAdminPentaList();
+                        renderPentasyarufanGaleri();
                     })
                     .withFailureHandler(function(e) {
                         progressDiv.classList.add('hidden');
