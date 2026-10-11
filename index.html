@@ -441,6 +441,40 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans overflow-x-hidden">
 
+    <!-- Modal Edit Kegiatan Pentasyarufan -->
+    <div id="pentaEditModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.6);">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                <h5 class="font-serif font-bold text-lg text-slate-900 dark:text-slate-100"><i class="fas fa-pen mr-2 text-emerald-600"></i>Edit Kegiatan Pentasyarufan</h5>
+                <button type="button" onclick="closePentaEdit()" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-5 space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Judul Kegiatan</label>
+                    <input type="text" id="pentaEditJudul" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-nuGreen-500">
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Foto saat ini <span id="pentaEditCount" class="font-normal text-slate-400 dark:text-slate-500"></span></p>
+                    <div id="pentaEditExisting" class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2"></div>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Tambah foto baru</p>
+                    <input type="file" id="pentaEditFileInput" accept="image/*" multiple class="hidden" onchange="pentaEditAddFiles(this.files); this.value='';">
+                    <button type="button" onclick="document.getElementById('pentaEditFileInput').click()" class="mt-2 w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl py-5 text-sm text-slate-500 dark:text-slate-400 hover:border-nuGreen-500 hover:text-nuGreen-700 transition"><i class="fas fa-cloud-upload-alt mr-2"></i>Pilih foto untuk ditambahkan</button>
+                    <div id="pentaEditNew" class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2"></div>
+                </div>
+                <div id="pentaEditProgress" class="hidden">
+                    <div class="w-full bg-slate-200 rounded-full h-2.5"><div id="pentaEditBar" class="bg-nuGreen-600 h-2.5 rounded-full transition-all" style="width:0%"></div></div>
+                    <p id="pentaEditProgressText" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 text-center">Menyimpan...</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 px-5 py-4 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white dark:bg-slate-900">
+                <button type="button" id="pentaEditCancel" onclick="closePentaEdit()" class="bg-slate-200 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Batal</button>
+                <button type="button" id="pentaEditSave" onclick="savePentaEdit()" class="bg-nuGreen-800 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-nuGreen-900 transition disabled:opacity-60"><i class="fas fa-save mr-1.5"></i>Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Lightbox Foto Pentasyarufan -->
     <div id="pentaLightbox" class="fixed inset-0 z-[60] hidden items-center justify-center" style="background:rgba(0,0,0,0.92);" onclick="if(event.target===this)closePentaLightbox()">
         <button onclick="closePentaLightbox()" class="absolute top-4 right-4 text-white text-2xl z-10"><i class="fas fa-times"></i></button>
@@ -2559,7 +2593,8 @@
                         // (sering terjadi sesaat setelah redeploy GAS atau payload besar)
                         var msg = String(err && (err.message || err));
                         var isNetworkErr = msg.indexOf('fetch') !== -1 || msg.indexOf('CORS') !== -1 || msg.indexOf('Failed') !== -1;
-                        if (isNetworkErr && _retryCount < 2) {
+                        var noRetry = /^(add|increment|track)/.test(fnName);   // tulis-baru/penghitung: JANGAN diulang otomatis (bisa dobel)
+                        if (isNetworkErr && _retryCount < 2 && !noRetry) {
                             console.warn('[GAS Shim] ' + fnName + ' gagal (percobaan ' + (_retryCount+1) + '), retry dalam 1.5 detik...');
                             setTimeout(function() {
                                 callBackend(fnName, args, onSuccess, onFail, _retryCount + 1);
@@ -3868,6 +3903,10 @@
         }
 
         // ── Admin: render daftar pentasyarufan ──
+        function pentaEsc(t) {
+            return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
         window.renderAdminPentaList = function() {
             var list = document.getElementById('adminPentaList');
             if (!list) return;
@@ -3876,33 +3915,33 @@
                 list.innerHTML = '<div class="col-span-full text-center py-8 text-slate-400 dark:text-slate-500 text-sm italic">Belum ada kegiatan pentasyarufan.</div>';
                 return;
             }
-
-            // Tampilkan per kegiatan: judul + grid foto (hapus per foto atau hapus album)
             list.innerHTML = items.map(function(album) {
                 var fotos = Array.isArray(album.fotos) ? album.fotos : [];
-                var fotoHtml = fotos.map(function(f, fi) {
+                var fotoHtml = fotos.map(function(f) {
                     var src = resolvePentaFoto(f) || f;
                     if (!src || src.length < 10) return '';
-                    return '<div class="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700" style="aspect-ratio:4/3">' +
-                        '<img src="' + src + '" class="w-full h-full object-cover" onerror="this.closest(\'.relative\').style.display=\'none\'">' +
-                        '<div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">' +
-                            '<button onclick="adminDeletePentaFoto(\'' + album.id + '\',' + fi + ')" ' +
-                                'class="opacity-0 group-hover:opacity-100 transition bg-rose-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs shadow-lg" ' +
-                                'title="Hapus foto ini"><i class="fas fa-trash"></i></button>' +
-                        '</div>' +
+                    return '<div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700" style="aspect-ratio:4/3">' +
+                        '<img src="' + src + '" class="w-full h-full object-cover" onerror="this.parentElement.style.display=\'none\'">' +
                     '</div>';
                 }).join('');
-
+                var safeJudul = pentaEsc(album.judul);
+                var delJudul  = pentaEsc((album.judul||'').replace(/'/g,''));
                 return '<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm col-span-full">' +
-                    '<div class="flex items-center justify-between px-4 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800">' +
-                        '<div>' +
-                            '<h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm">' + album.judul + '</h4>' +
-                            '<p class="text-[10px] text-slate-400 dark:text-slate-500">' + fotos.length + ' foto · ' + (album.timestamp||'') + '</p>' +
+                    '<div class="flex items-center justify-between gap-2 px-4 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800">' +
+                        '<div class="min-w-0">' +
+                            '<h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm">' + safeJudul + '</h4>' +
+                            '<p class="text-[10px] text-slate-400 dark:text-slate-500">' + fotos.length + ' foto · ' + pentaEsc(album.timestamp||'') + '</p>' +
                         '</div>' +
-                        '<button onclick="adminDeletePenta(\'' + album.id + '\',\'' + (album.judul||'').replace(/'/g,'') + '\')" ' +
-                            'class="text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1 border border-rose-200 hover:border-rose-400 px-2.5 py-1 rounded-lg transition">' +
-                            '<i class="fas fa-trash mr-1"></i>Hapus Album' +
-                        '</button>' +
+                        '<div class="flex items-center gap-2 shrink-0">' +
+                            '<button type="button" onclick="openPentaEdit(\'' + album.id + '\')" ' +
+                                'class="text-[10px] text-emerald-700 hover:text-emerald-900 flex items-center gap-1 border border-emerald-200 hover:border-emerald-400 px-2.5 py-1 rounded-lg transition">' +
+                                '<i class="fas fa-pen mr-1"></i>Edit' +
+                            '</button>' +
+                            '<button type="button" onclick="adminDeletePenta(\'' + album.id + '\',\'' + delJudul + '\')" ' +
+                                'class="text-[10px] text-rose-500 hover:text-rose-700 flex items-center gap-1 border border-rose-200 hover:border-rose-400 px-2.5 py-1 rounded-lg transition">' +
+                                '<i class="fas fa-trash mr-1"></i>Hapus Album' +
+                            '</button>' +
+                        '</div>' +
                     '</div>' +
                     '<div class="p-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">' +
                         (fotoHtml || '<p class="col-span-full text-center text-xs text-slate-400 dark:text-slate-500 py-4 italic">Tidak ada foto valid</p>') +
@@ -3911,29 +3950,138 @@
             }).join('');
         };
 
-        // Hapus 1 foto dari album (update fotos di spreadsheet)
-        window.adminDeletePentaFoto = function(albumId, fotoIdx) {
-            showDeleteConfirm(
-                'Hapus foto ini dari kegiatan?',
-                function() {
-                    // Update AppState dulu
-                    var album = (AppState.pentasyarufan||[]).find(function(a){ return String(a.id) === String(albumId); });
-                    if (!album) return;
-                    var newFotos = album.fotos.filter(function(_,i){ return i !== fotoIdx; });
-                    album.fotos = newFotos;
+        // ══ EDIT KEGIATAN: ubah judul, hapus foto, tambah foto ══
+        var _pentaEdit = { id: null, existing: [], added: [], saving: false };
 
-                    // Simpan ke backend: hapus album lama, tambah ulang dengan fotos baru
-                    var payload = JSON.stringify({ judul: album.judul, albumId: albumId, photoKeys: newFotos });
-                    google.script.run
-                        .withSuccessHandler(function() {
-                            renderAdminPentaList();
-                            renderPentasyarufanGaleri();
-                            showFloatingNotif('✅ Foto berhasil dihapus', 'success');
-                        })
-                        .withFailureHandler(function(e){ showFloatingNotif('Gagal: '+e, 'error'); })
-                        .updatePentasyarufan(albumId, payload);
+        function pentaCall(fn, args) {
+            return new Promise(function(resolve, reject) {
+                var run = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+                run[fn].apply(run, args || []);
+            });
+        }
+
+        window.openPentaEdit = function(albumId, _fresh) {
+            var album = (AppState.pentasyarufan || []).find(function(a) { return String(a.id) === String(albumId); });
+            if (!album) { showToast('Kegiatan tidak ditemukan.', 'error'); return; }
+            var ready = Array.isArray(album.fotoKeys) && album.fotoKeys.length === (album.fotos || []).length;
+            if (!ready && !_fresh) {
+                // Data lama belum memuat "key" foto → ambil data terbaru dulu
+                showToast('Memuat data kegiatan...');
+                pentaCall('getPentasyarufan').then(function(raw) {
+                    try { AppState.pentasyarufan = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) {}
+                    window.openPentaEdit(albumId, true);
+                }).catch(function(e) { showToast('Gagal memuat: ' + e, 'error'); });
+                return;
+            }
+            if (!ready) { showToast('Data foto belum lengkap. Muat ulang halaman lalu coba lagi.', 'error'); return; }
+            _pentaEdit = {
+                id: album.id,
+                existing: album.fotos.map(function(src, i) { return { key: album.fotoKeys[i], src: resolvePentaFoto(src) || src }; }),
+                added: [],
+                saving: false
+            };
+            document.getElementById('pentaEditJudul').value = album.judul || '';
+            document.getElementById('pentaEditProgress').classList.add('hidden');
+            renderPentaEdit();
+            var m = document.getElementById('pentaEditModal');
+            m.classList.remove('hidden'); m.classList.add('flex');
+        };
+
+        window.closePentaEdit = function() {
+            if (_pentaEdit.saving) return;
+            var m = document.getElementById('pentaEditModal');
+            m.classList.add('hidden'); m.classList.remove('flex');
+        };
+
+        function pentaThumb(src, onRemove, badge) {
+            return '<div class="relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700" style="aspect-ratio:1">' +
+                '<img src="' + src + '" class="w-full h-full object-cover">' +
+                (badge ? '<span class="absolute bottom-0 left-0 bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-tr-lg">' + badge + '</span>' : '') +
+                '<button type="button" onclick="' + onRemove + '" title="Hapus foto ini" ' +
+                    'class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] shadow-lg"><i class="fas fa-times"></i></button>' +
+            '</div>';
+        }
+
+        function renderPentaEdit() {
+            var total = _pentaEdit.existing.length + _pentaEdit.added.length;
+            document.getElementById('pentaEditCount').textContent = ' (' + total + ' dari maks 10 foto)';
+            document.getElementById('pentaEditExisting').innerHTML = _pentaEdit.existing.length
+                ? _pentaEdit.existing.map(function(f, i) { return pentaThumb(f.src, 'pentaEditRemoveExisting(' + i + ')'); }).join('')
+                : '<p class="col-span-full text-xs text-slate-400 dark:text-slate-500 italic">Semua foto lama dihapus.</p>';
+            document.getElementById('pentaEditNew').innerHTML = _pentaEdit.added.map(function(f, i) {
+                return pentaThumb(f.dataUrl, 'pentaEditRemoveAdded(' + i + ')', 'Baru');
+            }).join('');
+        }
+
+        window.pentaEditRemoveExisting = function(i) { if (_pentaEdit.saving) return; _pentaEdit.existing.splice(i, 1); renderPentaEdit(); };
+        window.pentaEditRemoveAdded    = function(i) { if (_pentaEdit.saving) return; _pentaEdit.added.splice(i, 1); renderPentaEdit(); };
+
+        window.pentaEditAddFiles = function(files) {
+            if (_pentaEdit.saving) return;
+            var room = 10 - (_pentaEdit.existing.length + _pentaEdit.added.length);
+            if (room <= 0) { showToast('Maksimal 10 foto per kegiatan. Hapus foto lama dulu.', 'error'); return; }
+            var imgs = Array.prototype.slice.call(files || []).filter(function(f) { return f.type && f.type.indexOf('image/') === 0; });
+            if (imgs.length > room) showToast('Hanya ' + room + ' foto yang ditambahkan (maks 10 per kegiatan).', 'error');
+            imgs.slice(0, room).forEach(function(file) {
+                var r = new FileReader();
+                r.onload = function(ev) {
+                    if (_pentaEdit.existing.length + _pentaEdit.added.length >= 10) return;
+                    _pentaEdit.added.push({ dataUrl: ev.target.result });
+                    renderPentaEdit();
+                };
+                r.readAsDataURL(file);
+            });
+        };
+
+        window.savePentaEdit = async function() {
+            if (_pentaEdit.saving) return;                       // cegah klik ganda
+            var judul = document.getElementById('pentaEditJudul').value.trim();
+            if (!judul) { showToast('Judul kegiatan tidak boleh kosong.', 'error'); return; }
+            var total = _pentaEdit.existing.length + _pentaEdit.added.length;
+            if (total < 1) { showToast('Kegiatan harus punya minimal 1 foto. Untuk menghapus semuanya, pakai Hapus Album.', 'error'); return; }
+
+            _pentaEdit.saving = true;
+            var saveBtn = document.getElementById('pentaEditSave'), cancelBtn = document.getElementById('pentaEditCancel');
+            var prog = document.getElementById('pentaEditProgress'), bar = document.getElementById('pentaEditBar'), txt = document.getElementById('pentaEditProgressText');
+            saveBtn.disabled = true; cancelBtn.disabled = true;
+            prog.classList.remove('hidden'); bar.style.width = '5%';
+
+            var albumId = _pentaEdit.id;
+            var keys = _pentaEdit.existing.map(function(f) { return f.key; });
+            try {
+                var n = _pentaEdit.added.length;
+                for (var j = 0; j < n; j++) {
+                    txt.textContent = 'Mengunggah foto baru ' + (j + 1) + ' dari ' + n + '...';
+                    bar.style.width = Math.round(10 + (j / n) * 70) + '%';
+                    var compressed = await compressImage(_pentaEdit.added[j].dataUrl, 600, 0.5);
+                    var key = 'penta_' + albumId + '_' + Date.now() + '_' + j;
+                    var res = await pentaCall('savePhoto', [compressed, key]);
+                    if (res !== 'success') throw new Error('Foto baru ke-' + (j + 1) + ' gagal diunggah');
+                    keys.push(key);
                 }
-            );
+                txt.textContent = 'Menyimpan perubahan...'; bar.style.width = '85%';
+                var r2 = await pentaCall('updatePentasyarufan', [albumId, JSON.stringify({ judul: judul, photoKeys: keys })]);
+                if (r2 !== 'success') throw new Error(String(r2));
+
+                txt.textContent = 'Memuat ulang data...'; bar.style.width = '95%';
+                try {
+                    var raw = await pentaCall('getPentasyarufan');
+                    AppState.pentasyarufan = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                    try { await preloadPentaFotos(); } catch (e) {}
+                } catch (e) { console.warn('Gagal memuat ulang:', e); }
+                renderAdminPentaList();
+                renderPentasyarufanGaleri();
+                bar.style.width = '100%';
+                showFloatingNotif('✅ Perubahan kegiatan berhasil disimpan', 'success');
+                _pentaEdit.saving = false;
+                closePentaEdit();
+            } catch (e) {
+                showToast('Gagal menyimpan: ' + (e && e.message ? e.message : e), 'error');
+            } finally {
+                _pentaEdit.saving = false;
+                saveBtn.disabled = false; cancelBtn.disabled = false;
+                prog.classList.add('hidden');
+            }
         };
 
         window.adminDeletePenta = function(id, judul) {
@@ -4045,6 +4193,9 @@
             if (btnSave) btnSave.addEventListener('click', async function() {
                 var judul = (document.getElementById('newPentaJudul')||{}).value.trim();
                 if (!judul) { showToast('Isi judul kegiatan dulu.','error'); return; }
+                if (window._pentaSaving) return;          // sedang menyimpan → abaikan klik berikutnya
+                window._pentaSaving = true;
+                btnSave.disabled = true;
 
                 // Baca semua file dari _pentaFiles dengan FileReader (async)
                 var previews = [];
@@ -4058,7 +4209,7 @@
                 });
                 previews = (await Promise.all(readPromises)).filter(function(d){ return d && d.startsWith("data:image"); });
 
-                if (previews.length === 0) { showToast('Upload minimal 1 foto.','error'); return; }
+                if (previews.length === 0) { showToast('Upload minimal 1 foto.','error'); window._pentaSaving = false; btnSave.disabled = false; return; }
 
                 // Upload semua foto ke Drive
                 var progressDiv = document.getElementById('pentaUploadProgress');
@@ -4087,6 +4238,13 @@
                     } catch(e) { console.warn('Gagal upload foto '+j, e); }
                 }
 
+                if (driveUrls.length === 0) {
+                    progressDiv.classList.add('hidden');
+                    window._pentaSaving = false; btnSave.disabled = false;
+                    showToast('Semua foto gagal diunggah. Periksa sinyal lalu coba lagi.','error');
+                    return;
+                }
+                if (driveUrls.length < previews.length) showToast((previews.length - driveUrls.length) + ' foto gagal diunggah, sisanya tetap disimpan.','error');
                 progressBar.style.width = '90%';
                 progressTxt.textContent = 'Menyimpan data...';
 
@@ -4101,6 +4259,7 @@
                             progressDiv.classList.add('hidden');
                             formDiv.classList.add('hidden');
                             btnSave.disabled = false;
+                            window._pentaSaving = false;
                             document.getElementById('newPentaJudul').value = '';
                             _pentaFiles = [];
                             initPentaFotoSlots();
@@ -4123,6 +4282,7 @@
                     .withFailureHandler(function(e) {
                         progressDiv.classList.add('hidden');
                         btnSave.disabled = false;
+                        window._pentaSaving = false;
                         showToast('Gagal menyimpan: '+e,'error');
                     })
                     .addPentasyarufan(payload);
