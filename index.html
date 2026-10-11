@@ -2260,7 +2260,7 @@
 
                             <!-- TOMBOL AKSI -->
                             <div class="flex gap-2 pt-1">
-                                <button onclick="window.saveGaleriPhoto()" class="flex-1 bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-sm">
+                                <button id="galeriSaveBtn" onclick="window.saveGaleriPhoto()" class="flex-1 bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-sm">
                                     <i class="fas fa-save"></i> <span id="galeriSaveLabel">Simpan ke Galeri</span>
                                 </button>
                                 <button onclick="window.hideAddGaleriForm()" class="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold py-2.5 px-5 rounded-xl text-sm transition">
@@ -3985,6 +3985,7 @@
         }
 
         window.pentaSendBatch = pentaSendBatch;   // dipakai juga oleh form berita
+        window.pentaCall = pentaCall;             // dipakai juga oleh galeri
 
         // dataUrls: array gambar asli; makeKey(i): nama key foto ke-i.
         // Hasil: array sejajar → {key, data} bila berhasil, atau null bila gagal.
@@ -7567,69 +7568,131 @@
             }
         };
 
-        window.saveGaleriPhoto = function() {
+        // ── Simpan galeri: anti-dobel, kompres paralel, kirim per paket 3 foto, tampil langsung ──
+        var _galeriSaving = false;
+        var _galCSlots = 0, _galCQueue = [];
+
+        function galCompress(file) {                 // maks 3 foto dikompres bersamaan (hemat memori HP)
+            return new Promise(function(resolve) {
+                function run() {
+                    _galCSlots++;
+                    compressAndReadFile(file, 900, 675, 0.82, function(b64) {
+                        _galCSlots--;
+                        var nx = _galCQueue.shift(); if (nx) nx();
+                        resolve(b64);
+                    });
+                }
+                if (_galCSlots < 3) run(); else _galCQueue.push(run);
+            });
+        }
+
+        function galSetSaving(on, label) {
+            var btn = document.getElementById('galeriSaveBtn');
+            var lab = document.getElementById('galeriSaveLabel');
+            if (btn) { btn.disabled = on; btn.style.opacity = on ? '0.7' : ''; }
+            if (lab) lab.textContent = on ? (label || 'Menyimpan…') : 'Simpan ke Galeri';
+        }
+
+        function galSortNewestFirst() {
+            AppState.galeri.sort(function(a, b) { return Number(b.id) - Number(a.id); });
+        }
+
+        // Kirim satu paket foto. Aman diulang: server melewati ID yang sudah tersimpan.
+        async function galSendBatch(items) {
+            if (!GAS) return;
+            try {
+                var r = await window.pentaCall('addGaleriPhotosBatch', [items]);
+                if (r !== 'success') throw new Error(String(r));
+            } catch (e) {
+                // Code.gs lama belum punya addGaleriPhotosBatch → simpan satu per satu
+                if (String((e && e.message) || e).indexOf('tidak dikenali') !== -1) {
+                    for (var i = 0; i < items.length; i++) {
+                        var r2 = await window.pentaCall('addGaleriPhoto', [JSON.stringify(items[i])]);
+                        if (r2 !== 'success') throw new Error(String(r2));
+                    }
+                } else { throw e; }
+            }
+        }
+
+        window.saveGaleriPhoto = async function() {
+            if (_galeriSaving) { showToast('Foto sebelumnya masih diproses, mohon tunggu sebentar.'); return; }
             var ui  = document.getElementById('galeriUrlInput');
             var ci  = document.getElementById('galeriCaptionInput');
             var cap = ci ? ci.value.trim() : '';
+            if (!AppState.galeri) AppState.galeri = [];
 
             // MODE URL TUNGGAL
             if (!_galeriSelectedFiles || _galeriSelectedFiles.length === 0) {
                 var urlVal = ui ? ui.value.trim() : '';
                 if (!urlVal) { showToast('Pilih foto atau masukkan URL terlebih dahulu.'); return; }
-                if (!AppState.galeri) AppState.galeri = [];
+                _galeriSaving = true; galSetSaving(true, 'Menyimpan…');
                 var item = { id: Date.now(), img: urlVal, caption: cap };
-                AppState.galeri.unshift(item);
-                syncStateToBackend();
-                renderPublicGaleri();
-                renderAdminGaleriGrid();
-                _addSatuFotoGaleriKeGAS(item, function(ok) {
-                    showToast(ok ? '✓ Foto berhasil ditambahkan!' : '⚠️ Foto ditambah lokal, gagal simpan ke database.');
-                });
-                window.hideAddGaleriForm();
+                try {
+                    await galSendBatch([item]);
+                    AppState.galeri.push(item); galSortNewestFirst();
+                    syncStateToBackend(); renderPublicGaleri(); renderAdminGaleriGrid();
+                    window.hideAddGaleriForm();
+                    showFloatingNotif('Foto berhasil ditambahkan ke galeri', 'success');
+                } catch (e) {
+                    showFloatingNotif('Gagal menyimpan foto: ' + ((e && e.message) || e), 'error');
+                } finally { _galeriSaving = false; galSetSaving(false); }
                 return;
             }
 
-            // MODE FILE UPLOAD (multi) — upload satu per satu ke GAS
-            var totalFiles  = _galeriSelectedFiles.length;
-            var uploaded    = 0;
-            var berhasil    = 0;
+            // MODE FILE UPLOAD (banyak foto)
+            var files = _galeriSelectedFiles.slice(), total = files.length;
             var progressBar = document.getElementById('galeriProgressBar');
             var progressTxt = document.getElementById('galeriProgressText');
             var progressDiv = document.getElementById('galeriUploadProgress');
-            var saveLabel   = document.getElementById('galeriSaveLabel');
+            _galeriSaving = true; galSetSaving(true, 'Mengupload…');
             if (progressDiv) progressDiv.classList.remove('hidden');
-            if (saveLabel)   saveLabel.textContent = 'Mengupload…';
+            if (progressBar) progressBar.style.width = '5%';
+            if (progressTxt) progressTxt.textContent = 'Memproses ' + total + ' foto…';
 
-            if (!AppState.galeri) AppState.galeri = [];
+            var baseId = Date.now(), done = 0, failed = [], next = 0;
+            var starts = []; for (var i = 0; i < total; i += 3) starts.push(i);
 
-            _galeriSelectedFiles.forEach(function(file, idx) {
-                compressAndReadFile(file, 900, 675, 0.82, function(b64) {
-                    var item = { id: Date.now() + idx, img: b64, caption: cap };
-                    AppState.galeri.unshift(item);
+            async function doBatch(start) {
+                var idxs = []; for (var k = start; k < Math.min(start + 3, total); k++) idxs.push(k);
+                var comps = await Promise.all(idxs.map(function(k) { return galCompress(files[k]); }));
+                var items = idxs.map(function(k, ii) { return { id: baseId + k, img: comps[ii], caption: cap }; });
+                var ok = false;
+                for (var attempt = 0; attempt < 3 && !ok; attempt++) {
+                    try { await galSendBatch(items); ok = true; }
+                    catch (e) {
+                        console.warn('Paket foto galeri gagal (percobaan ' + (attempt + 1) + '):', e);
+                        if (attempt < 2) await new Promise(function(r) { setTimeout(r, 1000); });
+                    }
+                }
+                if (ok) {
+                    items.forEach(function(it) { AppState.galeri.push(it); });
+                    galSortNewestFirst();
+                    renderPublicGaleri();
+                    renderAdminGaleriGrid();               // langsung tampil, tanpa menunggu semua foto selesai
+                } else {
+                    idxs.forEach(function(k) { failed.push(files[k]); });
+                }
+                done += idxs.length;
+                if (progressBar) progressBar.style.width = Math.round(5 + (done / total) * 95) + '%';
+                if (progressTxt) progressTxt.textContent = 'Menyimpan foto ' + done + ' dari ' + total + '…';
+            }
+            async function lane() { while (next < starts.length) { await doBatch(starts[next++]); } }
 
-                    // Simpan langsung ke GAS sheet GaleriPhotos
-                    _addSatuFotoGaleriKeGAS(item, function(ok) {
-                        if (ok) berhasil++;
-                        uploaded++;
-                        var pct = Math.round((uploaded / totalFiles) * 100);
-                        if (progressBar) progressBar.style.width = pct + '%';
-                        if (progressTxt) progressTxt.textContent = 'Menyimpan foto ' + uploaded + ' dari ' + totalFiles + '…';
+            try { await Promise.all([lane(), lane()]); }
+            catch (e) { console.warn('Galeri upload error:', e); }
 
-                        if (uploaded === totalFiles) {
-                            syncStateToBackend();
-                            renderPublicGaleri();
-                            renderAdminGaleriGrid();
-                            setTimeout(function() {
-                                window.hideAddGaleriForm();
-                                if (progressDiv) progressDiv.classList.add('hidden');
-                                if (progressBar) progressBar.style.width = '0%';
-                                if (saveLabel) saveLabel.textContent = 'Simpan ke Galeri';
-                                showToast('✓ ' + berhasil + '/' + totalFiles + ' foto berhasil tersimpan ke database!');
-                            }, 400);
-                        }
-                    });
-                });
-            });
+            syncStateToBackend();
+            if (progressDiv) progressDiv.classList.add('hidden');
+            if (progressBar) progressBar.style.width = '0%';
+            _galeriSaving = false; galSetSaving(false);
+            var okCount = total - failed.length;
+            if (failed.length === 0) {
+                window.hideAddGaleriForm();
+                showFloatingNotif(okCount + ' foto berhasil disimpan ke galeri', 'success');
+            } else {
+                processGaleriFiles(failed);                 // hanya foto yang gagal tetap terpilih
+                showFloatingNotif(okCount + ' foto tersimpan, ' + failed.length + ' gagal. Foto yang gagal masih terpilih, silakan simpan lagi.', 'error');
+            }
         };
 
         function _simpanGaleriKeGAS() {
@@ -7659,8 +7722,8 @@
             var list = AppState.galeri || [];
 
             if (counter) counter.textContent = list.length + ' foto';
-            if (btnHapus) btnHapus.classList.toggle('hidden');
-            if (empty)    empty.classList.toggle('hidden');
+            if (btnHapus) btnHapus.classList.toggle('hidden', list.length === 0);
+            if (empty)    empty.classList.toggle('hidden', list.length > 0);
 
             list.forEach(function(item, idx) {
                 var wrap = document.createElement('div');
@@ -7683,39 +7746,48 @@
                     ov.appendChild(cp);
                 }
 
-                var delBtn = document.createElement('button');
-                delBtn.className = 'w-full bg-rose-500/90 hover:bg-rose-600 text-white text-[10px] font-bold py-1 rounded-lg flex items-center justify-center gap-1 transition';
-                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Hapus';
-                delBtn.addEventListener('click', (function(id) {
+                // Tombol hapus selalu terlihat (di HP tidak ada "hover")
+                var quickDel = document.createElement('button');
+                quickDel.type = 'button';
+                quickDel.title = 'Hapus foto';
+                quickDel.className = 'absolute top-1.5 right-1.5 w-7 h-7 bg-rose-600/90 hover:bg-rose-700 text-white rounded-full flex items-center justify-center text-[11px] shadow-lg z-10';
+                quickDel.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                quickDel.addEventListener('click', (function(id) {
                     return function(e) { e.stopPropagation(); window.deleteGaleriPhoto(id); };
                 })(item.id || idx));
-                ov.appendChild(delBtn);
 
                 wrap.appendChild(img);
                 wrap.appendChild(ov);
+                wrap.appendChild(quickDel);
                 grid.appendChild(wrap);
             });
         }
 
+        var _galeriDeleting = false;
         window.deleteGaleriPhoto = function(idOrIdx) {
             showDeleteConfirm(
                 'Yakin hapus foto ini dari galeri?<br><span class="text-rose-500 font-semibold text-sm">Foto tidak dapat dikembalikan.</span>',
                 function() {
-                    var targetId = idOrIdx;
-                    AppState.galeri = (AppState.galeri || []).filter(function(item, i) {
-                        return item.id !== idOrIdx && i !== idOrIdx;
+                    if (_galeriDeleting) return;
+                    var targetId = String(idOrIdx);
+                    var removeLocal = function() {
+                        AppState.galeri = (AppState.galeri || []).filter(function(item) { return String(item.id) !== targetId; });
+                        renderPublicGaleri();
+                        renderAdminGaleriGrid();
+                        syncStateToBackend();
+                    };
+                    if (!GAS) { removeLocal(); showFloatingNotif('Foto berhasil dihapus', 'success'); return; }
+                    _galeriDeleting = true;
+                    showProcessing('Menghapus foto, mohon tunggu...');
+                    window.pentaCall('deleteGaleriPhoto', [targetId]).then(function(res) {
+                        hideProcessing(); _galeriDeleting = false;
+                        if (String(res).indexOf('error') === 0) throw new Error(res);
+                        removeLocal();                         // "deleted" atau "not_found" → hilangkan dari daftar
+                        showFloatingNotif('Foto berhasil dihapus', 'success');
+                    }).catch(function(e) {
+                        hideProcessing(); _galeriDeleting = false;
+                        showFloatingNotif('Gagal menghapus foto: ' + ((e && e.message) || e), 'error');
                     });
-                    renderPublicGaleri();
-                    renderAdminGaleriGrid();
-                    syncStateToBackend();
-                    if (GAS) {
-                        google.script.run
-                            .withSuccessHandler(function(r){ showToast('Foto dihapus dari galeri.'); })
-                            .withFailureHandler(function(e){ console.warn('deleteGaleriPhoto GAS:', e); showToast('Foto dihapus lokal.'); })
-                            .deleteGaleriPhoto(String(targetId));
-                    } else {
-                        showToast('Foto dihapus dari galeri.');
-                    }
                 }
             );
         };
@@ -7726,18 +7798,25 @@
                 + '<span class="font-bold text-slate-800 dark:text-slate-200">Hapus Semua Foto Galeri?</span><br>'
                 + '<span class="text-slate-500 dark:text-slate-400 text-sm">Seluruh ' + (AppState.galeri||[]).length + ' foto akan dihapus permanen.</span>',
                 function() {
-                    AppState.galeri = [];
-                    renderPublicGaleri();
-                    renderAdminGaleriGrid();
-                    syncStateToBackend();
-                    if (GAS) {
-                        google.script.run
-                            .withSuccessHandler(function(r){ showToast('Semua foto galeri dihapus.'); })
-                            .withFailureHandler(function(e){ console.warn('deleteAllGaleri GAS:', e); })
-                            .deleteAllGaleriPhotos();
-                    } else {
-                        showToast('Semua foto galeri dihapus.');
-                    }
+                    if (_galeriDeleting) return;
+                    var clearLocal = function() {
+                        AppState.galeri = [];
+                        renderPublicGaleri();
+                        renderAdminGaleriGrid();
+                        syncStateToBackend();
+                    };
+                    if (!GAS) { clearLocal(); showFloatingNotif('Semua foto galeri dihapus', 'success'); return; }
+                    _galeriDeleting = true;
+                    showProcessing('Menghapus semua foto galeri, mohon tunggu...');
+                    window.pentaCall('deleteAllGaleriPhotos', []).then(function(res) {
+                        hideProcessing(); _galeriDeleting = false;
+                        if (String(res).indexOf('error') === 0) throw new Error(res);
+                        clearLocal();
+                        showFloatingNotif('Semua foto galeri berhasil dihapus', 'success');
+                    }).catch(function(e) {
+                        hideProcessing(); _galeriDeleting = false;
+                        showFloatingNotif('Gagal menghapus galeri: ' + ((e && e.message) || e), 'error');
+                    });
                 }
             );
         };
