@@ -3984,6 +3984,8 @@
             }
         }
 
+        window.pentaSendBatch = pentaSendBatch;   // dipakai juga oleh form berita
+
         // dataUrls: array gambar asli; makeKey(i): nama key foto ke-i.
         // Hasil: array sejajar → {key, data} bila berhasil, atau null bila gagal.
         async function pentaUploadPhotos(dataUrls, makeKey, onProgress) {
@@ -5949,6 +5951,25 @@
 
         window.handleAddNewNews = function(event) {
             event.preventDefault();
+            if (window._newsSaving) { showToast('Berita sebelumnya masih diproses, mohon tunggu sebentar.'); return; }
+            window._newsSaving = true;
+            const newsClientId = String(Date.now());   // ID dibuat di sini agar server bisa menolak data dobel
+            const _submitBtn = document.querySelector('#addNewsForm button[type="submit"]');
+            if (_submitBtn) { _submitBtn.disabled = true; _submitBtn.innerText = 'Menyimpan...'; }
+            showProcessing('Menyimpan berita, mohon tunggu...');
+            const finishSaving = function() {
+                window._newsSaving = false;
+                hideProcessing();
+                const b = document.querySelector('#addNewsForm button[type="submit"]');
+                if (b) { b.disabled = false; b.innerText = (editingNewsId !== null) ? 'Simpan Perubahan' : newsSubmitLabel(); }
+            };
+            // Tutup & kosongkan form HANYA setelah berhasil disimpan (bila gagal, isian tidak hilang)
+            const closeNewsForm = function() {
+                if (window.resetNewsImgPreviews) resetNewsImgPreviews();
+                const f = document.getElementById('addNewsForm');
+                if (f && !f.classList.contains('hidden')) toggleAddNewsForm();
+                else if (f) f.reset();
+            };
             const title   = document.getElementById('newNewsTitle').value.trim();
             const cat     = document.getElementById('newNewsCat').value;
             const author  = document.getElementById('newNewsAuthor').value.trim();
@@ -5961,7 +5982,6 @@
                 
                 const _savingNewsId = editingNewsId;
                 const isKontributor = AppState.adminRole === 'kontributor';
-                editingNewsId = null;
 
                 // Simpan ke GAS Spreadsheet — usernameLogin dipakai backend untuk cek ulang
                 // role pengirim (Admin Utama = langsung tayang, Kontributor = menunggu verifikasi).
@@ -5972,12 +5992,15 @@
                         author: author,
                         img: finalImgs[0] || '',
                         imgs: JSON.stringify(finalImgs),
-                        usernameLogin: AppState.adminUsername
+                        usernameLogin: AppState.adminUsername,
+                        newsId: newsClientId
                     };
                     if (_savingNewsId !== null) {
                         google.script.run
                             .withSuccessHandler(function(r){
+                                finishSaving();
                                 if(r === 'success') {
+                                    closeNewsForm();
                                     showFloatingNotif(isKontributor ? '✅ Perubahan dikirim, menunggu verifikasi Admin Utama.' : '✅ Perubahan berita berhasil disimpan!', 'success');
                                 } else if(r === 'not_found') {
                                     showFloatingNotif('❌ Gagal: data tidak ditemukan. Coba reload halaman.', 'error');
@@ -5987,6 +6010,7 @@
                                 refreshAdminAndPublicNews();
                             })
                             .withFailureHandler(function(e){
+                                finishSaving();
                                 var msg = String(e && (e.message || e));
                                 console.warn('updateNews GAS:', e);
                                 showFloatingNotif('❌ Gagal menyimpan berita: ' + msg, 'error');
@@ -5996,23 +6020,23 @@
                         // INSERT baru
                         google.script.run
                             .withSuccessHandler(function(r){
-                                if(r==='success') showFloatingNotif(isKontributor ? '✅ Berita terkirim, menunggu verifikasi Admin Utama.' : '✅ Berita baru berhasil dipublikasi!', 'success');
-                                else showFloatingNotif('⚠️ Gagal menyimpan berita, cek koneksi.', 'warning');
+                                finishSaving();
+                                if(r==='success') { closeNewsForm(); showFloatingNotif(isKontributor ? '✅ Berita terkirim, menunggu verifikasi Admin Utama.' : '✅ Berita baru berhasil dipublikasi!', 'success'); }
+                                else showFloatingNotif('⚠️ Gagal menyimpan berita, cek koneksi. Isian Anda masih ada, silakan coba lagi.', 'warning');
                                 refreshAdminAndPublicNews();
                             })
                             .withFailureHandler(function(e){
+                                finishSaving();
                                 console.warn('addNews GAS:', e);
                                 showFloatingNotif('❌ Gagal mengirim berita: ' + (e.message||e), 'error');
                             })
                             .addNews(JSON.stringify(newsPayload));
                     }
                 } else {
+                    finishSaving();
                     showToast("Mode lokal (tanpa GAS): perubahan tidak tersimpan permanen.");
+                    closeNewsForm();
                 }
-                
-                document.getElementById('addNewsForm').reset();
-                if(window.resetNewsImgPreviews) resetNewsImgPreviews();
-                toggleAddNewsForm();
             };
 
             // Kumpulkan file dari 4 input terpisah
@@ -6023,31 +6047,29 @@
             }
 
             if (newsImgFiles.length > 0) {
-                // Upload foto satu per satu via savePhoto (chunked),
-                // agar setiap request ke GAS kecil & tidak timeout
-                let uploadedKeys = [];
-                function uploadNewsPhotoSeq(idx) {
-                    if (idx >= newsImgFiles.length) {
-                        saveNews(uploadedKeys);
+                // Kompres semua foto bersamaan lalu kirim dalam 1 paket (lebih cepat dari satu per satu).
+                // Bila gagal, form tidak dikosongkan sehingga bisa langsung dicoba lagi.
+                const stamp = Date.now();
+                Promise.all(newsImgFiles.map(function(file) {
+                    return new Promise(function(resolve) { compressAndReadFile(file, 800, 600, 0.75, resolve); });
+                })).then(async function(b64s) {
+                    var items = b64s.map(function(b64, idx) { return { key: 'news_' + stamp + '_' + idx, data: b64 }; });
+                    var sendBatch = window.pentaSendBatch;
+                    var ok = false;
+                    for (var attempt = 0; attempt < 3 && !ok && sendBatch; attempt++) {
+                        try { await sendBatch(items); ok = true; }
+                        catch (e) {
+                            console.warn('Unggah foto berita gagal (percobaan ' + (attempt + 1) + '):', e);
+                            if (attempt < 2) await new Promise(function(r) { setTimeout(r, 1000); });
+                        }
+                    }
+                    if (!ok) {
+                        finishSaving();
+                        showFloatingNotif('❌ Foto gagal diunggah. Periksa sinyal lalu coba lagi (isian Anda tetap ada).', 'error');
                         return;
                     }
-                    compressAndReadFile(newsImgFiles[idx], 800, 600, 0.75, function(b64) {
-                        var key = 'news_' + Date.now() + '_' + idx;
-                        google.script.run
-                            .withSuccessHandler(function(r) {
-                                // Simpan key jika berhasil, atau base64 langsung sebagai fallback
-                                uploadedKeys.push(r === 'success' ? '__newsphoto__' + key : b64);
-                                uploadNewsPhotoSeq(idx + 1);
-                            })
-                            .withFailureHandler(function() {
-                                // Fallback: simpan base64 langsung
-                                uploadedKeys.push(b64);
-                                uploadNewsPhotoSeq(idx + 1);
-                            })
-                            .savePhoto(b64, key);
-                    });
-                }
-                uploadNewsPhotoSeq(0);
+                    saveNews(items.map(function(it) { return '__newsphoto__' + it.key; }));
+                });
             } else {
                 if (editingNewsId !== null) {
                     // Tidak ada file baru → ambil dari preview img yang tampil (data existing)
@@ -6082,9 +6104,20 @@
                 'Yakin hapus berita ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
                 function() {
                     if (GAS) {
+                        if (window._newsDeleting) return;
+                        window._newsDeleting = true;
+                        showProcessing('Menghapus berita, mohon tunggu...');
                         google.script.run
-                            .withSuccessHandler(function(r){ showToast('Berita dihapus dari database.'); refreshAdminAndPublicNews(); })
-                            .withFailureHandler(function(e){ console.warn('deleteNews GAS:', e); })
+                            .withSuccessHandler(function(r){
+                                window._newsDeleting = false; hideProcessing();
+                                if (String(r).indexOf('error') === 0) { showFloatingNotif('❌ Gagal menghapus: ' + r, 'error'); return; }
+                                showFloatingNotif('Berita berhasil dihapus', 'success'); refreshAdminAndPublicNews();
+                            })
+                            .withFailureHandler(function(e){
+                                window._newsDeleting = false; hideProcessing();
+                                console.warn('deleteNews GAS:', e);
+                                showFloatingNotif('❌ Gagal menghapus berita: ' + ((e && e.message) || e), 'error');
+                            })
                             .deleteNews(String(id), AppState.adminUsername);
                     } else {
                         AppState.news = AppState.news.filter(x => x.id !== id);
