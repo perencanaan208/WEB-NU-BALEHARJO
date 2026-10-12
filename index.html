@@ -7511,16 +7511,48 @@
                     e.preventDefault();
                     dz.classList.remove('border-nuGreen-500', 'bg-nuGreen-50/40');
                     var files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-                    if (files.length) processGaleriFiles(files);
+                    if (files.length) window.addGaleriFiles(files);
                 });
             }
 
             fi.addEventListener('change', function() {
-                var files = Array.from(this.files);
-                if (files.length) processGaleriFiles(files);
+                var files = Array.from(this.files).filter(function(f) { return f.type && f.type.indexOf('image/') === 0; });
+                if (files.length) window.addGaleriFiles(files);
+                this.value = '';     // supaya memilih file yang sama lagi tetap memicu 'change'
             });
         }
 
+        // Pilih foto lagi = MENAMBAH ke foto yang sudah terpilih (bukan menggantikan)
+        window.addGaleriFiles = function(newFiles) {
+            if (_galeriSaving) { showToast('Tunggu proses upload selesai dulu.'); return; }
+            var MAX = 10;
+            var current = (_galeriSelectedFiles || []).slice();
+            var dup = 0, over = 0;
+            newFiles.forEach(function(f) {
+                var same = current.some(function(c) { return c.name === f.name && c.size === f.size && c.lastModified === f.lastModified; });
+                if (same) { dup++; return; }
+                if (current.length >= MAX) { over++; return; }
+                current.push(f);
+            });
+            if (dup)  showToast(dup + ' foto yang sama sudah dipilih, dilewati.');
+            if (over) showToast('Maksimal ' + MAX + ' foto sekali upload. ' + over + ' foto diabaikan.');
+            if (current.length) processGaleriFiles(current);
+        };
+
+        var _galDataCache = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
+        var _galRenderToken = 0;
+
+        function galReadFile(file) {
+            return new Promise(function(resolve) {
+                if (_galDataCache && _galDataCache.has(file)) { resolve(_galDataCache.get(file)); return; }
+                var reader = new FileReader();
+                reader.onload = function(e) { if (_galDataCache) _galDataCache.set(file, e.target.result); resolve(e.target.result); };
+                reader.onerror = function() { resolve(null); };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Menampilkan daftar foto terpilih (daftar ini yang akan di-upload)
         function processGaleriFiles(files) {
             var MAX = 10;
             if (files.length > MAX) {
@@ -7534,27 +7566,22 @@
             var grid = document.getElementById('galeriPreviewGrid');
             var cnt  = document.getElementById('galeriSelectedCount');
             if (prev) prev.classList.remove('hidden');
-            if (grid) grid.innerHTML = '';
             if (cnt)  cnt.textContent = files.length;
 
-            var loaded = 0;
-            files.forEach(function(file, idx) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    _galeriPreviews[idx] = { dataUrl: e.target.result, filename: file.name };
-                    loaded++;
-
-                    // Tambah preview thumbnail
-                    if (grid) {
-                        var thumb = document.createElement('div');
-                        thumb.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nuGreen-200 bg-slate-100 dark:bg-slate-900';
-                        thumb.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">'
-                            + '<button onclick="window.removeGaleriPreview(' + idx + ')" class="absolute top-1 right-1 w-5 h-5 bg-rose-500 hover:bg-rose-700 rounded-full text-white flex items-center justify-center text-[9px] shadow">'
-                            + '<i class="fas fa-times"></i></button>';
-                        grid.appendChild(thumb);
-                    }
-                };
-                reader.readAsDataURL(file);
+            var token = ++_galRenderToken;
+            Promise.all(files.map(galReadFile)).then(function(urls) {
+                if (token !== _galRenderToken || !grid) return;   // sudah ada render yang lebih baru
+                grid.innerHTML = '';
+                urls.forEach(function(url, idx) {
+                    if (!url) return;
+                    _galeriPreviews[idx] = { dataUrl: url, filename: files[idx].name };
+                    var thumb = document.createElement('div');
+                    thumb.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nuGreen-200 bg-slate-100 dark:bg-slate-900';
+                    thumb.innerHTML = '<img src="' + url + '" class="w-full h-full object-cover">'
+                        + '<button type="button" onclick="window.removeGaleriPreview(' + idx + ')" class="absolute top-1 right-1 w-5 h-5 bg-rose-500 hover:bg-rose-700 rounded-full text-white flex items-center justify-center text-[9px] shadow">'
+                        + '<i class="fas fa-times"></i></button>';
+                    grid.appendChild(thumb);
+                });
             });
         }
 
