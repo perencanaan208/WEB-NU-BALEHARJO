@@ -2537,7 +2537,7 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
+    <div id="toast" class="fixed bottom-6 right-6 z-[99999] transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2">
             <i class="fas fa-info-circle text-nuGold-400"></i>
             <span id="toastMessage">Pesan berhasil disalin!</span>
@@ -4032,6 +4032,10 @@
             if (el && el.parentNode) el.parentNode.removeChild(el);
         };
 
+        // Simpan pengaturan admin: tampil "Menyimpan…" lalu hasil (sukses/gagal) yang pasti terlihat
+        window.adminSaveStart = function(label) { showProcessing('Menyimpan ' + label + ', mohon tunggu...'); };
+        window.adminSaveDone  = function(ok, msg) { hideProcessing(); showFloatingNotif(msg, ok ? 'success' : 'error'); };
+
         // ══ EDIT KEGIATAN: ubah judul, hapus foto, tambah foto ══
         var _pentaEdit = { id: null, existing: [], added: [], saving: false };
 
@@ -4459,12 +4463,13 @@
                 'pengurus_hdr.masaKhidmat_UPZISNU': ps['masaKhidmat_UPZISNU'] || '',
                 'pengurus_hdr.masaKhidmat_Pagar_Nusa': ps['masaKhidmat_Pagar_Nusa'] || '',
             };
+            adminSaveStart('info kepengurusan');
             google.script.run
                 .withSuccessHandler(function(r){
-                    if (r === 'success') showToast('✓ Info & masa jabatan kepengurusan tersimpan!');
-                    else showToast('⚠️ Gagal: ' + r);
+                    if (r === 'success') adminSaveDone(true, 'Info & masa jabatan kepengurusan berhasil disimpan');
+                    else adminSaveDone(false, 'Gagal menyimpan: ' + r);
                 })
-                .withFailureHandler(function(e){ showToast('❌ GAS error: ' + (e.message||e)); })
+                .withFailureHandler(function(e){ adminSaveDone(false, 'Gagal menyimpan: ' + (e.message||e)); })
                 .saveSettingsBatch(JSON.stringify(batch));
         };
 
@@ -4547,13 +4552,14 @@
                 'kontak.kategoriList':    JSON.stringify(ks.kategoriList)
             };
 
+            adminSaveStart('pengaturan kontak');
             google.script.run
                 .withSuccessHandler(function(r) {
-                    if (r === 'success') showToast('✓ Pengaturan Kontak berhasil disimpan!');
-                    else showToast('⚠️ Gagal simpan: ' + r);
+                    if (r === 'success') adminSaveDone(true, 'Pengaturan kontak berhasil disimpan');
+                    else adminSaveDone(false, 'Gagal menyimpan: ' + r);
                 })
                 .withFailureHandler(function(e) {
-                    showToast('❌ GAS error: ' + (e.message || e));
+                    adminSaveDone(false, 'Gagal menyimpan: ' + (e.message || e));
                 })
                 .saveSettingsBatch(JSON.stringify(batch));
         };
@@ -5581,12 +5587,20 @@
                     'homepage.agendaTitle': AppState.homepageSettings.agendaTitle,
                     'homepage.agendaLocation': AppState.homepageSettings.agendaLocation
                 };
+                adminSaveStart('pengaturan beranda');
                 google.script.run
-                    .withSuccessHandler(function(r){ if(r==='success') showToast('Beranda tersimpan ke Spreadsheet!'); })
-                    .withFailureHandler(function(e){ console.warn('saveSettings GAS:', e); })
+                    .withSuccessHandler(function(r){
+                        if (r === 'success') adminSaveDone(true, 'Pengaturan beranda berhasil disimpan');
+                        else adminSaveDone(false, 'Gagal menyimpan: ' + r);
+                    })
+                    .withFailureHandler(function(e){
+                        console.warn('saveSettings GAS:', e);
+                        adminSaveDone(false, 'Gagal menyimpan. Periksa sinyal lalu coba lagi.');
+                    })
                     .saveSettingsBatch(JSON.stringify(settingsBatch));
+            } else {
+                showFloatingNotif('Pengaturan beranda diperbarui (mode lokal)', 'success');
             }
-            showToast("Pengaturan halaman Beranda berhasil diperbarui!");
         }
 
         window.handleProfileSettingsUpdate = function(event) {
@@ -5640,30 +5654,32 @@
                 'profile.fokus':            JSON.stringify(ps.fokus)
             };
 
+            adminSaveStart('data profil');
             google.script.run
                 .withSuccessHandler(function(r) {
-                    if (r !== 'success') { showToast('⚠️ Gagal simpan data: ' + r); return; }
+                    if (r !== 'success') { adminSaveDone(false, 'Gagal simpan data: ' + r); return; }
 
                     var fotoSrc = ps.profilImg || '';
-                    if (!fotoSrc) { showToast('✓ Data profil tersimpan!'); return; }
+                    if (!fotoSrc) { adminSaveDone(true, 'Data profil berhasil disimpan'); return; }
+                    showProcessing('Menyimpan foto profil, mohon tunggu...');
 
                     // ── STEP 2: Simpan foto via savePhoto (chunking otomatis di GAS) ──
                     // savePhoto memecah base64 besar menjadi chunks < 44KB per cell
                     // getSettings() otomatis menggabungkan kembali saat web dibuka
                     google.script.run
                         .withSuccessHandler(function(r2) {
-                            if (r2 === 'success') showToast('✓ Profil & foto berhasil disimpan!');
-                            else showToast('⚠️ Foto gagal: ' + r2);
+                            if (r2 === 'success') adminSaveDone(true, 'Profil & foto berhasil disimpan');
+                            else adminSaveDone(false, 'Data tersimpan, tetapi foto gagal: ' + r2);
                         })
                         .withFailureHandler(function(e) {
                             console.error('GAS savePhoto:', e);
-                            showToast('❌ Foto gagal: ' + (e.message || e));
+                            adminSaveDone(false, 'Data tersimpan, tetapi foto gagal: ' + (e.message || e));
                         })
                         .savePhoto(fotoSrc, 'profile.profilImg');
                 })
                 .withFailureHandler(function(e) {
                     console.error('GAS teks:', e);
-                    showToast('❌ Koneksi GAS gagal: ' + (e.message || e));
+                    adminSaveDone(false, 'Koneksi gagal: ' + (e.message || e));
                 })
                 .saveSettingsBatch(JSON.stringify(batchTeks));
         };
@@ -5775,12 +5791,19 @@
                 renderPublicLayanan();
                 syncStateToBackend();
                 if (GAS) {
+                    adminSaveStart('data layanan');
                     google.script.run
-                        .withSuccessHandler(function(r){ if(r==='success') showToast('Data layanan tersimpan ke database!'); })
-                        .withFailureHandler(function(e){ console.warn('GAS layanan:', e); })
+                        .withSuccessHandler(function(r){
+                            if (r === 'success') adminSaveDone(true, 'Data layanan berhasil disimpan');
+                            else adminSaveDone(false, 'Gagal menyimpan: ' + r);
+                        })
+                        .withFailureHandler(function(e){
+                            console.warn('GAS layanan:', e);
+                            adminSaveDone(false, 'Gagal menyimpan. Periksa sinyal lalu coba lagi.');
+                        })
                         .saveSettingsBatch(JSON.stringify({ 'site.layanan': JSON.stringify(AppState.layanan) }));
                 } else {
-                    showToast("Data Program & Layanan berhasil diperbarui!");
+                    showFloatingNotif('Data Program & Layanan diperbarui (mode lokal)', 'success');
                 }
             }
         }
@@ -5825,11 +5848,13 @@
                     };
                 });
 
+                adminSaveStart('data banom');
                 google.script.run
                     .withSuccessHandler(function(r) {
-                        if (r !== 'success') { showToast('⚠️ Gagal simpan data banom: ' + r); return; }
+                        if (r !== 'success') { adminSaveDone(false, 'Gagal simpan data banom: ' + r); return; }
 
-                        if (!imgBase64) { showToast('✓ Data banom tersimpan!'); return; }
+                        if (!imgBase64) { adminSaveDone(true, 'Data banom berhasil disimpan'); return; }
+                        showProcessing('Menyimpan foto banom, mohon tunggu...');
 
                         // ── STEP 2: Simpan foto via savePhoto (sheet Photos, bebas limit 50K) ──
                         // Key: "site.banom_img_ansor", "site.banom_img_fatayat", dst
@@ -5838,27 +5863,30 @@
                         if (imgBase64.startsWith('http')) {
                             // URL langsung → simpan di Settings biasa (pendek, aman)
                             google.script.run
-                                .withSuccessHandler(function(r2){ if(r2==='success') showToast('✓ Foto banom tersimpan!'); })
-                                .withFailureHandler(function(e){ console.warn('GAS banom URL:', e); })
+                                .withSuccessHandler(function(r2){
+                                    if (r2 === 'success') adminSaveDone(true, 'Banom & foto berhasil disimpan');
+                                    else adminSaveDone(false, 'Data tersimpan, tetapi foto gagal: ' + r2);
+                                })
+                                .withFailureHandler(function(e){ console.warn('GAS banom URL:', e); adminSaveDone(false, 'Data tersimpan, tetapi foto gagal disimpan.'); })
                                 .saveSetting(fotoKey, imgBase64);
                         } else {
                             // Base64 → simpan ke sheet Photos (chunking otomatis, tidak ada limit)
                             google.script.run
                                 .withSuccessHandler(function(r2) {
                                     if (r2 === 'success') {
-                                        showToast('✓ Banom & foto berhasil disimpan!');
+                                        adminSaveDone(true, 'Banom & foto berhasil disimpan');
                                     } else {
-                                        showToast('⚠️ Foto banom gagal: ' + r2);
+                                        adminSaveDone(false, 'Data tersimpan, tetapi foto gagal: ' + r2);
                                     }
                                 })
                                 .withFailureHandler(function(e) {
                                     console.error('GAS savePhoto banom:', e);
-                                    showToast('❌ Foto banom gagal: ' + (e.message || e));
+                                    adminSaveDone(false, 'Data tersimpan, tetapi foto gagal: ' + (e.message || e));
                                 })
                                 .savePhoto(imgBase64, fotoKey);
                         }
                     })
-                    .withFailureHandler(function(e){ console.warn('GAS banom teks:', e); showToast('Gagal menyimpan data banom.'); })
+                    .withFailureHandler(function(e){ console.warn('GAS banom teks:', e); adminSaveDone(false, 'Gagal menyimpan data banom. Periksa sinyal lalu coba lagi.'); })
                     .saveSettingsBatch(JSON.stringify({ 'site.banoms': JSON.stringify(banomsTeks) }));
             }
 
@@ -7198,24 +7226,24 @@
                     'site.sosmedYt':           ss.sosmedYt || '#',
                     'site.sosmedIg':           ss.sosmedIg || '#'
                 };
+                adminSaveStart('pengaturan situs');
                 google.script.run
                     .withSuccessHandler(function(r){
-                        if (r === 'success') {
-                            showToast('✓ Pengaturan situs berhasil disimpan!');
-                            if (ss.logoImg) {
-                                google.script.run
-                                    .withSuccessHandler(function(r2){ if(r2==='success') showToast('Logo berhasil tersimpan!'); })
-                                    .withFailureHandler(function(e){ console.warn('GAS logo:', e); })
-                                    .saveSettingsBatch(JSON.stringify({ 'site.logoImg': ss.logoImg }));
-                            }
-                        } else {
-                            showToast('Gagal simpan: ' + r);
-                        }
+                        if (r !== 'success') { adminSaveDone(false, 'Gagal simpan: ' + r); return; }
+                        if (!ss.logoImg) { adminSaveDone(true, 'Pengaturan situs berhasil disimpan'); return; }
+                        showProcessing('Menyimpan logo, mohon tunggu...');
+                        google.script.run
+                            .withSuccessHandler(function(r2){
+                                if (r2 === 'success') adminSaveDone(true, 'Pengaturan situs & logo berhasil disimpan');
+                                else adminSaveDone(false, 'Pengaturan tersimpan, tetapi logo gagal: ' + r2);
+                            })
+                            .withFailureHandler(function(e){ console.warn('GAS logo:', e); adminSaveDone(false, 'Pengaturan tersimpan, tetapi logo gagal disimpan.'); })
+                            .saveSettingsBatch(JSON.stringify({ 'site.logoImg': ss.logoImg }));
                     })
-                    .withFailureHandler(function(e){ console.warn('GAS site:', e); showToast('Gagal menghubungi server GAS.'); })
+                    .withFailureHandler(function(e){ console.warn('GAS site:', e); adminSaveDone(false, 'Gagal menghubungi server. Periksa sinyal lalu coba lagi.'); })
                     .saveSettingsBatch(JSON.stringify(batchSettings));
             } else {
-                showToast('Pengaturan situs berhasil disimpan (lokal)!');
+                showFloatingNotif('Pengaturan situs disimpan (mode lokal)', 'success');
             }
         };
 
