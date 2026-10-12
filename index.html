@@ -3186,16 +3186,24 @@
         }
 
         // Fungsi utama: simpan perubahan yang relevan ke GAS
-        function syncStateToBackend(dataType) {
-            // dataType: 'settings' | 'news' | 'finance' | 'pengurus' | 'inbox' | undefined (semua)
-            // localStorage sebagai cache lokal tetap disimpan
-            try {
-                const cacheState = JSON.parse(JSON.stringify(AppState));
-                cacheState.isAdminLoggedIn = false;
-                localStorage.setItem('PRNU_BALEHARJO_STATE_CACHE', JSON.stringify(cacheState));
-            } catch(e) {}
-            // Sinkronisasi ke GAS sudah dilakukan secara langsung di masing-masing handler
+        function fmtNewsDate(raw) {
+            if (!raw) return '';
+            var s = String(raw);
+            if (/^\d{4}-\d{2}-\d{2}T/.test(s)) {
+                var d = new Date(s);
+                if (!isNaN(d.getTime())) return d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            return s;
         }
+        window.fmtNewsDate = fmtNewsDate;
+
+        function syncStateToBackend(dataType) {
+            // Dulu menyalin SELURUH AppState (termasuk foto base64) ke localStorage di setiap aksi, padahal
+            // cache itu tidak pernah dibaca dan hanya memperlambat serta menghabiskan kuota penyimpanan.
+            // Sekarang tidak melakukan apa-apa; sinkronisasi ke GAS dilakukan langsung di tiap handler.
+            // Cache data sebenarnya ditangani oleh PRNU_BOOT (prnu_core_v2 / prnu_media_v2_*).
+        }
+        try { localStorage.removeItem('PRNU_BALEHARJO_STATE_CACHE'); } catch(e) {}   // bersihkan sisa cache lama
 
         // Muat semua data dari Spreadsheet GAS
         function loadFromSpreadsheet(callback) {
@@ -4701,7 +4709,7 @@
                             </div>
                             <div class="p-5 space-y-2">
                                 <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                                    <span><i class="far fa-calendar-alt mr-1"></i>${item.date}</span>
+                                    <span><i class="far fa-calendar-alt mr-1"></i>${fmtNewsDate(item.date)}</span>
                                     <span>•</span>
                                     <span><i class="far fa-user mr-1"></i>${item.author}</span>
                                 </div>
@@ -4858,7 +4866,7 @@
                         + '</div>'
                         + '<div class="p-3"><p class="text-xs font-bold text-nuGreen-700 uppercase tracking-wider mb-1">' + (n.category || '') + '</p>'
                         + '<h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">' + (n.title || '') + '</h4>'
-                        + '<p class="text-xs text-slate-400 dark:text-slate-500 mt-1">' + (n.date || '') + '</p></div>';
+                        + '<p class="text-xs text-slate-400 dark:text-slate-500 mt-1">' + fmtNewsDate(n.date || '') + '</p></div>';
                     card.onclick = function() { openNewsDetail(n.id); };
                     related.appendChild(card);
                 });
@@ -6162,26 +6170,34 @@
         // Admin Utama menyetujui berita kontributor → tayang di web publik
         window.approveNewsItem = function(id) {
             if (!GAS) { showToast("Fitur ini butuh koneksi ke backend."); return; }
+            if (window._newsActing) return;
+            window._newsActing = true;
+            showProcessing('Menyetujui berita, mohon tunggu...');
             google.script.run
                 .withSuccessHandler(function(r){
+                    window._newsActing = false; hideProcessing();
                     if (r === 'success') showFloatingNotif('✅ Berita disetujui & tayang di website.', 'success');
                     else showFloatingNotif('❌ Gagal menyetujui: ' + r, 'error');
                     refreshAdminAndPublicNews();
                 })
-                .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal menyetujui berita: ' + (e.message||e), 'error'); })
+                .withFailureHandler(function(e){ window._newsActing = false; hideProcessing(); showFloatingNotif('❌ Gagal menyetujui berita: ' + (e.message||e), 'error'); })
                 .approveNews(String(id));
         }
 
         // Admin Utama menolak berita kontributor (opsional beri alasan)
         window.rejectNewsItem = function(id) {
+            if (window._newsActing) return;
             const alasan = prompt("Alasan penolakan (opsional, akan terlihat kontributor):", "") || "";
+            window._newsActing = true;
+            showProcessing('Menolak berita, mohon tunggu...');
             google.script.run
                 .withSuccessHandler(function(r){
+                    window._newsActing = false; hideProcessing();
                     if (r === 'success') showFloatingNotif('🚫 Berita ditolak.', 'warning');
                     else showFloatingNotif('❌ Gagal menolak: ' + r, 'error');
                     refreshAdminAndPublicNews();
                 })
-                .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal menolak berita: ' + (e.message||e), 'error'); })
+                .withFailureHandler(function(e){ window._newsActing = false; hideProcessing(); showFloatingNotif('❌ Gagal menolak berita: ' + (e.message||e), 'error'); })
                 .rejectNews(String(id), alasan);
         }
 
@@ -6271,7 +6287,7 @@
                         <td class="p-3 font-semibold text-slate-800 dark:text-slate-200 max-w-xs truncate">${item.title}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.category === 'dakwah' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${item.category.toUpperCase()}</span></td>
                         <td class="p-3">${badge}</td>
-                        <td class="p-3 text-slate-500 dark:text-slate-400">${item.date}</td>
+                        <td class="p-3 text-slate-500 dark:text-slate-400">${fmtNewsDate(item.date)}</td>
                         <td class="p-3 text-slate-600 dark:text-slate-400">${item.author}</td>
                         <td class="p-3 text-right flex justify-end gap-1.5 flex-wrap">
                             ${actionBtns}
@@ -6357,6 +6373,7 @@
 
         window.handleAddUserSubmit = function(event) {
             event.preventDefault();
+            if (window._userSaving) { showToast('Akun sebelumnya masih diproses, mohon tunggu sebentar.'); return; }
             const username = document.getElementById('newUserUsername').value.trim();
             const nama     = document.getElementById('newUserNama').value.trim();
             const password = document.getElementById('newUserPassword').value;
@@ -6364,29 +6381,43 @@
 
             if (!GAS) { showToast("Fitur ini butuh koneksi ke backend (GAS)."); return; }
 
+            const startUserSave = function() {
+                window._userSaving = true;
+                const b = document.querySelector('#addUserForm button[type="submit"]'); if (b) b.disabled = true;
+                showProcessing('Menyimpan akun, mohon tunggu...');
+            };
+            const endUserSave = function() {
+                window._userSaving = false; hideProcessing();
+                const b = document.querySelector('#addUserForm button[type="submit"]'); if (b) b.disabled = false;
+            };
+
             if (editingUsername) {
                 const payload = { role: role, nama: nama };
                 if (password) payload.password = password;
+                startUserSave();
                 google.script.run
                     .withSuccessHandler(function(r){
+                        endUserSave();
                         if (r === 'success') { showFloatingNotif('✅ Akun berhasil diperbarui.', 'success'); loadUsersAdmin(); toggleAddUserForm(); }
                         else if (r === 'not_found') { showFloatingNotif('❌ Akun tidak ditemukan.', 'error'); }
                         else if (typeof r === 'string' && r.indexOf('error:') === 0) { showFloatingNotif('❌ ' + r.replace('error:','').trim(), 'error'); }
                         else { showFloatingNotif('⚠️ ' + r, 'warning'); loadUsersAdmin(); toggleAddUserForm(); }
                     })
-                    .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal memperbarui akun: ' + (e.message||e), 'error'); })
+                    .withFailureHandler(function(e){ endUserSave(); showFloatingNotif('❌ Gagal memperbarui akun: ' + (e.message||e), 'error'); })
                     .updateUser(editingUsername, JSON.stringify(payload));
             } else {
                 if (!password) { showToast("Password wajib diisi untuk akun baru."); return; }
                 const payload = { username: username, password: password, role: role, nama: nama };
+                startUserSave();
                 google.script.run
                     .withSuccessHandler(function(r){
+                        endUserSave();
                         if (r === 'success') { showFloatingNotif('✅ Akun admin baru berhasil dibuat.', 'success'); loadUsersAdmin(); toggleAddUserForm(); }
                         else if (r === 'exists') { showToast('Username sudah dipakai, pilih username lain.'); }
                         else if (typeof r === 'string' && r.indexOf('error:') === 0) { showFloatingNotif('❌ ' + r.replace('error:','').trim(), 'error'); }
                         else { showFloatingNotif('⚠️ ' + r, 'warning'); }
                     })
-                    .withFailureHandler(function(e){ showFloatingNotif('❌ Gagal membuat akun: ' + (e.message||e), 'error'); })
+                    .withFailureHandler(function(e){ endUserSave(); showFloatingNotif('❌ Gagal membuat akun: ' + (e.message||e), 'error'); })
                     .addUser(JSON.stringify(payload));
             }
         }
@@ -6395,13 +6426,21 @@
             showDeleteConfirm(
                 'Yakin hapus akun <b>' + username + '</b>?<br><span class="text-rose-500 font-semibold">Akun ini tidak akan bisa login lagi.</span>',
                 function() {
+                    if (window._userDeleting) return;
+                    window._userDeleting = true;
+                    showProcessing('Menghapus akun, mohon tunggu...');
                     google.script.run
                         .withSuccessHandler(function(r){
-                            if (r === 'deleted') showToast('Akun dihapus.');
-                            else showToast(String(r));
+                            window._userDeleting = false; hideProcessing();
+                            if (r === 'deleted') showFloatingNotif('Akun berhasil dihapus', 'success');
+                            else showFloatingNotif(String(r).replace(/^error:\s*/, ''), 'error');
                             loadUsersAdmin();
                         })
-                        .withFailureHandler(function(e){ console.warn('deleteUser GAS:', e); })
+                        .withFailureHandler(function(e){
+                            window._userDeleting = false; hideProcessing();
+                            console.warn('deleteUser GAS:', e);
+                            showFloatingNotif('Gagal menghapus akun. Periksa sinyal lalu coba lagi.', 'error');
+                        })
                         .deleteUser(username);
                 }
             );
@@ -6599,18 +6638,34 @@
             form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        var _pengurusSubmitting = false;
         window.handleAddNewPengurus = function(event) {
             event.preventDefault();
-            if (_pengurusSubmitting) return;
-            _pengurusSubmitting = true;
-            setTimeout(function(){ _pengurusSubmitting = false; }, 3000);
+            if (window._pengurusSaving) { showToast('Data sebelumnya masih diproses, mohon tunggu sebentar.'); return; }
             const name  = document.getElementById('newPengurusName').value.trim();
             const role  = document.getElementById('newPengurusRole').value.trim();
             const group = document.getElementById('newPengurusGroup').value.trim();
             const photoInput = document.getElementById('newPengurusPhoto');
 
             if (!name) { showToast('Nama pengurus wajib diisi!'); return; }
+
+            // ── Cegah simpan ganda + tampilkan proses ──
+            window._pengurusSaving = true;
+            let addedIdForRollback = null;      // ID sementara bila ini penambahan baru
+            let _photoNote = '';
+            const _pBtn = document.querySelector('#addPengurusForm button[type="submit"]');
+            if (_pBtn) _pBtn.disabled = true;
+            showProcessing('Menyimpan data pengurus, mohon tunggu...');
+            const finishPengurus = function(ok, msg) {
+                window._pengurusSaving = false;
+                hideProcessing();
+                const b = document.querySelector('#addPengurusForm button[type="submit"]');
+                if (b) b.disabled = false;
+                if (!ok && addedIdForRollback !== null) {      // gagal menyimpan → batalkan tampilan sementara
+                    AppState.pengurus = AppState.pengurus.filter(x => x.id !== addedIdForRollback);
+                    renderPublicPengurus(); renderAdminPengurusTable(); syncStateToBackend();
+                }
+                showFloatingNotif(msg + (ok ? _photoNote : ''), ok ? 'success' : 'error');
+            };
 
             const savePengurus = (imgDataUrl) => {
                 // ★ KUNCI FIX: capture ID ke variabel lokal SEBELUM apapun direset
@@ -6635,11 +6690,10 @@
                         AppState.pengurus[idx].group = group;
                         if (imgDataUrl) AppState.pengurus[idx].photo = imgDataUrl;
                     }
-                    showToast('Data pengurus diperbarui!');
                 } else {
                     const newId = Date.now();
+                    addedIdForRollback = newId;
                     AppState.pengurus.unshift({ id: newId, name, role, group, photo: imgDataUrl || '' });
-                    showToast('Pengurus baru didaftarkan!');
                 }
 
                 // Reset form SEBELUM async (aman, frozenId sudah di-capture)
@@ -6650,17 +6704,18 @@
                 document.getElementById('addPengurusForm').reset();
                 toggleAddPengurusForm();
 
-                if (!GAS) return;
+                if (!GAS) { finishPengurus(true, 'Data pengurus disimpan (mode lokal).'); return; }
 
                 // ── Fungsi kirim ke GAS — selalu pakai frozenId, bukan editingPengurusId ──
                 function kirimPengurusKeGAS(urlFoto) {
-                    var pPayload = JSON.stringify({ nama: name, jabatan: role, kategori: group, foto: urlFoto });
+                    var pPayload = JSON.stringify({ nama: name, jabatan: role, kategori: group, foto: urlFoto,
+                                                    pengurusId: (frozenId === null && addedIdForRollback !== null) ? String(addedIdForRollback) : undefined });
+                    showProcessing('Menyimpan data pengurus, mohon tunggu...');
                     if (frozenId !== null) {
                         // MODE EDIT
                         google.script.run
                             .withSuccessHandler(function(r) {
                                 if (r === 'success') {
-                                    showToast('Foto & data pengurus tersimpan ke Spreadsheet!');
                                     // Update photo di AppState dengan URL final (Drive URL)
                                     var idx3 = AppState.pengurus.findIndex(function(x){ return x.id === frozenId; });
                                     if (idx3 !== -1 && urlFoto.startsWith('https://drive.google.com')) {
@@ -6668,23 +6723,30 @@
                                         renderPublicPengurus();
                                         renderAdminPengurusTable();
                                     }
+                                    finishPengurus(true, 'Data pengurus berhasil disimpan.');
                                 } else if (r === 'not_found') {
-                                    showToast('⚠️ Gagal: data tidak ditemukan di Spreadsheet.');
+                                    finishPengurus(false, 'Gagal: data tidak ditemukan di Spreadsheet. Muat ulang halaman.');
+                                } else {
+                                    finishPengurus(false, 'Gagal menyimpan: ' + r);
                                 }
                             })
-                            .withFailureHandler(function(e){ console.warn('updatePengurus GAS:', e); showToast('Gagal update ke Spreadsheet.'); })
+                            .withFailureHandler(function(e){ console.warn('updatePengurus GAS:', e); finishPengurus(false, 'Gagal menyimpan. Periksa sinyal lalu coba lagi.'); })
                             .updatePengurus(String(frozenId), pPayload);
                     } else {
-                        // MODE TAMBAH BARU — gunakan ID yang baru dibuat (unshift pertama)
+                        // MODE TAMBAH BARU — ID dikirim dari browser agar server menolak data dobel
                         google.script.run
-                            .withSuccessHandler(function(r){ if(r === 'success') showToast('Pengurus & foto tersimpan!'); })
-                            .withFailureHandler(function(e){ console.warn('addPengurus GAS:', e); })
+                            .withSuccessHandler(function(r){
+                                if (r === 'success') finishPengurus(true, 'Pengurus baru berhasil disimpan.');
+                                else finishPengurus(false, 'Gagal menyimpan: ' + r);
+                            })
+                            .withFailureHandler(function(e){ console.warn('addPengurus GAS:', e); finishPengurus(false, 'Gagal menyimpan. Periksa sinyal lalu coba lagi.'); })
                             .addPengurus(pPayload);
                     }
                 }
 
                 if (fotoUntukGAS && fotoUntukGAS.startsWith('data:')) {
                     var namaFile = 'pengurus_' + name.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
+                    showProcessing('Mengunggah foto pengurus, mohon tunggu...');
 
                     // Kompres ke ukuran sedang untuk Drive (< 130KB base64)
                     _kompresUntukDrive(fotoUntukGAS, function(fotoDrive) {
@@ -6714,6 +6776,7 @@
                                         })
                                         .withFailureHandler(function(e2){
                                             console.warn('savePhoto pengurus:', e2);
+                                            _photoNote = ' Namun foto gagal diunggah.';
                                             kirimPengurusKeGAS(''); // simpan tanpa foto
                                         })
                                         .savePhoto(fotoUntukGAS, chunkKey);
@@ -6721,6 +6784,7 @@
                             })
                             .withFailureHandler(function(e){
                                 console.warn('Drive pengurus gagal:', e);
+                                _photoNote = ' Namun foto gagal diunggah.';
                                 kirimPengurusKeGAS('');
                             })
                             .savePhotoToDrive(fotoDrive, namaFile);
@@ -6749,18 +6813,29 @@
             showDeleteConfirm(
                 'Yakin hapus data pengurus ini?<br><span class="text-rose-500 font-semibold">Data tidak dapat dikembalikan.</span>',
                 function() {
-                    AppState.pengurus = AppState.pengurus.filter(x => x.id !== id);
-                    renderPublicPengurus();
-                    renderAdminPengurusTable();
-                    syncStateToBackend();
-                    if (GAS) {
-                        google.script.run
-                            .withSuccessHandler(function(r){ showToast('Data pengurus dihapus dari database.'); })
-                            .withFailureHandler(function(e){ console.warn('deletePengurus GAS:', e); })
-                            .deletePengurus(String(id));
-                    } else {
-                        showToast("Data pengurus berhasil dihapus.");
-                    }
+                    const removeLocal = function() {
+                        AppState.pengurus = AppState.pengurus.filter(x => x.id !== id);
+                        renderPublicPengurus();
+                        renderAdminPengurusTable();
+                        syncStateToBackend();
+                    };
+                    if (!GAS) { removeLocal(); showFloatingNotif('Data pengurus berhasil dihapus', 'success'); return; }
+                    if (window._pengurusDeleting) return;
+                    window._pengurusDeleting = true;
+                    showProcessing('Menghapus data pengurus, mohon tunggu...');
+                    google.script.run
+                        .withSuccessHandler(function(r){
+                            window._pengurusDeleting = false; hideProcessing();
+                            if (String(r).indexOf('error') === 0) { showFloatingNotif('Gagal menghapus: ' + r, 'error'); return; }
+                            removeLocal();                              // "deleted" atau "not_found" → hilangkan dari daftar
+                            showFloatingNotif('Data pengurus berhasil dihapus', 'success');
+                        })
+                        .withFailureHandler(function(e){
+                            window._pengurusDeleting = false; hideProcessing();
+                            console.warn('deletePengurus GAS:', e);
+                            showFloatingNotif('Gagal menghapus. Periksa sinyal lalu coba lagi.', 'error');
+                        })
+                        .deletePengurus(String(id));
                 }
             );
         }
@@ -6857,9 +6932,16 @@
 
             if (GAS) {
                 const idsUrut = AppState.pengurus.map(x => String(x.id));
+                window._reorderPending = (window._reorderPending || 0) + 1;
+                showProcessing('Menyimpan urutan pengurus...');
+                const doneReorder = function(ok, msg) {
+                    window._reorderPending = Math.max(0, (window._reorderPending || 1) - 1);
+                    if (window._reorderPending === 0) hideProcessing();
+                    if (!ok || window._reorderPending === 0) showFloatingNotif(msg, ok ? 'success' : 'error');
+                };
                 google.script.run
-                    .withSuccessHandler(function(r){ if (r === 'success') showToast('Urutan pengurus tersimpan!'); })
-                    .withFailureHandler(function(e){ console.warn('reorderPengurus GAS:', e); })
+                    .withSuccessHandler(function(r){ if (r === 'success') doneReorder(true, 'Urutan pengurus tersimpan'); else doneReorder(false, 'Gagal menyimpan urutan: ' + r); })
+                    .withFailureHandler(function(e){ console.warn('reorderPengurus GAS:', e); doneReorder(false, 'Gagal menyimpan urutan. Periksa sinyal.'); })
                     .reorderPengurus(JSON.stringify(idsUrut));
             }
         };
@@ -6904,23 +6986,42 @@
             showDeleteConfirm(
                 'Yakin hapus pesan ini?<br><span class="text-rose-500 font-semibold">Pesan tidak dapat dikembalikan.</span>',
                 function() {
-                    AppState.messages = AppState.messages.filter(x => x.id !== id);
-                    renderInbox();
-                    syncStateToBackend();
-                    if (GAS) {
-                        google.script.run
-                            .withSuccessHandler(function(r){ showToast('Pesan dihapus dari database.'); })
-                            .withFailureHandler(function(e){ console.warn('deleteInbox GAS:', e); })
-                            .deleteInbox(String(id));
-                    } else {
-                        showToast("Pesan berhasil dihapus.");
-                    }
+                    const removeLocal = function() {
+                        AppState.messages = AppState.messages.filter(x => x.id !== id);
+                        renderInbox();
+                        syncStateToBackend();
+                    };
+                    if (!GAS) { removeLocal(); showFloatingNotif('Pesan berhasil dihapus', 'success'); return; }
+                    if (window._inboxDeleting) return;
+                    window._inboxDeleting = true;
+                    showProcessing('Menghapus pesan, mohon tunggu...');
+                    google.script.run
+                        .withSuccessHandler(function(r){
+                            window._inboxDeleting = false; hideProcessing();
+                            if (String(r).indexOf('error') === 0) { showFloatingNotif('Gagal menghapus: ' + r, 'error'); return; }
+                            removeLocal();
+                            showFloatingNotif('Pesan berhasil dihapus', 'success');
+                        })
+                        .withFailureHandler(function(e){
+                            window._inboxDeleting = false; hideProcessing();
+                            console.warn('deleteInbox GAS:', e);
+                            showFloatingNotif('Gagal menghapus. Periksa sinyal lalu coba lagi.', 'error');
+                        })
+                        .deleteInbox(String(id));
                 }
             );
         };
 
         window.handleContactSubmit = function(event) {
             event.preventDefault();
+            if (window._contactSending) return;               // cegah kirim ganda
+            window._contactSending = true;
+            const _cBtn = document.querySelector('#contactForm button[type="submit"]');
+            if (_cBtn) { _cBtn.disabled = true; _cBtn.style.opacity = '0.7'; }
+            const _contactDone = function() {
+                window._contactSending = false;
+                if (_cBtn) { _cBtn.disabled = false; _cBtn.style.opacity = ''; }
+            };
             const name     = document.getElementById('contactName').value;
             const phone    = document.getElementById('contactPhone').value;
             const message  = document.getElementById('contactMessage').value;
@@ -6930,10 +7031,13 @@
             if (AppState.isAdminLoggedIn) renderInbox();
 
             if (GAS) {
-                const inboxPayload = { nama: name, wa: phone, pesan: message };
+                const inboxPayload = { nama: name, wa: phone, pesan: message, pesanId: String(newMsg.id) };
                 google.script.run
-                    .withFailureHandler(function(e){ console.warn('addInbox GAS:', e); })
+                    .withSuccessHandler(function(){ _contactDone(); })
+                    .withFailureHandler(function(e){ console.warn('addInbox GAS:', e); _contactDone(); })
                     .addInbox(JSON.stringify(inboxPayload));
+            } else {
+                _contactDone();
             }
 
             // Gunakan nomor WA dari AppState.kontakSettings
