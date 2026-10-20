@@ -330,7 +330,7 @@
         /* ── Submenu (dropdown) menu desktop: muncul saat kursor didekatkan ── */
         .nav-dd { position: relative; display: inline-flex; align-items: center; }
         .nav-dd-caret { font-size: 8px; margin-left: 5px; opacity: .7; transition: transform .2s ease; }
-        .nav-dd:hover .nav-dd-caret, .nav-dd:focus-within .nav-dd-caret { transform: rotate(180deg); }
+        .nav-dd:hover .nav-dd-caret, body.kbd-nav .nav-dd:focus-within .nav-dd-caret { transform: rotate(180deg); }
         .nav-dd-menu {
             position: absolute; top: 100%; left: 50%;
             transform: translateX(-50%) translateY(8px);
@@ -342,11 +342,11 @@
             z-index: 60;
         }
         .nav-dd-menu::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; } /* jembatan agar menu tidak menutup saat kursor bergerak */
-        .nav-dd:hover .nav-dd-menu, .nav-dd:focus-within .nav-dd-menu {
+        .nav-dd:hover .nav-dd-menu, body.kbd-nav .nav-dd:focus-within .nav-dd-menu {
             opacity: 1; visibility: visible; pointer-events: auto;
             transform: translateX(-50%) translateY(2px);
         }
-        .nav-dd.dd-suppress .nav-dd-menu, .nav-dd.dd-suppress:hover .nav-dd-menu, .nav-dd.dd-suppress:focus-within .nav-dd-menu {
+        .nav-dd.dd-suppress .nav-dd-menu, .nav-dd.dd-suppress:hover .nav-dd-menu, body.kbd-nav .nav-dd.dd-suppress:focus-within .nav-dd-menu {
             opacity: 0; visibility: hidden; pointer-events: none;
         }
         .nav-dd-head { padding: 6px 12px 4px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; }
@@ -7164,6 +7164,7 @@
         const PAGE_SECTIONS = ['beranda','profil','pengurus','layanan','banom','berita','galeri','kontak'];
 
         window.showPage = function(pageId) {
+            if (window.closeNavDropdowns) window.closeNavDropdowns();
             // Sembunyikan semua section
             PAGE_SECTIONS.forEach(function(id) {
                 const el = document.getElementById(id);
@@ -7215,6 +7216,9 @@
         // ============================================================
         window.closeNavDropdowns = function() {
             document.querySelectorAll('.nav-dd').forEach(function(d) { d.classList.add('dd-suppress'); });
+            // Lepas fokus dari item/link menu yang baru diklik agar menu tidak terbuka lagi
+            var ae = document.activeElement;
+            if (ae && ae !== document.body && ae.closest && ae.closest('.nav-dd') && ae.blur) ae.blur();
         };
         window.goPengurus = function(group) {
             showPage('pengurus');
@@ -7294,7 +7298,10 @@
         });
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') window.closeNavDropdowns();
+            if (e.key === 'Tab') document.body.classList.add('kbd-nav');        // mode keyboard: menu terbuka saat difokus
         });
+        document.addEventListener('mousedown', function() { document.body.classList.remove('kbd-nav'); });
+        document.addEventListener('touchstart', function() { document.body.classList.remove('kbd-nav'); }, { passive: true });
 
         // Inisialisasi: tampilkan Beranda saat pertama load
         function initSPA() {
