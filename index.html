@@ -639,14 +639,21 @@
                 </button>
             </div>
 
-            <button id="mobileMenuBtn" class="xl:hidden text-nuGreen-900 text-2xl focus:outline-none p-1.5" aria-label="Toggle Menu">
+            <div class="flex items-center gap-1.5 xl:hidden shrink-0">
+                <!-- Tombol gelap/terang versi HP: di kiri hamburger -->
+                <button type="button" onclick="toggleDarkMode()" aria-label="Ganti tampilan gelap/terang" class="sm:hidden border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                    <i id="darkModeSunIconMobile" class="fas fa-sun text-nuGold-500 text-sm"></i>
+                    <i id="darkModeMoonIconMobile" class="fas fa-moon text-slate-300 text-sm hidden"></i>
+                </button>
+                <button id="mobileMenuBtn" class="xl:hidden text-nuGreen-900 text-2xl focus:outline-none p-1.5" aria-label="Toggle Menu">
                 <i class="fas fa-bars"></i>
             </button>
+            </div>
         </div>
 
         <div id="mobileDrawer" class="mobile-drawer-scroll hidden xl:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 absolute top-full left-0 w-full shadow-xl transition-all duration-300">
             <div class="p-4 font-sans">
-                <div class="grid grid-cols-2 gap-1.5 mb-4">
+                <div class="flex flex-col gap-1.5">
                 <a href="#" onclick="showPage('beranda'); return false;" data-page="beranda" class="mobile-nav-link text-slate-600 dark:text-slate-400">Beranda</a>
                 <a href="#" onclick="showPage('profil'); return false;" data-page="profil" class="mobile-nav-link text-slate-600 dark:text-slate-400">Profil</a>
                 <div class="col-span-2">
@@ -663,21 +670,18 @@
                 </div>
                 <a href="#" onclick="showPage('berita'); return false;" data-page="berita" class="mobile-nav-link text-slate-600 dark:text-slate-400">Kabar Kegiatan</a>
                 <a href="#" onclick="showPage('galeri'); return false;" data-page="galeri" class="mobile-nav-link text-slate-600 dark:text-slate-400">Galeri</a>
-                <a href="#" onclick="showPage('kontak'); return false;" data-page="kontak" class="mobile-nav-link col-span-2 text-slate-600 dark:text-slate-400">Kontak</a>
+                <a href="#" onclick="showPage('kontak'); return false;" data-page="kontak" class="mobile-nav-link text-slate-600 dark:text-slate-400">Kontak</a>
                 
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="toggleDarkMode()" aria-label="Ganti tampilan gelap/terang" class="border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition w-11 rounded-xl flex items-center justify-center shrink-0">
-                        <i id="darkModeSunIconMobile" class="fas fa-sun text-nuGold-500 text-sm"></i>
-                        <i id="darkModeMoonIconMobile" class="fas fa-moon text-slate-300 text-sm hidden"></i>
-                    </button>
-                    <button id="mobileAdminLoginBtn" class="flex-1 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center gap-2 text-xs">
-                        <i class="fas fa-lock text-nuGreen-800 text-xs"></i>
-                        <span id="mobileAdminBtnText">Login Admin</span>
-                    </button>
-                    <button id="mobileDonationBtn" class="flex-1 bg-gradient-to-r from-nuGold-500 to-amber-600 text-white font-semibold py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 text-xs">
+                <!-- Koin NU & Login (urutan: Kontak → Koin NU → Login) -->
+                <div class="flex flex-col gap-2 mt-2">
+                    <button id="mobileDonationBtn" class="w-full bg-gradient-to-r from-nuGold-500 to-amber-600 text-white font-semibold py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm">
                         <i class="fas fa-heart text-xs"></i>
                         <span>Koin NU</span>
+                    </button>
+                    <button id="mobileAdminLoginBtn" class="w-full border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fas fa-lock text-nuGreen-800 text-xs"></i>
+                        <span id="mobileAdminBtnText">Login Admin</span>
                     </button>
                 </div>
             </div>
