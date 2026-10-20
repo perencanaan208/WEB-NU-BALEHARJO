@@ -375,6 +375,21 @@
             color: #ffffff !important;
             font-weight: 700;
         }
+        /* ── Menu HP: menu dengan submenu (ketuk → submenu terbuka dulu, lalu pilih) ── */
+        .mobile-drawer-scroll { max-height: calc(100vh - 70px); max-height: calc(100dvh - 70px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .mobile-nav-link.mobile-nav-parent { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; cursor: pointer; }
+        .mobile-acc-caret { font-size: 10px; opacity: .75; transition: transform .2s ease; }
+        .mobile-nav-parent[aria-expanded="true"] .mobile-acc-caret { transform: rotate(180deg); }
+        .mobile-sub { display: none; margin-top: 6px; padding: 6px; border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; gap: 5px; }
+        .mobile-sub.open { display: grid; grid-template-columns: 1fr; }
+        .mobile-sub.open.cols-2 { grid-template-columns: 1fr 1fr; }
+        .mobile-sub-item { display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px; font-size: .8rem; font-weight: 500; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; cursor: pointer; line-height: 1.25; }
+        .mobile-sub-item:active, .mobile-sub-item:hover { background: #dcfce7; color: #14532d; }
+        .mobile-sub-item.all { grid-column: 1 / -1; font-weight: 700; color: #166534; background: #f0fdf4; border-color: #bbf7d0; }
+        .dark .mobile-sub { background: #0b1220; border-color: #334155; }
+        .dark .mobile-sub-item { background: #0f172a; border-color: #334155; color: #cbd5e1; }
+        .dark .mobile-sub-item:active, .dark .mobile-sub-item:hover { background: #14532d; color: #ffffff; }
+        .dark .mobile-sub-item.all { background: #052e16; border-color: #166534; color: #86efac; }
 
         /* ── Running Text / Marquee ── */
         @keyframes marquee {
@@ -629,17 +644,26 @@
             </button>
         </div>
 
-        <div id="mobileDrawer" class="hidden xl:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 absolute top-full left-0 w-full shadow-xl transition-all duration-300">
+        <div id="mobileDrawer" class="mobile-drawer-scroll hidden xl:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 absolute top-full left-0 w-full shadow-xl transition-all duration-300">
             <div class="p-4 font-sans">
                 <div class="grid grid-cols-2 gap-1.5 mb-4">
                 <a href="#" onclick="showPage('beranda'); return false;" data-page="beranda" class="mobile-nav-link text-slate-600 dark:text-slate-400">Beranda</a>
                 <a href="#" onclick="showPage('profil'); return false;" data-page="profil" class="mobile-nav-link text-slate-600 dark:text-slate-400">Profil</a>
-                <a href="#" onclick="showPage('pengurus'); return false;" data-page="pengurus" class="mobile-nav-link text-slate-600 dark:text-slate-400">Kepengurusan</a>
-                <a href="#" onclick="showPage('layanan'); return false;" data-page="layanan" class="mobile-nav-link text-slate-600 dark:text-slate-400">Program & Layanan</a>
-                <a href="#" onclick="showPage('banom'); return false;" data-page="banom" class="mobile-nav-link text-slate-600 dark:text-slate-400">Lembaga/Banom</a>
+                <div class="col-span-2">
+                    <button type="button" data-accordion="pengurus" data-page="pengurus" aria-expanded="false" aria-controls="mobileSub-pengurus" onclick="toggleMobileSub('pengurus')" class="mobile-nav-link mobile-nav-parent text-slate-600 dark:text-slate-400"><span>Kepengurusan</span><i class="fas fa-chevron-down mobile-acc-caret"></i></button>
+                    <div id="mobileSub-pengurus" class="mobile-sub"></div>
+                </div>
+                <div class="col-span-2">
+                    <button type="button" data-accordion="layanan" data-page="layanan" aria-expanded="false" aria-controls="mobileSub-layanan" onclick="toggleMobileSub('layanan')" class="mobile-nav-link mobile-nav-parent text-slate-600 dark:text-slate-400"><span>Program &amp; Layanan</span><i class="fas fa-chevron-down mobile-acc-caret"></i></button>
+                    <div id="mobileSub-layanan" class="mobile-sub"></div>
+                </div>
+                <div class="col-span-2">
+                    <button type="button" data-accordion="banom" data-page="banom" aria-expanded="false" aria-controls="mobileSub-banom" onclick="toggleMobileSub('banom')" class="mobile-nav-link mobile-nav-parent text-slate-600 dark:text-slate-400"><span>Lembaga/Banom</span><i class="fas fa-chevron-down mobile-acc-caret"></i></button>
+                    <div id="mobileSub-banom" class="mobile-sub"></div>
+                </div>
                 <a href="#" onclick="showPage('berita'); return false;" data-page="berita" class="mobile-nav-link text-slate-600 dark:text-slate-400">Kabar Kegiatan</a>
                 <a href="#" onclick="showPage('galeri'); return false;" data-page="galeri" class="mobile-nav-link text-slate-600 dark:text-slate-400">Galeri</a>
-                <a href="#" onclick="showPage('kontak'); return false;" data-page="kontak" class="mobile-nav-link text-slate-600 dark:text-slate-400">Kontak</a>
+                <a href="#" onclick="showPage('kontak'); return false;" data-page="kontak" class="mobile-nav-link col-span-2 text-slate-600 dark:text-slate-400">Kontak</a>
                 
                 </div>
                 <div class="flex gap-2">
@@ -7165,6 +7189,7 @@
 
         window.showPage = function(pageId) {
             if (window.closeNavDropdowns) window.closeNavDropdowns();
+            if (window.closeMobileSubs) window.closeMobileSubs();
             // Sembunyikan semua section
             PAGE_SECTIONS.forEach(function(id) {
                 const el = document.getElementById(id);
@@ -7220,6 +7245,24 @@
             var ae = document.activeElement;
             if (ae && ae !== document.body && ae.closest && ae.closest('.nav-dd') && ae.blur) ae.blur();
         };
+        // ── Menu HP: ketuk menu → submenu terbuka dulu → pilih ──
+        window.closeMobileSubs = function() {
+            document.querySelectorAll('.mobile-sub').forEach(function(p) { p.classList.remove('open'); });
+            document.querySelectorAll('.mobile-nav-parent').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+        };
+        window.toggleMobileSub = function(key) {
+            var panel = document.getElementById('mobileSub-' + key);
+            var btn = document.querySelector('.mobile-nav-parent[data-accordion="' + key + '"]');
+            if (!panel || !btn) return;
+            var willOpen = !panel.classList.contains('open');
+            window.closeMobileSubs();                       // satu submenu terbuka pada satu waktu
+            if (willOpen) {
+                panel.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+                setTimeout(function() { try { panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }, 60);
+            }
+        };
+
         window.goPengurus = function(group) {
             showPage('pengurus');
             // renderPublicPengurus() memilih "Pengurus NU" lewat setTimeout(0); pilih grup tujuan sesudahnya
@@ -7288,6 +7331,34 @@
             fill('navDd-banom', 'Banom & Lembaga', banomItems.map(function(b) {
                 return { label: b[1], go: function() { window.goBanom(b[0]); } };
             }));
+
+            // ── Versi HP: daftar yang sama, tampil sebagai submenu lipat di drawer ──
+            function fillMobile(key, allLabel, page, items, twoCols) {
+                var panel = document.getElementById('mobileSub-' + key);
+                if (!panel) return;
+                panel.innerHTML = '';
+                panel.classList.toggle('cols-2', !!twoCols);
+                function add(label, cls, go) {
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'mobile-sub-item' + (cls ? ' ' + cls : '');
+                    b.textContent = label;
+                    b.addEventListener('click', function() {
+                        window.closeMobileSubs();
+                        go();                                   // showPage() menutup drawer
+                    });
+                    panel.appendChild(b);
+                }
+                add(allLabel, 'all', function() { showPage(page); });
+                items.forEach(function(it) { add(it.label, '', it.go); });
+            }
+            fillMobile('pengurus', 'Lihat semua Kepengurusan', 'pengurus', grupPengurus.map(function(g) {
+                return { label: g[1], go: function() { window.goPengurus(g[0]); } };
+            }), true);
+            fillMobile('layanan', 'Lihat semua Program & Layanan', 'layanan', progItems, false);
+            fillMobile('banom', 'Lihat semua Lembaga', 'banom', banomItems.map(function(b) {
+                return { label: b[1], go: function() { window.goBanom(b[0]); } };
+            }), true);
         };
 
         // Menu yang baru diklik ditutup; muncul lagi setelah kursor keluar lalu masuk kembali
@@ -8340,11 +8411,14 @@
             safeBind('btn-cat-dakwah', 'click', () => filterNews('dakwah'));
 
             safeBind('mobileMenuBtn', 'click', () => {
-                document.getElementById('mobileDrawer').classList.toggle('hidden');
+                const _dr = document.getElementById('mobileDrawer');
+                _dr.classList.toggle('hidden');
+                if (_dr.classList.contains('hidden') && window.closeMobileSubs) window.closeMobileSubs();
             });
 
             document.querySelectorAll('.mobile-nav-link').forEach(link => {
                 link.addEventListener('click', () => {
+                    if (link.hasAttribute('data-accordion')) return;   // menu bersubmenu: buka submenu dulu, jangan tutup drawer
                     document.getElementById('mobileDrawer').classList.add('hidden');
                 });
             });
