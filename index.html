@@ -327,6 +327,38 @@
             font-weight: 700;
             box-shadow: 0 2px 8px rgba(22,101,52,0.25);
         }
+        /* ── Submenu (dropdown) menu desktop: muncul saat kursor didekatkan ── */
+        .nav-dd { position: relative; display: inline-flex; align-items: center; }
+        .nav-dd-caret { font-size: 8px; margin-left: 5px; opacity: .7; transition: transform .2s ease; }
+        .nav-dd:hover .nav-dd-caret, .nav-dd:focus-within .nav-dd-caret { transform: rotate(180deg); }
+        .nav-dd-menu {
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            min-width: 220px; max-width: 300px; padding: 6px;
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(15,23,42,.16);
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity .18s ease, transform .18s ease, visibility .18s;
+            z-index: 60;
+        }
+        .nav-dd-menu::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; } /* jembatan agar menu tidak menutup saat kursor bergerak */
+        .nav-dd:hover .nav-dd-menu, .nav-dd:focus-within .nav-dd-menu {
+            opacity: 1; visibility: visible; pointer-events: auto;
+            transform: translateX(-50%) translateY(2px);
+        }
+        .nav-dd.dd-suppress .nav-dd-menu, .nav-dd.dd-suppress:hover .nav-dd-menu, .nav-dd.dd-suppress:focus-within .nav-dd-menu {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .nav-dd-head { padding: 6px 12px 4px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; }
+        .nav-dd-item {
+            display: block; width: 100%; text-align: left; cursor: pointer;
+            padding: 8px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 500; color: #475569;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .15s, color .15s;
+        }
+        .nav-dd-item:hover, .nav-dd-item:focus { background: #f0fdf4; color: #14532d; outline: none; }
+        .dark .nav-dd-menu { background: #0f172a; border-color: #334155; box-shadow: 0 12px 32px rgba(0,0,0,.5); }
+        .dark .nav-dd-item { color: #cbd5e1; }
+        .dark .nav-dd-item:hover, .dark .nav-dd-item:focus { background: #14532d; color: #ffffff; }
         .mobile-nav-link {
             font-size: 0.875rem;
             padding: 0.5rem 0.75rem;
@@ -559,9 +591,18 @@
             <nav class="hidden xl:flex items-center gap-0.5 flex-1 justify-center">
                 <a href="#" onclick="showPage('beranda'); return false;" data-page="beranda" class="nav-link-item text-slate-600 dark:text-slate-400">Beranda</a>
                 <a href="#" onclick="showPage('profil'); return false;" data-page="profil" class="nav-link-item text-slate-600 dark:text-slate-400">Profil</a>
-                <a href="#" onclick="showPage('pengurus'); return false;" data-page="pengurus" class="nav-link-item text-slate-600 dark:text-slate-400">Kepengurusan</a>
-                <a href="#" onclick="showPage('layanan'); return false;" data-page="layanan" class="nav-link-item text-slate-600 dark:text-slate-400">Program</a>
-                <a href="#" onclick="showPage('banom'); return false;" data-page="banom" class="nav-link-item text-slate-600 dark:text-slate-400">Lembaga</a>
+                <div class="nav-dd">
+                    <a href="#" onclick="showPage('pengurus'); return false;" data-page="pengurus" aria-haspopup="true" class="nav-link-item text-slate-600 dark:text-slate-400">Kepengurusan<i class="fas fa-chevron-down nav-dd-caret"></i></a>
+                    <div class="nav-dd-menu" id="navDd-pengurus" role="menu"></div>
+                </div>
+                <div class="nav-dd">
+                    <a href="#" onclick="showPage('layanan'); return false;" data-page="layanan" aria-haspopup="true" class="nav-link-item text-slate-600 dark:text-slate-400">Program<i class="fas fa-chevron-down nav-dd-caret"></i></a>
+                    <div class="nav-dd-menu" id="navDd-layanan" role="menu"></div>
+                </div>
+                <div class="nav-dd">
+                    <a href="#" onclick="showPage('banom'); return false;" data-page="banom" aria-haspopup="true" class="nav-link-item text-slate-600 dark:text-slate-400">Lembaga<i class="fas fa-chevron-down nav-dd-caret"></i></a>
+                    <div class="nav-dd-menu" id="navDd-banom" role="menu"></div>
+                </div>
                 <a href="#" onclick="showPage('berita'); return false;" data-page="berita" class="nav-link-item text-slate-600 dark:text-slate-400">Berita</a>
                 <a href="#" onclick="showPage('galeri'); return false;" data-page="galeri" class="nav-link-item text-slate-600 dark:text-slate-400">Galeri</a>
                 <a href="#" onclick="showPage('kontak'); return false;" data-page="kontak" class="nav-link-item text-slate-600 dark:text-slate-400">Kontak</a>
@@ -890,7 +931,7 @@
                 <!-- Loaded dynamically -->
             </div>
 
-            <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-200/80 shadow-md">
+            <div id="layananKeuangan" class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-200/80 shadow-md">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 dark:border-slate-800 pb-4 mb-6 gap-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-nuGreen-800">
@@ -4619,7 +4660,7 @@
             if (!container) return;
             container.innerHTML = '';
 
-            AppState.layanan.forEach((item) => {
+            AppState.layanan.forEach((item, layananIdx) => {
                 let actionAttr = '';
                 if (item.isDonationModal) {
                     actionAttr = `onclick="window.openDonationModal()"`
@@ -4630,7 +4671,7 @@
                 }
 
                 const cardHtml = `
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300 flex flex-col justify-between">
+                    <div id="layanan-card-${layananIdx}" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300 flex flex-col justify-between">
                         <div>
                             <div class="w-12 h-12 rounded-xl ${item.color} flex items-center justify-center text-xl mb-4">
                                 <i class="${item.icon}"></i>
@@ -4645,6 +4686,7 @@
                 `;
                 container.innerHTML += cardHtml;
             });
+            if (window.buildNavDropdowns) window.buildNavDropdowns();   // daftar submenu Program mengikuti data layanan
         }
 
         let activeBanomKey = 'ansor';
@@ -7168,8 +7210,95 @@
             if (pageId === 'galeri')   { try { renderPublicGaleri(); } catch(e) {} }
         };
 
+        // ============================================================
+        // SUBMENU (dropdown) MENU UTAMA: Kepengurusan, Program, Lembaga
+        // ============================================================
+        window.closeNavDropdowns = function() {
+            document.querySelectorAll('.nav-dd').forEach(function(d) { d.classList.add('dd-suppress'); });
+        };
+        window.goPengurus = function(group) {
+            showPage('pengurus');
+            // renderPublicPengurus() memilih "Pengurus NU" lewat setTimeout(0); pilih grup tujuan sesudahnya
+            setTimeout(function() { try { filterPublicPengurus(group); } catch (e) {} }, 40);
+        };
+        window.goBanom = function(key) {
+            showPage('banom');
+            setTimeout(function() { try { switchBanom(key); } catch (e) {} }, 10);
+        };
+        window.goLayanan = function(targetId) {
+            showPage('layanan');
+            setTimeout(function() {
+                var el = document.getElementById(targetId);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 90);
+        };
+
+        window.buildNavDropdowns = function() {
+            function fill(menuId, head, items) {
+                var menu = document.getElementById(menuId);
+                if (!menu) return;
+                menu.innerHTML = '';
+                if (head) {
+                    var hd = document.createElement('div');
+                    hd.className = 'nav-dd-head';
+                    hd.textContent = head;
+                    menu.appendChild(hd);
+                }
+                items.forEach(function(it) {
+                    var a = document.createElement('a');
+                    a.href = '#';
+                    a.className = 'nav-dd-item';
+                    a.setAttribute('role', 'menuitem');
+                    a.textContent = it.label;
+                    a.title = it.label;
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        window.closeNavDropdowns();
+                        it.go();
+                    });
+                    menu.appendChild(a);
+                });
+            }
+
+            // Kepengurusan — sama dengan tombol filter di halaman Kepengurusan
+            var grupPengurus = [
+                ['Pengurus NU', 'Pengurus NU'], ['Muslimat', 'Muslimat'], ['Fatayat', 'Fatayat'], ['Ansor', 'Ansor'],
+                ['IPNU', 'IPNU'], ['IPPNU', 'IPPNU'], ['UPZISNU', 'UPZISNU'], ['Pagar Nusa', 'Pagar Nusa']
+            ];
+            fill('navDd-pengurus', 'Struktur Kepengurusan', grupPengurus.map(function(g) {
+                return { label: g[1], go: function() { window.goPengurus(g[0]); } };
+            }));
+
+            // Program — mengikuti data layanan (bisa diubah dari Kelola Layanan) + Transparansi Keuangan
+            var progItems = (AppState.layanan || []).map(function(item, i) {
+                return { label: item.title || ('Program ' + (i + 1)), go: function() { window.goLayanan('layanan-card-' + i); } };
+            });
+            progItems.push({ label: 'Transparansi Keuangan UPZISNU', go: function() { window.goLayanan('layananKeuangan'); } });
+            fill('navDd-layanan', 'Program & Layanan', progItems);
+
+            // Lembaga — sama dengan tab di halaman Lembaga
+            var banomItems = [
+                ['ansor', 'GP Ansor'], ['fatayat', 'Fatayat NU'], ['ipnu', 'IPNU & IPPNU'],
+                ['muslimat', 'Muslimat NU'], ['upzisnu', 'UPZISNU'], ['pagar_nusa', 'Pagar Nusa']
+            ];
+            fill('navDd-banom', 'Banom & Lembaga', banomItems.map(function(b) {
+                return { label: b[1], go: function() { window.goBanom(b[0]); } };
+            }));
+        };
+
+        // Menu yang baru diklik ditutup; muncul lagi setelah kursor keluar lalu masuk kembali
+        document.addEventListener('mouseout', function(e) {
+            document.querySelectorAll('.nav-dd.dd-suppress').forEach(function(d) {
+                if (!d.contains(e.relatedTarget)) d.classList.remove('dd-suppress');
+            });
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') window.closeNavDropdowns();
+        });
+
         // Inisialisasi: tampilkan Beranda saat pertama load
         function initSPA() {
+            try { window.buildNavDropdowns(); } catch (e) { console.warn('submenu:', e); }
             // Tampilkan beranda default
             const hash = window.location.hash ? window.location.hash.replace('#','') : 'beranda';
             const validPage = PAGE_SECTIONS.includes(hash) ? hash : 'beranda';
