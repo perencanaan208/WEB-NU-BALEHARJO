@@ -522,6 +522,31 @@
         </div>
     </div>
 
+    <!-- Modal Balas Komentar Berita -->
+    <div id="kmtReplyModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.6);">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+                <h5 class="font-serif font-bold text-lg text-slate-900 dark:text-slate-100"><i class="fas fa-reply mr-2 text-nuGreen-800"></i>Balas Komentar</h5>
+                <button type="button" onclick="closeKmtReply()" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-3">
+                    <p id="kmtReplyWho" class="text-xs font-bold text-slate-700 dark:text-slate-200"></p>
+                    <p id="kmtReplyQuote" class="text-sm text-slate-600 dark:text-slate-400 mt-1 whitespace-pre-line break-words"></p>
+                </div>
+                <div>
+                    <label for="kmtReplyText" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Balasan Admin</label>
+                    <textarea id="kmtReplyText" rows="5" maxlength="1000" placeholder="Tulis balasan. Balasan akan tampil publik di bawah komentar." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nuGreen-500 resize-y"></textarea>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Kosongkan lalu simpan untuk menghapus balasan.</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 px-5 py-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" id="kmtReplyCancel" onclick="closeKmtReply()" class="bg-slate-200 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Batal</button>
+                <button type="button" id="kmtReplySave" onclick="saveKmtReply()" class="bg-nuGreen-800 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-nuGreen-900 transition disabled:opacity-60"><i class="fas fa-paper-plane mr-1.5"></i>Kirim Balasan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Lightbox Foto Pentasyarufan -->
     <div id="pentaLightbox" class="fixed inset-0 z-[60] hidden items-center justify-center" style="background:rgba(0,0,0,0.92);" onclick="if(event.target===this)closePentaLightbox()">
         <button onclick="closePentaLightbox()" class="absolute top-4 right-4 text-white text-2xl z-10"><i class="fas fa-times"></i></button>
@@ -1313,6 +1338,11 @@
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-envelope-open-text text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Pesan Masuk</span>
                     </button>
+                    <button id="btn-admin-komentar" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-comments text-xs text-slate-500 dark:text-slate-400"></i></span>
+                        <span>Komentar Berita</span>
+                        <span class="kmt-admin-badge hidden ml-auto bg-rose-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center"></span>
+                    </button>
                     <button id="btn-admin-kontak" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-address-card text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Kontak</span>
@@ -1391,6 +1421,11 @@
                             <button id="btn-mob-admin-inbox" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
                                 <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-envelope-open-text text-xs text-slate-500 dark:text-slate-400"></i></span>
                                 <span>Pesan Masuk</span>
+                            </button>
+                            <button id="btn-mob-admin-komentar" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-comments text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Komentar Berita</span>
+                                <span class="kmt-admin-badge hidden ml-auto bg-rose-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center"></span>
                             </button>
                             <button id="btn-mob-admin-kontak" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
                                 <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-address-card text-xs text-slate-500 dark:text-slate-400"></i></span>
@@ -2377,6 +2412,28 @@
                         </div>
                     </div>
 
+                    <!-- TAB: Komentar Berita -->
+                    <div id="admin-tab-komentar" class="admin-panel-content space-y-5 hidden">
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
+                            <div>
+                                <h4 class="text-lg font-serif font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2"><i class="fas fa-comments text-nuGreen-800"></i> Komentar Berita</h4>
+                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Rekap komentar pengunjung. Balasan Anda tampil di bawah komentar pada halaman berita.</p>
+                            </div>
+                            <button type="button" onclick="loadKomentarAdmin()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"><i class="fas fa-sync-alt"></i> Muat Ulang</button>
+                        </div>
+                        <div id="kmtAdminStats" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <select id="kmtAdminFilter" class="sm:w-52 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-nuGreen-500">
+                                <option value="semua">Semua komentar</option>
+                                <option value="belum">Belum dibalas</option>
+                                <option value="sudah">Sudah dibalas</option>
+                                <option value="sembunyi">Disembunyikan</option>
+                            </select>
+                            <input type="search" id="kmtAdminSearch" placeholder="Cari nama, komentar, no. WA, atau judul berita..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nuGreen-500">
+                        </div>
+                        <div id="kmtAdminList" class="space-y-3"></div>
+                    </div>
+
                     <!-- TAB: Kelola Kontak -->
                     <div id="admin-tab-kontak" class="admin-panel-content space-y-6 hidden">
                         <div class="flex items-center justify-between border-b pb-3">
@@ -2588,6 +2645,38 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- KOMENTAR BERITA -->
+                <div id="newsCommentsSection" class="mt-10 pt-8 border-t border-slate-200 dark:border-slate-700 max-w-3xl">
+                    <h3 class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1"><i class="far fa-comments mr-1.5"></i>Komentar <span id="newsCommentCount" class="text-nuGreen-800 dark:text-nuGreen-500"></span></h3>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mb-5">Tinggalkan komentar atau pertanyaan. Nomor WhatsApp hanya dilihat admin dan tidak ditampilkan di halaman ini.</p>
+                    <form id="newsCommentForm" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm" autocomplete="off" novalidate>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="kmtNama" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Nama <span class="text-rose-500">*</span></label>
+                                <input type="text" id="kmtNama" maxlength="60" placeholder="Nama Anda" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nuGreen-500">
+                            </div>
+                            <div>
+                                <label for="kmtWa" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">No. WhatsApp aktif <span class="text-rose-500">*</span></label>
+                                <input type="tel" id="kmtWa" inputmode="tel" maxlength="20" placeholder="08xxxxxxxxxx" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nuGreen-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="kmtText" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Komentar / Pesan <span class="text-rose-500">*</span></label>
+                            <textarea id="kmtText" rows="4" maxlength="1000" placeholder="Tulis komentar atau pertanyaan Anda..." class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nuGreen-500 resize-y"></textarea>
+                            <div class="text-right text-[10px] text-slate-400 dark:text-slate-500 mt-1"><span id="kmtCount">0</span>/1000</div>
+                        </div>
+                        <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                            <label for="kmtWebsite">Website</label>
+                            <input type="text" id="kmtWebsite" tabindex="-1" autocomplete="off">
+                        </div>
+                        <p id="kmtError" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2"></p>
+                        <button type="submit" id="kmtSubmit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition shadow-sm disabled:opacity-60">
+                            <i class="fas fa-paper-plane text-xs"></i> <span id="kmtSubmitLabel">Kirim Komentar</span>
+                        </button>
+                    </form>
+                    <div id="newsCommentList" class="mt-6 space-y-4"></div>
                 </div>
 
                 <!-- BERITA LAIN (related) -->
@@ -4809,6 +4898,392 @@
             }
         }
 
+        // ============================================================
+        // KOMENTAR BERITA — publik (di bawah berita) + admin (rekap & balas)
+        // ============================================================
+        function kmtEl(tag, cls, text) {
+            var e = document.createElement(tag);
+            if (cls) e.className = cls;
+            if (text != null) e.textContent = text;          // textContent: komentar apa pun tidak bisa menyisipkan HTML
+            return e;
+        }
+        function kmtEsc(t) {
+            return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+        function kmtFmtTime(ts) {
+            if (!ts) return '';
+            try {
+                var d = new Date(Number(ts)), tz = { timeZone: 'Asia/Jakarta' };
+                return d.toLocaleDateString('id-ID', Object.assign({ day: 'numeric', month: 'short', year: 'numeric' }, tz)) + ', ' +
+                       d.toLocaleTimeString('id-ID', Object.assign({ hour: '2-digit', minute: '2-digit' }, tz)) + ' WIB';
+            } catch (e) { return ''; }
+        }
+        function kmtVal(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+        // ── Publik ──
+        var _kmt = { newsId: null, list: [], shown: 10, sending: false, pending: null, bound: false };
+
+        function kmtShowError(msg) {
+            var e = document.getElementById('kmtError');
+            if (!e) return;
+            e.textContent = msg || '';
+            e.classList.toggle('hidden', !msg);
+        }
+
+        function kmtCard(c) {
+            var card = kmtEl('div', 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm');
+            var row = kmtEl('div', 'flex items-start gap-3');
+            var initial = (String(c.nama || '?').trim().charAt(0) || '?').toUpperCase();
+            row.appendChild(kmtEl('div', 'w-9 h-9 rounded-full bg-nuGreen-100 text-nuGreen-800 font-bold flex items-center justify-center shrink-0 text-sm', initial));
+            var body = kmtEl('div', 'min-w-0 flex-1');
+            var top = kmtEl('div', 'flex flex-wrap items-baseline gap-x-2');
+            top.appendChild(kmtEl('span', 'font-bold text-sm text-slate-800 dark:text-slate-100', c.nama));
+            top.appendChild(kmtEl('span', 'text-[11px] text-slate-400 dark:text-slate-500', kmtFmtTime(c.ts)));
+            body.appendChild(top);
+            body.appendChild(kmtEl('p', 'mt-1 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line break-words', c.komentar));
+            if (c.balasan) {
+                var rep = kmtEl('div', 'mt-3 rounded-xl bg-nuGreen-50 dark:bg-nuGreen-950 border-l-4 border-nuGreen-500 px-3 py-2.5');
+                var rh = kmtEl('div', 'flex flex-wrap items-center gap-2 mb-1');
+                rh.appendChild(kmtEl('span', 'inline-flex items-center bg-nuGreen-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full', 'Admin PRNU Baleharjo'));
+                rh.appendChild(kmtEl('span', 'text-[11px] text-slate-400 dark:text-slate-500', kmtFmtTime(c.balasanTs)));
+                rep.appendChild(rh);
+                rep.appendChild(kmtEl('p', 'text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line break-words', c.balasan));
+                body.appendChild(rep);
+            }
+            row.appendChild(body);
+            card.appendChild(row);
+            return card;
+        }
+
+        function kmtRender() {
+            var list = document.getElementById('newsCommentList');
+            if (!list) return;
+            var cnt = document.getElementById('newsCommentCount');
+            if (cnt) cnt.textContent = _kmt.list.length ? '(' + _kmt.list.length + ')' : '';
+            list.innerHTML = '';
+            if (!_kmt.list.length) {
+                list.appendChild(kmtEl('p', 'text-sm text-slate-400 dark:text-slate-500 italic py-3', 'Belum ada komentar. Jadilah yang pertama berkomentar.'));
+                return;
+            }
+            _kmt.list.slice(0, _kmt.shown).forEach(function(c) { list.appendChild(kmtCard(c)); });
+            if (_kmt.list.length > _kmt.shown) {
+                var more = kmtEl('button', 'w-full text-xs font-bold text-nuGreen-800 dark:text-nuGreen-500 border border-nuGreen-100 dark:border-nuGreen-800 rounded-xl py-2.5 hover:bg-nuGreen-50 dark:hover:bg-slate-800 transition',
+                                 'Tampilkan komentar lainnya (' + (_kmt.list.length - _kmt.shown) + ')');
+                more.type = 'button';
+                more.onclick = function() { _kmt.shown += 10; kmtRender(); };
+                list.appendChild(more);
+            }
+        }
+
+        function kmtLoad() {
+            var reqId = _kmt.newsId, list = document.getElementById('newsCommentList');
+            if (!list) return;
+            list.innerHTML = '';
+            list.appendChild(kmtEl('p', 'text-sm text-slate-400 dark:text-slate-500 py-3', 'Memuat komentar...'));
+            if (!GAS) { list.innerHTML = ''; list.appendChild(kmtEl('p', 'text-sm text-slate-400 italic py-3', 'Komentar belum tersedia (mode lokal).')); return; }
+            google.script.run
+                .withSuccessHandler(function(raw) {
+                    if (reqId !== _kmt.newsId) return;                 // pengunjung sudah pindah berita
+                    try { _kmt.list = JSON.parse(raw) || []; } catch (e) { _kmt.list = []; }
+                    _kmt.shown = 10;
+                    kmtRender();
+                })
+                .withFailureHandler(function() {
+                    if (reqId !== _kmt.newsId) return;
+                    list.innerHTML = '';
+                    var box = kmtEl('div', 'text-sm text-slate-500 dark:text-slate-400 py-3');
+                    box.appendChild(kmtEl('span', '', 'Komentar belum bisa dimuat. '));
+                    var retry = kmtEl('button', 'font-bold text-nuGreen-800 dark:text-nuGreen-500 underline', 'Coba lagi');
+                    retry.type = 'button';
+                    retry.onclick = kmtLoad;
+                    box.appendChild(retry);
+                    list.appendChild(box);
+                })
+                .getKomentar(String(reqId));
+        }
+
+        function kmtSetSending(on) {
+            _kmt.sending = on;
+            var b = document.getElementById('kmtSubmit'), l = document.getElementById('kmtSubmitLabel');
+            if (b) b.disabled = on;
+            if (l) l.textContent = on ? 'Mengirim...' : 'Kirim Komentar';
+        }
+
+        function kmtSubmit(e) {
+            e.preventDefault();
+            if (_kmt.sending) return;                                  // cegah klik ganda
+            var nama = kmtVal('kmtNama').replace(/\s+/g, ' ').trim();
+            var wa   = kmtVal('kmtWa').replace(/[^0-9]/g, '');
+            var teks = kmtVal('kmtText').trim();
+            var err = '';
+            if (nama.length < 2)                      err = 'Nama minimal 2 huruf.';
+            else if (wa.length < 9 || wa.length > 15) err = 'Nomor WhatsApp tidak valid. Contoh: 08123456789.';
+            else if (teks.length < 3)                 err = 'Komentar terlalu pendek.';
+            if (err) { kmtShowError(err); return; }
+            kmtShowError('');
+            if (!GAS) { kmtShowError('Komentar belum tersedia (mode lokal).'); return; }
+
+            // ID dibuat di browser: bila kiriman diulang (sinyal putus), server tidak membuat komentar ganda
+            var key = nama + '|' + wa + '|' + teks;
+            if (!_kmt.pending || _kmt.pending.key !== key) _kmt.pending = { key: key, id: 'k' + Date.now() + Math.floor(Math.random() * 1000) };
+            var komentarId = _kmt.pending.id, newsId = _kmt.newsId;
+
+            kmtSetSending(true);
+            showProcessing('Mengirim komentar, mohon tunggu...');
+            google.script.run
+                .withSuccessHandler(function(r) {
+                    kmtSetSending(false); hideProcessing();
+                    r = String(r);
+                    if (r === 'success' || r === 'pending') {
+                        _kmt.pending = null;
+                        if (newsId === _kmt.newsId) {
+                            if (r === 'success') {
+                                _kmt.list.unshift({ id: komentarId, nama: nama, komentar: teks, ts: Date.now(), balasan: '', balasanTs: 0 });
+                                kmtRender();
+                            }
+                            var f = document.getElementById('newsCommentForm'); if (f) f.reset();
+                            var ct = document.getElementById('kmtCount'); if (ct) ct.textContent = '0';
+                        }
+                        showFloatingNotif(r === 'success' ? '✅ Komentar berhasil terkirim' : '✅ Komentar terkirim dan akan tampil setelah disetujui admin', 'success');
+                    } else {
+                        kmtShowError(r.replace(/^error:\s*/, '') || 'Komentar belum terkirim.');
+                        showFloatingNotif('❌ Komentar belum terkirim', 'error');
+                    }
+                })
+                .withFailureHandler(function(e) {
+                    kmtSetSending(false); hideProcessing();
+                    console.warn('addKomentar GAS:', e);
+                    kmtShowError('Gagal mengirim. Periksa sinyal lalu tekan Kirim lagi (isian Anda masih ada).');
+                    showFloatingNotif('❌ Gagal mengirim komentar. Periksa sinyal lalu coba lagi.', 'error');
+                })
+                .addKomentar(JSON.stringify({ newsId: newsId, nama: nama, wa: wa, komentar: teks, komentarId: komentarId, website: kmtVal('kmtWebsite') }));
+        }
+
+        window.initNewsComments = function(newsId) {
+            _kmt.newsId = String(newsId);
+            _kmt.list = []; _kmt.shown = 10; _kmt.pending = null;
+            var f = document.getElementById('newsCommentForm');
+            if (f && !_kmt.bound) {
+                _kmt.bound = true;
+                f.addEventListener('submit', kmtSubmit);
+                var ta = document.getElementById('kmtText'), ct = document.getElementById('kmtCount');
+                if (ta && ct) ta.addEventListener('input', function() { ct.textContent = ta.value.length; });
+            }
+            if (f) f.reset();
+            var c0 = document.getElementById('kmtCount'); if (c0) c0.textContent = '0';
+            kmtShowError('');
+            kmtSetSending(false);
+            kmtLoad();
+        };
+
+        // ── Admin: rekap, balas, sembunyikan, hapus ──
+        var _kmtA = { list: [], replyId: null, saving: false, busy: {} };
+
+        function kmtAdminCounts() {
+            var L = _kmtA.list;
+            return {
+                total: L.length,
+                belum: L.filter(function(c) { return !c.balasan && c.status !== 'Disembunyikan'; }).length,
+                sudah: L.filter(function(c) { return !!c.balasan; }).length,
+                sembunyi: L.filter(function(c) { return c.status === 'Disembunyikan'; }).length
+            };
+        }
+
+        function kmtUpdateBadge() {
+            var n = kmtAdminCounts().belum;
+            document.querySelectorAll('.kmt-admin-badge').forEach(function(b) {
+                b.textContent = n > 99 ? '99+' : String(n);
+                b.classList.toggle('hidden', n === 0);
+            });
+        }
+
+        function kmtAdminRender() {
+            kmtUpdateBadge();
+            var stats = document.getElementById('kmtAdminStats'), box = document.getElementById('kmtAdminList');
+            if (!stats || !box) return;
+            var c = kmtAdminCounts();
+            stats.innerHTML = '';
+            [['Total', c.total, 'text-slate-800 dark:text-slate-100'], ['Belum dibalas', c.belum, 'text-amber-600'],
+             ['Sudah dibalas', c.sudah, 'text-nuGreen-800 dark:text-nuGreen-500'], ['Disembunyikan', c.sembunyi, 'text-slate-500']].forEach(function(s) {
+                var card = kmtEl('div', 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3');
+                card.appendChild(kmtEl('p', 'text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500', s[0]));
+                card.appendChild(kmtEl('p', 'text-2xl font-extrabold ' + s[2], String(s[1])));
+                stats.appendChild(card);
+            });
+
+            var f = kmtVal('kmtAdminFilter') || 'semua';
+            var q = kmtVal('kmtAdminSearch').trim().toLowerCase();
+            var rows = _kmtA.list.filter(function(x) {
+                if (f === 'belum'    && !(!x.balasan && x.status !== 'Disembunyikan')) return false;
+                if (f === 'sudah'    && !x.balasan) return false;
+                if (f === 'sembunyi' && x.status !== 'Disembunyikan') return false;
+                if (q && (x.nama + ' ' + x.komentar + ' ' + x.newsTitle + ' ' + x.wa).toLowerCase().indexOf(q) === -1) return false;
+                return true;
+            });
+            box.innerHTML = '';
+            if (!rows.length) {
+                box.appendChild(kmtEl('div', 'text-center py-10 text-sm text-slate-400 dark:text-slate-500 italic',
+                    _kmtA.list.length ? 'Tidak ada komentar yang cocok dengan filter.' : 'Belum ada komentar dari pengunjung.'));
+                return;
+            }
+            rows.forEach(function(x) { box.appendChild(kmtAdminCard(x)); });
+        }
+
+        function kmtActionBtn(label, icon, cls, onClick) {
+            var b = kmtEl('button', 'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border transition ' + cls);
+            b.type = 'button';
+            b.innerHTML = '<i class="fas ' + icon + '"></i> ';
+            b.appendChild(document.createTextNode(label));
+            b.addEventListener('click', onClick);
+            return b;
+        }
+
+        function kmtAdminCard(x) {
+            var hidden = x.status === 'Disembunyikan';
+            var card = kmtEl('div', 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm' + (hidden ? ' opacity-70' : ''));
+            card.setAttribute('data-kmt-id', x.id);
+
+            var top = kmtEl('div', 'flex flex-wrap items-start justify-between gap-2 mb-2');
+            var ttl = kmtEl('p', 'text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500 min-w-0 flex-1 break-words');
+            ttl.innerHTML = '<i class="far fa-newspaper mr-1"></i>';
+            ttl.appendChild(document.createTextNode(x.newsTitle || '(berita sudah dihapus)'));
+            top.appendChild(ttl);
+            var meta = kmtEl('div', 'flex items-center gap-2 shrink-0');
+            meta.appendChild(kmtEl('span', 'text-[11px] text-slate-400 dark:text-slate-500', kmtFmtTime(x.ts)));
+            var st = hidden ? ['Disembunyikan', 'bg-slate-100 text-slate-600'] : (x.balasan ? ['Sudah dibalas', 'bg-green-100 text-green-700'] : ['Belum dibalas', 'bg-amber-100 text-amber-700']);
+            meta.appendChild(kmtEl('span', 'text-[10px] font-bold px-2 py-0.5 rounded-full ' + st[1], st[0]));
+            top.appendChild(meta);
+            card.appendChild(top);
+
+            var who = kmtEl('div', 'flex flex-wrap items-center gap-x-3 gap-y-1');
+            who.appendChild(kmtEl('span', 'font-bold text-sm text-slate-800 dark:text-slate-100', x.nama));
+            if (x.wa) {
+                var waText = 'Halo ' + x.nama + ', kami dari PRNU Baleharjo menanggapi komentar Anda pada berita "' + (x.newsTitle || '') + '".';
+                var a = kmtEl('a', 'inline-flex items-center gap-1 text-xs font-semibold text-green-700 hover:underline');
+                a.href = 'https://wa.me/' + encodeURIComponent(x.wa) + '?text=' + encodeURIComponent(waText);
+                a.target = '_blank'; a.rel = 'noopener';
+                a.innerHTML = '<i class="fab fa-whatsapp"></i> ';
+                a.appendChild(document.createTextNode('+' + x.wa));
+                who.appendChild(a);
+            }
+            card.appendChild(who);
+            card.appendChild(kmtEl('p', 'mt-2 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line break-words', x.komentar));
+
+            if (x.balasan) {
+                var rep = kmtEl('div', 'mt-3 rounded-xl bg-nuGreen-50 dark:bg-nuGreen-950 border-l-4 border-nuGreen-500 px-3 py-2.5');
+                rep.appendChild(kmtEl('p', 'text-[11px] font-bold text-nuGreen-800 dark:text-nuGreen-500 mb-1', 'Balasan Admin · ' + kmtFmtTime(x.balasanTs)));
+                rep.appendChild(kmtEl('p', 'text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line break-words', x.balasan));
+                card.appendChild(rep);
+            }
+
+            var actions = kmtEl('div', 'mt-3 flex flex-wrap gap-2');
+            actions.appendChild(kmtActionBtn(x.balasan ? 'Ubah Balasan' : 'Balas', 'fa-reply', 'border-nuGreen-100 text-nuGreen-800 hover:bg-nuGreen-50', function() { openKmtReply(x.id); }));
+            actions.appendChild(kmtActionBtn(hidden ? 'Tampilkan' : 'Sembunyikan', hidden ? 'fa-eye' : 'fa-eye-slash', 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800', function() { toggleKmtStatus(x.id); }));
+            actions.appendChild(kmtActionBtn('Hapus', 'fa-trash-alt', 'border-rose-200 text-rose-600 hover:bg-rose-50', function() { deleteKmt(x.id); }));
+            card.appendChild(actions);
+            return card;
+        }
+
+        window.loadKomentarAdmin = function(silent) {
+            if (!GAS) return;
+            var box = document.getElementById('kmtAdminList');
+            if (!silent && box) { box.innerHTML = ''; box.appendChild(kmtEl('p', 'text-sm text-slate-400 dark:text-slate-500 py-6 text-center', 'Memuat komentar...')); }
+            window.pentaCall('getKomentarAdmin', []).then(function(raw) {
+                try { _kmtA.list = JSON.parse(raw) || []; } catch (e) { _kmtA.list = []; }
+                kmtAdminRender();
+            }).catch(function(e) {
+                console.warn('getKomentarAdmin:', e);
+                if (!silent && box) { box.innerHTML = ''; box.appendChild(kmtEl('p', 'text-sm text-rose-500 py-6 text-center', 'Gagal memuat komentar. Periksa sinyal lalu tekan Muat Ulang.')); }
+            });
+        };
+
+        function kmtFind(id) { return _kmtA.list.find(function(c) { return String(c.id) === String(id); }); }
+
+        window.openKmtReply = function(id) {
+            var c = kmtFind(id); if (!c) return;
+            _kmtA.replyId = c.id;
+            document.getElementById('kmtReplyWho').textContent = c.nama + (c.newsTitle ? ' · ' + c.newsTitle : '');
+            document.getElementById('kmtReplyQuote').textContent = c.komentar;
+            document.getElementById('kmtReplyText').value = c.balasan || '';
+            var m = document.getElementById('kmtReplyModal'); m.classList.remove('hidden'); m.classList.add('flex');
+            setTimeout(function() { var t = document.getElementById('kmtReplyText'); if (t) t.focus(); }, 50);
+        };
+        window.closeKmtReply = function() {
+            if (_kmtA.saving) return;
+            var m = document.getElementById('kmtReplyModal'); m.classList.add('hidden'); m.classList.remove('flex');
+        };
+
+        window.saveKmtReply = function() {
+            if (_kmtA.saving) return;                                  // cegah klik ganda
+            var c = kmtFind(_kmtA.replyId); if (!c) return;
+            var teks = kmtVal('kmtReplyText').trim();
+            if (!teks && !c.balasan) { showToast('Tulis balasan terlebih dahulu.'); return; }
+            _kmtA.saving = true;
+            var sb = document.getElementById('kmtReplySave'), cb = document.getElementById('kmtReplyCancel');
+            if (sb) sb.disabled = true; if (cb) cb.disabled = true;
+            showProcessing(teks ? 'Mengirim balasan, mohon tunggu...' : 'Menghapus balasan, mohon tunggu...');
+            window.pentaCall('balasKomentar', [String(c.id), teks]).then(function(r) {
+                r = String(r);
+                if (r !== 'success') throw new Error(r.replace(/^error:\s*/, ''));
+                c.balasan = teks; c.balasanTs = teks ? Date.now() : 0;
+                kmtAdminRender();
+                _kmtA.saving = false; hideProcessing();
+                if (sb) sb.disabled = false; if (cb) cb.disabled = false;
+                closeKmtReply();
+                showFloatingNotif(teks ? '✅ Balasan terkirim dan tampil di bawah komentar' : 'Balasan dihapus', 'success');
+            }).catch(function(e) {
+                _kmtA.saving = false; hideProcessing();
+                if (sb) sb.disabled = false; if (cb) cb.disabled = false;
+                showFloatingNotif('❌ Gagal menyimpan balasan: ' + ((e && e.message) || e), 'error');
+            });
+        };
+
+        window.toggleKmtStatus = function(id) {
+            var c = kmtFind(id); if (!c || _kmtA.busy[id]) return;
+            var next = c.status === 'Disembunyikan' ? 'Tampil' : 'Disembunyikan';
+            _kmtA.busy[id] = true;
+            showProcessing(next === 'Tampil' ? 'Menampilkan komentar, mohon tunggu...' : 'Menyembunyikan komentar, mohon tunggu...');
+            window.pentaCall('setKomentarStatus', [String(id), next]).then(function(r) {
+                delete _kmtA.busy[id]; hideProcessing();
+                if (String(r) !== 'success') throw new Error(String(r));
+                c.status = next; kmtAdminRender();
+                showFloatingNotif(next === 'Tampil' ? '✅ Komentar ditampilkan di berita' : 'Komentar disembunyikan dari publik', 'success');
+            }).catch(function(e) {
+                delete _kmtA.busy[id]; hideProcessing();
+                showFloatingNotif('❌ Gagal mengubah status: ' + ((e && e.message) || e), 'error');
+            });
+        };
+
+        window.deleteKmt = function(id) {
+            var c = kmtFind(id); if (!c) return;
+            showDeleteConfirm(
+                'Hapus komentar dari <b>' + kmtEsc(c.nama) + '</b>?<br><span class="text-rose-500 text-xs">Komentar dan balasannya dihapus permanen.</span>',
+                function() {
+                    if (_kmtA.busy[id]) return;
+                    _kmtA.busy[id] = true;
+                    var card = document.querySelector('[data-kmt-id="' + String(id).replace(/"/g, '') + '"]');
+                    if (card) { card.style.opacity = '0.45'; card.style.pointerEvents = 'none'; }
+                    showProcessing('Menghapus komentar, mohon tunggu...');
+                    window.pentaCall('deleteKomentar', [String(id)]).then(function(r) {
+                        delete _kmtA.busy[id]; hideProcessing();
+                        r = String(r);
+                        if (r.indexOf('error') === 0) throw new Error(r);
+                        _kmtA.list = _kmtA.list.filter(function(x) { return String(x.id) !== String(id); });
+                        kmtAdminRender();
+                        showFloatingNotif('Komentar berhasil dihapus', 'success');
+                    }).catch(function(e) {
+                        delete _kmtA.busy[id]; hideProcessing();
+                        if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+                        showFloatingNotif('❌ Gagal menghapus komentar: ' + ((e && e.message) || e), 'error');
+                    });
+                }
+            );
+        };
+
+        // Filter & pencarian di rekap
+        document.addEventListener('change', function(e) { if (e.target && e.target.id === 'kmtAdminFilter') kmtAdminRender(); });
+        document.addEventListener('input',  function(e) { if (e.target && e.target.id === 'kmtAdminSearch') kmtAdminRender(); });
+
         window.openNewsDetail = function(id) {
             const article = AppState.news.find(x => String(x.id) === String(id));
             if (!article) return;
@@ -4848,6 +5323,7 @@
             // ── Isi teks ──
             document.getElementById('newsModalTitle').textContent    = article.title  || '';
             document.getElementById('newsModalDesc').innerHTML      = article.content || article.summary || '';
+            if (window.initNewsComments) window.initNewsComments(String(id));   // komentar pengunjung
 
             // ── Metadata ──
             const cat  = article.category || '';
@@ -5402,6 +5878,8 @@
                         .withFailureHandler(function(){})
                         .getInbox();
                 } catch(e) {}
+                // Muat jumlah komentar yang belum dibalas (untuk lencana di menu)
+                try { if (!authInfo || authInfo.role !== 'kontributor') window.loadKomentarAdmin(true); } catch(e) {}
                 
                 setTimeout(() => {
                     openAdminPanelModal();
@@ -5525,7 +6003,7 @@
             'banom-settings': 'Kelola Banom/Lembaga', 'shalat': 'Waktu Shalat',
             'berita-manage': 'Kelola Berita', 'galeri': 'Kelola Galeri',
             'keuangan': 'Keuangan UPZISNU', 'pengurus-manage': 'Kelola Pengurus',
-            'users': 'Kelola Admin', 'inbox': 'Pesan Masuk', 'kontak': 'Kelola Kontak'
+            'users': 'Kelola Admin', 'inbox': 'Pesan Masuk', 'komentar': 'Komentar Berita', 'kontak': 'Kelola Kontak'
         };
         // Tab name → id tombol versi mobile (beberapa berbeda dari pola "btn-mob-admin-"+tabName)
         var ADMIN_TAB_MOBILE_ID = {
@@ -5534,7 +6012,7 @@
             'banom-settings': 'btn-mob-admin-banom', 'shalat': 'btn-mob-admin-shalat',
             'berita-manage': 'btn-mob-admin-berita', 'galeri': 'btn-mob-admin-galeri',
             'keuangan': 'btn-mob-admin-keuangan', 'pengurus-manage': 'btn-mob-admin-pengurus',
-            'users': 'btn-mob-admin-users', 'inbox': 'btn-mob-admin-inbox', 'kontak': 'btn-mob-admin-kontak'
+            'users': 'btn-mob-admin-users', 'inbox': 'btn-mob-admin-inbox', 'komentar': 'btn-mob-admin-komentar', 'kontak': 'btn-mob-admin-kontak'
         };
 
         window.closeMobAdminMenu = function() {
@@ -5633,6 +6111,7 @@
             if (tabName === 'pengurus-manage') { setupPengurusHeaderForm(); }
             if (tabName === 'berita-manage') { loadAdminNewsList(); }
             if (tabName === 'users') { loadUsersAdmin(); }
+            if (tabName === 'komentar') { loadKomentarAdmin(); }
         }
 
         // Sembunyikan menu & tab yang bukan haknya Admin Kontributor Berita.
@@ -8321,6 +8800,7 @@
             safeBind('btn-admin-pengurus-manage', 'click', () => switchAdminTab('pengurus-manage'));
             safeBind('btn-admin-users', 'click', () => switchAdminTab('users'));
             safeBind('btn-admin-inbox', 'click', () => switchAdminTab('inbox'));
+            safeBind('btn-admin-komentar', 'click', () => switchAdminTab('komentar'));
             
             // Mobile Admin tabs
             safeBind('btn-mob-admin-beranda', 'click', () => switchAdminTab('beranda-settings'));
@@ -8333,6 +8813,7 @@
             safeBind('btn-mob-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
             safeBind('btn-mob-admin-pengurus', 'click', () => switchAdminTab('pengurus-manage'));
             safeBind('btn-mob-admin-inbox', 'click', () => switchAdminTab('inbox'));
+            safeBind('btn-mob-admin-komentar', 'click', () => switchAdminTab('komentar'));
             safeBind('btn-mob-admin-users', 'click', () => switchAdminTab('users'));
             safeBind('btn-mob-admin-kontak', 'click', () => switchAdminTab('kontak'));
             safeBind('mobAdminMenuToggle', 'click', () => toggleMobAdminMenu());
