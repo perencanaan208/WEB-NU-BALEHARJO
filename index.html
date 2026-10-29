@@ -3211,6 +3211,63 @@
             updatePrayerCountdown(); // langsung update tanpa menunggu 1 detik
         }
 
+        // ── NOTIF AJAKAN SHOLAT BERJAMAAH: tampil 1 menit sebelum s/d 30 detik setelah masuk waktu ──
+        var _prayerAlertDismissed = {};
+        function prayerAlertEnsure() {
+            var el = document.getElementById('prayerAlertPopup');
+            if (el) return el;
+            el = document.createElement('div');
+            el.id = 'prayerAlertPopup';
+            el.style.cssText = 'position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,24,14,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);';
+            el.innerHTML =
+                '<div style="max-width:340px;width:100%;text-align:center;color:#fff;border-radius:20px;padding:24px 20px 20px;' +
+                'background:linear-gradient(160deg,#14532d,#052e16);border:1px solid rgba(251,191,36,.55);box-shadow:0 20px 60px rgba(0,0,0,.5);' +
+                'animation:heroUp .5s cubic-bezier(.22,1,.36,1) both;position:relative;">' +
+                    '<button type="button" id="prayerAlertClose" aria-label="Tutup" style="position:absolute;top:8px;right:12px;color:rgba(255,255,255,.6);font-size:22px;line-height:1;background:none;border:0;cursor:pointer;">&times;</button>' +
+                    '<div style="width:54px;height:54px;margin:0 auto 10px;border-radius:50%;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);display:flex;align-items:center;justify-content:center;">' +
+                        '<i class="fas fa-mosque" style="color:#fbbf24;font-size:22px;"></i></div>' +
+                    '<div id="prayerAlertTitle" style="font-size:17px;font-weight:700;color:#fbbf24;line-height:1.3;"></div>' +
+                    '<div id="prayerAlertSub" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px;font-variant-numeric:tabular-nums;"></div>' +
+                    '<p style="font-size:13px;line-height:1.6;margin:14px 0 4px;color:rgba(255,255,255,.92);">Mari tunaikan sholat <b>berjamaah</b> di masjid atau musholla terdekat.</p>' +
+                    '<p style="font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.7);margin:0 0 16px;">Sholat berjamaah lebih utama 27 derajat dibanding sholat sendirian (HR. Bukhari &amp; Muslim).</p>' +
+                    '<button type="button" id="prayerAlertOk" style="background:#fbbf24;color:#052e16;font-weight:700;font-size:13px;padding:9px 22px;border-radius:999px;border:0;cursor:pointer;">Siap, insyaAllah</button>' +
+                '</div>';
+            document.body.appendChild(el);
+            el.addEventListener('click', function(e) { if (e.target === el) prayerAlertDismiss(); });
+            el.querySelector('#prayerAlertClose').addEventListener('click', prayerAlertDismiss);
+            el.querySelector('#prayerAlertOk').addEventListener('click', prayerAlertDismiss);
+            return el;
+        }
+        function prayerAlertDismiss() {
+            var el = document.getElementById('prayerAlertPopup');
+            if (el) { if (el.dataset.key) _prayerAlertDismissed[el.dataset.key] = true; el.style.display = 'none'; }
+        }
+        function prayerAlertCheck(names, times, nowMs) {
+            var splash = document.getElementById('splashScreen');
+            if (splash && !splash.classList.contains('hidden')) return;
+            var dayKey = new Date().toDateString(), active = -1, delta = 0;
+            for (var i = 0; i < times.length; i++) {
+                var parts = times[i].split(':');
+                if (parts.length < 2 || isNaN(parts[0])) continue;
+                var d = nowMs - (parseInt(parts[0]) * 3600000 + parseInt(parts[1]) * 60000);
+                if (d >= -60000 && d <= 30000) { active = i; delta = d; break; }
+            }
+            var el = document.getElementById('prayerAlertPopup');
+            var key = dayKey + '#' + active;
+            if (active < 0 || _prayerAlertDismissed[key]) { if (el && el.style.display !== 'none') el.style.display = 'none'; return; }
+            el = prayerAlertEnsure();
+            el.dataset.key = key;
+            var nama = names[active];
+            if (delta < 0) {
+                el.querySelector('#prayerAlertTitle').textContent = 'Sebentar lagi masuk waktu ' + nama;
+                el.querySelector('#prayerAlertSub').textContent = Math.max(1, Math.ceil(-delta / 1000)) + ' detik lagi';
+            } else {
+                el.querySelector('#prayerAlertTitle').textContent = 'Telah masuk waktu ' + nama;
+                el.querySelector('#prayerAlertSub').textContent = 'Wilayah Baleharjo dan sekitarnya';
+            }
+            if (el.style.display !== 'flex') el.style.display = 'flex';
+        }
+
         function updatePrayerCountdown() {
             var names   = ['Subuh','Dzuhur','Ashar','Maghrib','Isya\''];
             var ids     = ['shubuh','dzuhur','ashar','maghrib','isya'];
@@ -3224,6 +3281,7 @@
 
             var now   = new Date();
             var nowMs = now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000;
+            try { prayerAlertCheck(names, times, nowMs); } catch(e) {}
 
             // Cari sholat berikutnya
             var nextIdx   = -1;
