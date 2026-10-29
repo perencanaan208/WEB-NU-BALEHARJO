@@ -777,7 +777,7 @@
 
             <!-- ── Kolom 2: Waktu Sholat ── -->
             <div class="hero-right flex flex-col">
-                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full justify-between">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center justify-between">
                         <span><i class="fas fa-clock mr-1.5"></i>Waktu Shalat</span>
                         <span class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full"><i class="fas fa-magic mr-0.5"></i>Sragen</span>
@@ -796,13 +796,6 @@
                     <div id="islamicNextEventBox" class="rounded-lg border border-emerald-700/40 bg-emerald-900/30 px-3 py-1.5 flex items-center gap-1.5">
                         <i class="fas fa-moon text-nuGold-300 text-[9px] shrink-0"></i>
                         <span id="islamicNextEvent" class="text-[10px] font-medium text-white/80 leading-tight">Memuat kalender hijriah...</span>
-                    </div>
-                    <div class="flex-1">
-                        <span class="text-[9px] uppercase font-bold text-nuGold-400 tracking-widest">Agenda Terdekat</span>
-                        <div class="mt-1.5 bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-900/60 flex items-start gap-2">
-                            <div class="bg-nuGold-500 text-nuGreen-950 font-bold rounded-md p-1 text-center min-w-[36px]"><span class="block text-xs leading-none" id="pubAgendaDay">21</span><span class="block text-[8px] uppercase" id="pubAgendaMonth">Jun</span></div>
-                            <div><h4 class="text-xs font-semibold text-white line-clamp-1" id="pubAgendaTitle">Rutinan Lailatul Ijtima'</h4><p class="text-[10px] text-white/60 mt-0.5 line-clamp-1"><i class="fas fa-map-marker-alt mr-1"></i><span id="pubAgendaLocation">Masjid Jami' Al-Ikhlas</span></p></div>
-                        </div>
                     </div>
                 </div><!-- end card sholat -->
             </div><!-- end kolom sholat -->
@@ -873,8 +866,21 @@
                 </div>
             </div>
 
-            <!-- Kolom 3: kosong -->
-            <div class="hidden lg:block"></div>
+            <!-- Kolom 3: Agenda Terdekat (di bawah Berita Terbaru) -->
+            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.1s both;">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                        <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5"><i class="fas fa-calendar-check text-xs"></i>Agenda Terdekat</h3>
+                        <span id="agendaCount" class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full hidden"></span>
+                    </div>
+                    <div id="agendaViewport" class="relative overflow-hidden flex-1" style="min-height:190px">
+                        <div id="agendaTrack" class="absolute left-0 right-0 top-0" style="transition:transform .6s cubic-bezier(.22,1,.36,1);">
+                            <div class="ag-slide flex items-center"><div class="animate-pulse bg-white/10 rounded-xl w-full h-24"></div></div>
+                        </div>
+                    </div>
+                    <div id="agendaDots" class="flex justify-center gap-1.5 min-h-[6px]"></div>
+                </div>
+            </div>
 
         </div><!-- end baris-2 -->
 
@@ -1308,6 +1314,10 @@
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Kelola Banom/Lembaga</span>
                     </button>
+                    <button id="btn-admin-agenda" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-calendar-check text-xs text-slate-500 dark:text-slate-400"></i></span>
+                        <span>Kelola Agenda</span>
+                    </button>
                     <button id="btn-admin-shalat" data-role="superadmin" class="admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-clock text-xs text-slate-500 dark:text-slate-400"></i></span>
                         <span>Waktu Shalat</span>
@@ -1391,6 +1401,10 @@
                             <button id="btn-mob-admin-banom" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
                                 <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-users-cog text-xs text-slate-500 dark:text-slate-400"></i></span>
                                 <span>Kelola Banom/Lembaga</span>
+                            </button>
+                            <button id="btn-mob-admin-agenda" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
+                                <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-calendar-check text-xs text-slate-500 dark:text-slate-400"></i></span>
+                                <span>Kelola Agenda</span>
                             </button>
                             <button id="btn-mob-admin-shalat" data-role="superadmin" class="mob-admin-tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left">
                                 <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0"><i class="fas fa-clock text-xs text-slate-500 dark:text-slate-400"></i></span>
@@ -1617,28 +1631,52 @@
                                 <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Sub-Judul Deskripsi Hero</label>
                                 <textarea id="editHeroSubtitle" rows="3" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200"></textarea>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Tanggal Agenda (Angka)</label>
-                                    <input type="text" id="editAgendaDay" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Bulan Agenda (Huruf Singkat)</label>
-                                    <input type="text" id="editAgendaMonth" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama/Judul Agenda Terdekat</label>
-                                <input type="text" id="editAgendaTitle" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Lokasi Kegiatan Agenda</label>
-                                <input type="text" id="editAgendaLocation" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
+                            <div class="rounded-xl border border-nuGold-500/30 bg-nuGold-500/10 px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
+                                <i class="fas fa-info-circle text-nuGold-500 mr-1"></i> Agenda Terdekat sekarang dikelola di menu <b>Kelola Agenda</b> (bisa menambah banyak agenda).
                             </div>
                             <button type="submit" class="bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition">
                                 Simpan Pengaturan Beranda
                             </button>
                         </form>
+                    </div>
+
+                    <!-- TAB: Kelola Agenda -->
+                    <div id="admin-tab-agenda" class="admin-panel-content space-y-6 hidden">
+                        <h4 class="text-lg font-serif font-bold text-slate-900 dark:text-slate-100 border-b pb-2">Kelola Agenda Terdekat</h4>
+                        <form id="formAgenda" class="space-y-4 max-w-2xl bg-slate-50/60 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
+                            <div id="agendaFormTitle" class="text-sm font-bold text-nuGreen-800 dark:text-nuGold-400"><i class="fas fa-plus-circle mr-1"></i>Tambah Agenda Baru</div>
+                            <input type="hidden" id="agendaEditId" value="">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Tanggal Agenda</label>
+                                    <input type="date" id="agendaTanggal" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Waktu (opsional)</label>
+                                    <input type="text" id="agendaWaktu" placeholder="mis. 19.30 WIB / Ba'da Isya" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama/Judul Agenda</label>
+                                <input type="text" id="agendaJudul" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Lokasi Kegiatan</label>
+                                <input type="text" id="agendaLokasi" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 focus:border-nuGreen-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none transition text-slate-800 dark:text-slate-200">
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="submit" id="agendaSubmitBtn" class="bg-nuGreen-800 hover:bg-nuGreen-900 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition"><i class="fas fa-plus mr-1"></i>Tambah Agenda</button>
+                                <button type="button" id="agendaCancelBtn" onclick="resetAgendaForm()" class="hidden bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold py-2.5 px-5 rounded-xl transition">Batal Edit</button>
+                            </div>
+                        </form>
+                        <div class="max-w-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="text-sm font-bold text-slate-700 dark:text-slate-200">Daftar Agenda</h5>
+                                <button type="button" onclick="clearExpiredAgenda()" class="text-[11px] font-semibold text-red-600 hover:text-red-700"><i class="fas fa-broom mr-1"></i>Bersihkan yang sudah lewat</button>
+                            </div>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Agenda yang tanggalnya sudah lewat otomatis hilang dari slide di beranda.</p>
+                            <div id="adminAgendaList" class="space-y-2"></div>
+                        </div>
                     </div>
 
                     <!-- TAB: Kelola Profil -->
@@ -2836,6 +2874,7 @@
             adminUsername: '',
             adminNama: '',
             newsAdmin: [],       // daftar berita LENGKAP (semua status) khusus panel admin
+            agenda: [],          // daftar agenda terdekat: {id, tanggal:'YYYY-MM-DD', waktu, judul, lokasi}
             homepageSettings: {
                 heroTitle: "Merawat Jagat <br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow\">Membangun Peradaban</span> <br>di Bumi Baleharjo",
                 heroSubtitle: "Meneguhkan Aqidah Islam Ahlussunnah wal Jama'ah An-Nahdliyah, mengokohkan ukhuwah islamiyah, wathaniyah, dan basyariyah di wilayah Baleharjo, Sukodono, Sragen.",
@@ -3436,6 +3475,8 @@
                             } else if (parts[1] === 'galeri') {
                                 // Galeri sekarang dimuat dari data.galeri (sheet GaleriPhotos), bukan settings
                                 // Lewati — ditangani di bawah
+                            } else if (parts[1] === 'agenda') {
+                                try { var _ag = JSON.parse(s[key]); AppState.agenda = Array.isArray(_ag) ? _ag : []; } catch(e) {}
                             } else if (parts[1] === 'layanan') {
                                 try { AppState.layanan = JSON.parse(s[key]); } catch(e) {}
                             } else if (parts[1] === 'banoms') {
@@ -4556,6 +4597,7 @@
             try { renderAdminPentaList(); } catch(e) {}
             try { renderPublicGaleri(); } catch(e) {}
             try { renderHomepageContent(); } catch(e) {}
+            try { renderAgendaCard(); } catch(e) {}
             try { renderProfileContent(); } catch(e) {}
             try { renderPublicLayanan(); } catch(e) {}
             try { renderPublicBanom(); } catch(e) {}
@@ -4730,13 +4772,239 @@
                 .saveSettingsBatch(JSON.stringify(batch));
         };
 
+
+        // ══════════════ AGENDA TERDEKAT ══════════════
+        var AG_BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        var AG_BULAN_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        var AG_HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+        var _agSlider = { idx: 0, n: 0, h: 0, timer: null, bound: false, dayKey: '' };
+
+        function agEsc(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) {
+                return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+            });
+        }
+        function agParse(str) {
+            var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(str || ''));
+            if (!m) return null;
+            return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+        }
+        function agToday() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+        function agDiff(str) {           // selisih hari dari hari ini (0 = hari ini, <0 = lewat)
+            var d = agParse(str); if (!d) return null;
+            return Math.round((d.getTime() - agToday().getTime()) / 86400000);
+        }
+        function agLabel(diff) { return diff === 0 ? 'Hari Ini' : 'H-' + diff; }
+        function getActiveAgenda() {
+            return (AppState.agenda || []).filter(function(a) {
+                var d = agDiff(a.tanggal); return d !== null && d >= 0;
+            }).sort(function(a, b) { return String(a.tanggal).localeCompare(String(b.tanggal)); });
+        }
+
+        function agSlideHtml(a) {
+            var d = agParse(a.tanggal), diff = agDiff(a.tanggal);
+            var pillCls = diff === 0 ? 'bg-emerald-500 text-white' : (diff <= 3 ? 'bg-amber-400 text-nuGreen-950' : 'bg-white/10 text-nuGold-300 border border-nuGold-400/40');
+            var tglFull = AG_HARI[d.getDay()] + ', ' + d.getDate() + ' ' + AG_BULAN_FULL[d.getMonth()] + ' ' + d.getFullYear();
+            return '<div class="ag-slide flex items-center">' +
+                '<div class="w-full bg-emerald-950/60 border border-emerald-900/60 rounded-xl p-3.5 flex items-start gap-3">' +
+                    '<div class="bg-nuGold-500 text-nuGreen-950 font-bold rounded-lg px-2 py-1.5 text-center min-w-[46px] shrink-0">' +
+                        '<span class="block text-lg leading-none">' + d.getDate() + '</span>' +
+                        '<span class="block text-[9px] uppercase mt-0.5">' + AG_BULAN[d.getMonth()] + '</span>' +
+                        '<span class="block text-[8px] opacity-70">' + d.getFullYear() + '</span>' +
+                    '</div>' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ' + pillCls + (diff === 0 ? ' animate-pulse' : '') + '">' + agLabel(diff) + '</span>' +
+                        '<h4 class="text-sm font-semibold text-white leading-snug mt-1.5 break-words">' + agEsc(a.judul) + '</h4>' +
+                        '<p class="text-[11px] text-white/70 mt-1.5"><i class="far fa-calendar mr-1.5 text-nuGold-400"></i>' + tglFull + '</p>' +
+                        (a.waktu ? '<p class="text-[11px] text-white/70 mt-0.5"><i class="far fa-clock mr-1.5 text-nuGold-400"></i>' + agEsc(a.waktu) + '</p>' : '') +
+                        (a.lokasi ? '<p class="text-[11px] text-white/70 mt-0.5"><i class="fas fa-map-marker-alt mr-1.5 text-nuGold-400"></i>' + agEsc(a.lokasi) + '</p>' : '') +
+                    '</div>' +
+                '</div></div>';
+        }
+
+        function agSize() {
+            var vp = document.getElementById('agendaViewport'), tr = document.getElementById('agendaTrack');
+            if (!vp || !tr) return;
+            var h = vp.clientHeight; if (!h) return;
+            _agSlider.h = h;
+            tr.querySelectorAll('.ag-slide').forEach(function(el) { el.style.height = h + 'px'; });
+            tr.style.transition = 'none';
+            tr.style.transform = 'translateY(-' + (_agSlider.idx * h) + 'px)';
+            void tr.offsetHeight;
+            tr.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+        }
+        function agDots() {
+            var dots = document.getElementById('agendaDots'); if (!dots) return;
+            if (_agSlider.n < 2) { dots.innerHTML = ''; return; }
+            var cur = _agSlider.idx % _agSlider.n, html = '';
+            for (var i = 0; i < _agSlider.n; i++) {
+                html += '<span class="h-1.5 rounded-full transition-all ' + (i === cur ? 'w-4 bg-nuGold-400' : 'w-1.5 bg-white/30') + '"></span>';
+            }
+            dots.innerHTML = html;
+        }
+        function agNext() {
+            var tr = document.getElementById('agendaTrack');
+            if (!tr || _agSlider.n < 2 || !_agSlider.h) return;
+            _agSlider.idx++;
+            tr.style.transform = 'translateY(-' + (_agSlider.idx * _agSlider.h) + 'px)';
+            agDots();
+            if (_agSlider.idx >= _agSlider.n) {         // sudah di klon agenda pertama → lompat balik tanpa animasi
+                setTimeout(function() {
+                    _agSlider.idx = 0;
+                    tr.style.transition = 'none';
+                    tr.style.transform = 'translateY(0)';
+                    void tr.offsetHeight;
+                    tr.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+                }, 650);
+            }
+        }
+        function agStart() {
+            clearInterval(_agSlider.timer);
+            if (_agSlider.n > 1) _agSlider.timer = setInterval(agNext, 4500);
+        }
+
+        window.renderAgendaCard = function() {
+            var tr = document.getElementById('agendaTrack');
+            if (!tr) return;
+            clearInterval(_agSlider.timer);
+            var list = getActiveAgenda();
+            _agSlider.idx = 0; _agSlider.n = list.length; _agSlider.dayKey = agToday().getTime();
+            var cnt = document.getElementById('agendaCount');
+            if (!list.length) {
+                tr.innerHTML = '<div class="ag-slide flex items-center"><div class="w-full text-center text-white/60 py-6">' +
+                    '<i class="far fa-calendar-times text-2xl text-nuGold-400/70 mb-2 block"></i>' +
+                    '<p class="text-xs font-semibold">Belum ada agenda terdekat</p></div></div>';
+                if (cnt) cnt.classList.add('hidden');
+            } else {
+                tr.innerHTML = list.map(agSlideHtml).join('') + (list.length > 1 ? agSlideHtml(list[0]) : '');
+                if (cnt) { cnt.textContent = list.length + ' agenda'; cnt.classList.remove('hidden'); }
+            }
+            agSize(); agDots(); agStart();
+            if (!_agSlider.bound) {
+                _agSlider.bound = true;
+                window.addEventListener('resize', function() { agSize(); });
+                var vp = document.getElementById('agendaViewport');
+                if (vp) {
+                    vp.addEventListener('mouseenter', function() { clearInterval(_agSlider.timer); });
+                    vp.addEventListener('mouseleave', agStart);
+                }
+                // Ganti hari → agenda yang lewat otomatis hilang & H- diperbarui
+                setInterval(function() {
+                    if (_agSlider.dayKey !== agToday().getTime()) renderAgendaCard();
+                }, 60000);
+            }
+        };
+
+        // ── Admin: tambah / edit / hapus agenda ──
+        function saveAgendaBackend(okMsg) {
+            if (typeof GAS === 'undefined' || !GAS) { showFloatingNotif(okMsg + ' (mode lokal)', 'success'); return; }
+            adminSaveStart('agenda');
+            google.script.run
+                .withSuccessHandler(function(r) {
+                    if (r === 'success') adminSaveDone(true, okMsg);
+                    else adminSaveDone(false, 'Gagal menyimpan: ' + r);
+                })
+                .withFailureHandler(function(e) {
+                    console.warn('saveAgenda GAS:', e);
+                    adminSaveDone(false, 'Gagal menyimpan. Periksa sinyal lalu coba lagi.');
+                })
+                .saveSettingsBatch(JSON.stringify({ 'site.agenda': JSON.stringify(AppState.agenda) }));
+        }
+
+        window.resetAgendaForm = function() {
+            var f = document.getElementById('formAgenda'); if (!f) return;
+            f.reset();
+            document.getElementById('agendaEditId').value = '';
+            document.getElementById('agendaFormTitle').innerHTML = '<i class="fas fa-plus-circle mr-1"></i>Tambah Agenda Baru';
+            document.getElementById('agendaSubmitBtn').innerHTML = '<i class="fas fa-plus mr-1"></i>Tambah Agenda';
+            document.getElementById('agendaCancelBtn').classList.add('hidden');
+        };
+
+        window.handleAgendaSubmit = function(ev) {
+            ev.preventDefault();
+            var id = document.getElementById('agendaEditId').value;
+            var item = {
+                id: id ? Number(id) : Date.now(),
+                tanggal: document.getElementById('agendaTanggal').value,
+                waktu: document.getElementById('agendaWaktu').value.trim(),
+                judul: document.getElementById('agendaJudul').value.trim(),
+                lokasi: document.getElementById('agendaLokasi').value.trim()
+            };
+            if (!item.tanggal || !item.judul) { showFloatingNotif('Tanggal dan judul agenda wajib diisi', 'error'); return; }
+            if (!Array.isArray(AppState.agenda)) AppState.agenda = [];
+            if (id) {
+                var i = AppState.agenda.findIndex(function(a) { return String(a.id) === String(id); });
+                if (i >= 0) AppState.agenda[i] = item; else AppState.agenda.push(item);
+            } else {
+                AppState.agenda.push(item);          // TAMBAH — tidak menimpa agenda yang sudah ada
+            }
+            resetAgendaForm();
+            renderAdminAgendaList();
+            renderAgendaCard();
+            saveAgendaBackend(id ? 'Agenda berhasil diperbarui' : 'Agenda berhasil ditambahkan');
+        };
+
+        window.editAgenda = function(id) {
+            var a = (AppState.agenda || []).find(function(x) { return String(x.id) === String(id); });
+            if (!a) return;
+            document.getElementById('agendaEditId').value = a.id;
+            document.getElementById('agendaTanggal').value = a.tanggal || '';
+            document.getElementById('agendaWaktu').value = a.waktu || '';
+            document.getElementById('agendaJudul').value = a.judul || '';
+            document.getElementById('agendaLokasi').value = a.lokasi || '';
+            document.getElementById('agendaFormTitle').innerHTML = '<i class="fas fa-pen mr-1"></i>Edit Agenda';
+            document.getElementById('agendaSubmitBtn').innerHTML = '<i class="fas fa-save mr-1"></i>Simpan Perubahan';
+            document.getElementById('agendaCancelBtn').classList.remove('hidden');
+            var ca = document.getElementById('adminContentArea'); if (ca) ca.scrollTop = 0;
+        };
+
+        window.deleteAgenda = function(id) {
+            if (!confirm('Hapus agenda ini?')) return;
+            AppState.agenda = (AppState.agenda || []).filter(function(x) { return String(x.id) !== String(id); });
+            resetAgendaForm();
+            renderAdminAgendaList();
+            renderAgendaCard();
+            saveAgendaBackend('Agenda berhasil dihapus');
+        };
+
+        window.clearExpiredAgenda = function() {
+            var before = (AppState.agenda || []).length;
+            AppState.agenda = (AppState.agenda || []).filter(function(a) { var d = agDiff(a.tanggal); return d !== null && d >= 0; });
+            if (AppState.agenda.length === before) { showFloatingNotif('Tidak ada agenda yang sudah lewat', 'success'); return; }
+            renderAdminAgendaList();
+            renderAgendaCard();
+            saveAgendaBackend('Agenda yang sudah lewat dibersihkan');
+        };
+
+        window.renderAdminAgendaList = function() {
+            var box = document.getElementById('adminAgendaList'); if (!box) return;
+            var list = (AppState.agenda || []).slice().sort(function(a, b) { return String(a.tanggal).localeCompare(String(b.tanggal)); });
+            if (!list.length) {
+                box.innerHTML = '<div class="text-center text-xs text-slate-400 py-8 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Belum ada agenda. Tambahkan lewat form di atas.</div>';
+                return;
+            }
+            box.innerHTML = list.map(function(a) {
+                var d = agParse(a.tanggal), diff = agDiff(a.tanggal), expired = diff === null || diff < 0;
+                var badge = expired
+                    ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500">Sudah lewat</span>'
+                    : '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full ' + (diff === 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700') + '">' + agLabel(diff) + '</span>';
+                var tgl = d ? d.getDate() + ' ' + AG_BULAN[d.getMonth()] + ' ' + d.getFullYear() : '-';
+                return '<div class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 ' + (expired ? 'opacity-60' : '') + '">' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<div class="flex flex-wrap items-center gap-2">' + badge + '<span class="text-[11px] text-slate-500 dark:text-slate-400">' + tgl + (a.waktu ? ' • ' + agEsc(a.waktu) : '') + '</span></div>' +
+                        '<div class="text-sm font-semibold text-slate-800 dark:text-slate-100 mt-1 break-words">' + agEsc(a.judul) + '</div>' +
+                        (a.lokasi ? '<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5"><i class="fas fa-map-marker-alt mr-1"></i>' + agEsc(a.lokasi) + '</div>' : '') +
+                    '</div>' +
+                    '<div class="flex gap-1.5 shrink-0">' +
+                        '<button type="button" onclick="editAgenda(' + a.id + ')" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-nuGreen-800 hover:text-white transition text-xs" title="Edit"><i class="fas fa-pen"></i></button>' +
+                        '<button type="button" onclick="deleteAgenda(' + a.id + ')" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 hover:bg-red-600 hover:text-white transition text-xs" title="Hapus"><i class="fas fa-trash"></i></button>' +
+                    '</div></div>';
+            }).join('');
+        };
+
         function renderHomepageContent() {
             document.getElementById('pubHeroTitle').innerHTML = AppState.homepageSettings.heroTitle;
             document.getElementById('pubHeroSubtitle').innerText = AppState.homepageSettings.heroSubtitle;
-            document.getElementById('pubAgendaDay').innerText = AppState.homepageSettings.agendaDay;
-            document.getElementById('pubAgendaMonth').innerText = AppState.homepageSettings.agendaMonth;
-            document.getElementById('pubAgendaTitle').innerText = AppState.homepageSettings.agendaTitle;
-            document.getElementById('pubAgendaLocation').innerText = AppState.homepageSettings.agendaLocation;
         }
 
         function renderProfileContent() {
@@ -5843,10 +6111,6 @@
                 // Prep initial fields
                 document.getElementById('editHeroTitle').value = AppState.homepageSettings.heroTitle;
                 document.getElementById('editHeroSubtitle').value = AppState.homepageSettings.heroSubtitle;
-                document.getElementById('editAgendaDay').value = AppState.homepageSettings.agendaDay;
-                document.getElementById('editAgendaMonth').value = AppState.homepageSettings.agendaMonth;
-                document.getElementById('editAgendaTitle').value = AppState.homepageSettings.agendaTitle;
-                document.getElementById('editAgendaLocation').value = AppState.homepageSettings.agendaLocation;
 
                 document.getElementById('editSelayangPandang').value = AppState.profileSettings.selayangPandang;
                 document.getElementById('editPesanQuote').value = AppState.profileSettings.pesanQuote;
@@ -6000,7 +6264,7 @@
         var ADMIN_TAB_LABELS = {
             'siteconfig': 'Pengaturan Situs', 'beranda-settings': 'Kelola Beranda',
             'profil-settings': 'Kelola Profil', 'layanan-settings': 'Kelola Layanan',
-            'banom-settings': 'Kelola Banom/Lembaga', 'shalat': 'Waktu Shalat',
+            'banom-settings': 'Kelola Banom/Lembaga', 'agenda': 'Kelola Agenda', 'shalat': 'Waktu Shalat',
             'berita-manage': 'Kelola Berita', 'galeri': 'Kelola Galeri',
             'keuangan': 'Keuangan UPZISNU', 'pengurus-manage': 'Kelola Pengurus',
             'users': 'Kelola Admin', 'inbox': 'Pesan Masuk', 'komentar': 'Komentar Berita', 'kontak': 'Kelola Kontak'
@@ -6009,7 +6273,7 @@
         var ADMIN_TAB_MOBILE_ID = {
             'siteconfig': 'btn-mob-admin-siteconfig', 'beranda-settings': 'btn-mob-admin-beranda',
             'profil-settings': 'btn-mob-admin-profil', 'layanan-settings': 'btn-mob-admin-layanan',
-            'banom-settings': 'btn-mob-admin-banom', 'shalat': 'btn-mob-admin-shalat',
+            'banom-settings': 'btn-mob-admin-banom', 'agenda': 'btn-mob-admin-agenda', 'shalat': 'btn-mob-admin-shalat',
             'berita-manage': 'btn-mob-admin-berita', 'galeri': 'btn-mob-admin-galeri',
             'keuangan': 'btn-mob-admin-keuangan', 'pengurus-manage': 'btn-mob-admin-pengurus',
             'users': 'btn-mob-admin-users', 'inbox': 'btn-mob-admin-inbox', 'komentar': 'btn-mob-admin-komentar', 'kontak': 'btn-mob-admin-kontak'
@@ -6105,6 +6369,7 @@
 
             if (tabName === 'siteconfig') { populateSiteSettingsForm(); setupLogoFileInput(); }
             if (tabName === 'galeri') { renderAdminGaleriGrid(); setupGaleriFileInput(); }
+            if (tabName === 'agenda') { try { resetAgendaForm(); renderAdminAgendaList(); } catch(e) {} }
             if (tabName === 'profil-settings') { populateProfileForm(); setupProfilImgPreview(); }
             if (tabName === 'beranda-settings') { try { populateHomepageForm(); } catch(e) {} }
             if (tabName === 'kontak') { setupKontakAdminForm(); }
@@ -6127,10 +6392,6 @@
             event.preventDefault();
             AppState.homepageSettings.heroTitle = document.getElementById('editHeroTitle').value;
             AppState.homepageSettings.heroSubtitle = document.getElementById('editHeroSubtitle').value;
-            AppState.homepageSettings.agendaDay = document.getElementById('editAgendaDay').value;
-            AppState.homepageSettings.agendaMonth = document.getElementById('editAgendaMonth').value;
-            AppState.homepageSettings.agendaTitle = document.getElementById('editAgendaTitle').value;
-            AppState.homepageSettings.agendaLocation = document.getElementById('editAgendaLocation').value;
 
             renderHomepageContent();
             syncStateToBackend();
@@ -6138,11 +6399,7 @@
             if (GAS) {
                 const settingsBatch = {
                     'homepage.heroTitle': AppState.homepageSettings.heroTitle,
-                    'homepage.heroSubtitle': AppState.homepageSettings.heroSubtitle,
-                    'homepage.agendaDay': AppState.homepageSettings.agendaDay,
-                    'homepage.agendaMonth': AppState.homepageSettings.agendaMonth,
-                    'homepage.agendaTitle': AppState.homepageSettings.agendaTitle,
-                    'homepage.agendaLocation': AppState.homepageSettings.agendaLocation
+                    'homepage.heroSubtitle': AppState.homepageSettings.heroSubtitle
                 };
                 adminSaveStart('pengaturan beranda');
                 google.script.run
@@ -8795,6 +9052,7 @@
             safeBind('btn-admin-layanan-settings', 'click', () => switchAdminTab('layanan-settings'));
             safeBind('btn-admin-banom-settings', 'click', () => switchAdminTab('banom-settings'));
             safeBind('btn-admin-shalat', 'click', () => switchAdminTab('shalat'));
+            safeBind('btn-admin-agenda', 'click', () => switchAdminTab('agenda'));
             safeBind('btn-admin-berita-manage', 'click', () => switchAdminTab('berita-manage'));
             safeBind('btn-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
             safeBind('btn-admin-pengurus-manage', 'click', () => switchAdminTab('pengurus-manage'));
@@ -8808,6 +9066,8 @@
             safeBind('btn-mob-admin-layanan', 'click', () => switchAdminTab('layanan-settings'));
             safeBind('btn-mob-admin-banom', 'click', () => switchAdminTab('banom-settings'));
             safeBind('btn-mob-admin-shalat', 'click', () => switchAdminTab('shalat'));
+            safeBind('btn-mob-admin-agenda', 'click', () => switchAdminTab('agenda'));
+            safeBind('formAgenda', 'submit', handleAgendaSubmit);
             safeBind('btn-mob-admin-berita', 'click', () => switchAdminTab('berita-manage'));
             safeBind('btn-mob-admin-galeri', 'click', () => switchAdminTab('galeri'));
             safeBind('btn-mob-admin-keuangan', 'click', () => switchAdminTab('keuangan'));
