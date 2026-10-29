@@ -145,6 +145,13 @@
         })();
     </script>
     <style>
+        /* ── Beranda HP: 2 tab (Beranda | Info) agar tidak scroll panjang ── */
+        @media (max-width:1023.98px){
+            #beranda[data-mtab="beranda"] [data-mtab-item="info"]{display:none!important}
+            #beranda[data-mtab="info"] [data-mtab-item="beranda"]{display:none!important}
+            #agendaWrap{order:1}
+            #statWrap{order:2}
+        }
         .islamic-pattern {
             background-color: transparent;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='none' stroke='rgba(251,191,36,0.28)' stroke-width='0.9'%3E%3Cpolygon points='36,10 39,26 54,18 44,31 60,36 44,41 54,54 39,46 36,62 33,46 18,54 28,41 12,36 28,31 18,18 33,26'/%3E%3Ccircle cx='36' cy='36' r='7' stroke-width='0.6' stroke='rgba(251,191,36,0.15)'/%3E%3Crect x='32' y='32' width='8' height='8' transform='rotate(45 36 36)' stroke-width='0.6' stroke='rgba(251,191,36,0.2)'/%3E%3C/g%3E%3C/svg%3E");
@@ -732,7 +739,7 @@
         </div>
     </header>
 
-    <section id="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden flex items-center">
+    <section id="beranda" data-mtab="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden flex items-center">
         <div class="absolute inset-0 islamic-pattern opacity-[0.13]"></div>
         <div class="absolute inset-0 bg-gradient-to-tr from-nuGreen-950 via-nuGreen-900/90 to-transparent"></div>
         <div class="hero-glow-pulse absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style="background:radial-gradient(ellipse,rgba(251,191,36,0.07) 0%,transparent 70%);"></div>
@@ -752,9 +759,15 @@
 
         <div class="relative max-w-7xl mx-auto px-4 py-5 flex flex-col gap-4 z-10 w-full">
 
+        <!-- Navigasi tab khusus HP -->
+        <div id="mobTabBar" class="lg:hidden self-center w-full max-w-xs flex gap-1 p-1 bg-emerald-950/70 border border-white/10 rounded-full backdrop-blur-sm">
+            <button type="button" data-mtab-btn="beranda" onclick="setMobTab('beranda')" class="flex-1 py-2 rounded-full text-xs font-bold transition bg-nuGold-500 text-nuGreen-950"><i class="fas fa-home mr-1.5"></i>Beranda</button>
+            <button type="button" data-mtab-btn="info" onclick="setMobTab('info')" class="flex-1 py-2 rounded-full text-xs font-bold transition text-white/70"><i class="fas fa-circle-info mr-1.5"></i>Info</button>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
 <!-- ── Kolom 1: Teks Hero ── -->
-            <div class="flex flex-col justify-center space-y-4 text-center lg:text-left">
+            <div data-mtab-item="beranda" class="flex flex-col justify-center space-y-4 text-center lg:text-left">
                 <div class="hero-up hero-d1 inline-flex items-center gap-2 bg-emerald-900/50 border border-emerald-700/60 rounded-full px-3 py-1 self-center lg:self-start">
                     <span class="w-2 h-2 rounded-full bg-nuGold-400 animate-pulse"></span>
                     <span class="text-[10px] font-semibold tracking-wider text-emerald-300 uppercase">Official Website Ranting NU</span>
@@ -776,7 +789,7 @@
             </div>
 
             <!-- ── Kolom 2: Waktu Sholat ── -->
-            <div class="hero-right flex flex-col">
+            <div data-mtab-item="beranda" class="hero-right flex flex-col">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full justify-between">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center justify-between">
                         <span><i class="fas fa-clock mr-1.5"></i>Waktu Shalat</span>
@@ -801,7 +814,7 @@
             </div><!-- end kolom sholat -->
 
             <!-- ── Kolom 3: Berita Terbaru ── -->
-            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.7s both;">
+            <div data-mtab-item="info" class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.7s both;">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <div class="flex items-center justify-between border-b border-white/10 pb-2">
                         <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5"><i class="fas fa-newspaper text-xs"></i>Berita Terbaru</h3>
@@ -830,7 +843,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
 
             <!-- Kolom 1: Slider Pengurus -->
-            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.9s both;">
+            <div data-mtab-item="beranda" class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 0.9s both;">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5">
@@ -852,7 +865,7 @@
             </div>
 
             <!-- Kolom 2: Statistik Pengunjung -->
-            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
+            <div id="statWrap" data-mtab-item="info" class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.0s both;">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
                         <i class="fas fa-chart-bar text-xs"></i>Statistik Pengunjung
@@ -867,7 +880,7 @@
             </div>
 
             <!-- Kolom 3: Agenda Terdekat (di bawah Berita Terbaru) -->
-            <div class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.1s both;">
+            <div id="agendaWrap" data-mtab-item="info" class="flex flex-col" style="animation:heroUp 0.8s cubic-bezier(.22,1,.36,1) 1.1s both;">
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full">
                     <div class="flex items-center justify-between border-b border-white/10 pb-2">
                         <h3 class="text-sm font-bold text-nuGold-400 flex items-center gap-1.5"><i class="fas fa-calendar-check text-xs"></i>Agenda Terdekat</h3>
@@ -5001,6 +5014,27 @@
                     '</div></div>';
             }).join('');
         };
+
+        // ── Tab beranda HP: Beranda | Info ──
+        window.setMobTab = function(tab) {
+            if (tab !== 'info') tab = 'beranda';
+            var sec = document.getElementById('beranda'); if (!sec) return;
+            sec.setAttribute('data-mtab', tab);
+            document.querySelectorAll('[data-mtab-btn]').forEach(function(b) {
+                var on = b.getAttribute('data-mtab-btn') === tab;
+                b.classList.toggle('bg-nuGold-500', on);
+                b.classList.toggle('text-nuGreen-950', on);
+                b.classList.toggle('text-white/70', !on);
+            });
+            try { sessionStorage.setItem('prnu_mtab', tab); } catch(e) {}
+            if (tab === 'info') {   // viewport agenda baru terukur setelah tampil
+                requestAnimationFrame(function() { try { agSize(); agStart(); } catch(e) {} });
+            }
+        };
+        (function() {
+            function init() { var t = 'beranda'; try { t = sessionStorage.getItem('prnu_mtab') || 'beranda'; } catch(e) {} setMobTab(t); }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+        })();
 
         function renderHomepageContent() {
             document.getElementById('pubHeroTitle').innerHTML = AppState.homepageSettings.heroTitle;
