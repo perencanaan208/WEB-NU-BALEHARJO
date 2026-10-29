@@ -802,6 +802,11 @@
                         <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Maghrib</span><span class="block font-bold text-amber-300 text-[11px]" id="maghrib">--:--</span></div>
                         <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Isya'</span><span class="block font-bold text-white text-[11px]" id="isya">--:--</span></div>
                     </div>
+                    <div class="grid grid-cols-3 gap-1.5 text-center text-[9px] font-semibold">
+                        <div class="bg-nuGold-400/10 p-1.5 rounded-lg border border-nuGold-400/20"><span class="block text-nuGold-300/80 mb-0.5">Tahajud</span><span class="block font-bold text-white text-[11px]" id="tahajud">--:--</span></div>
+                        <div class="bg-nuGold-400/10 p-1.5 rounded-lg border border-nuGold-400/20"><span class="block text-nuGold-300/80 mb-0.5">Terbit</span><span class="block font-bold text-white text-[11px]" id="terbit">--:--</span></div>
+                        <div class="bg-nuGold-400/10 p-1.5 rounded-lg border border-nuGold-400/20"><span class="block text-nuGold-300/80 mb-0.5">Dhuha</span><span class="block font-bold text-white text-[11px]" id="dhuha">--:--</span></div>
+                    </div>
                     <div id="prayerCountdownBox" class="rounded-lg border border-nuGold-400/30 bg-nuGold-400/10 px-3 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-nuGold-400 animate-pulse"></span><span class="text-[10px] font-semibold text-nuGold-300">Menuju <span id="nextPrayerName">---</span></span></div>
                         <span id="nextPrayerCountdown" class="text-sm font-bold text-nuGold-400 tabular-nums">--:--:--</span>
@@ -3145,7 +3150,21 @@
                 return String(h).padStart(2, '0') + ":" + String(m).padStart(2, '0');
             };
 
+            // Waktu tambahan: Terbit (ihtiyati -2 mnt), Dhuha (matahari ±4,5° di atas ufuk), Tahajud (awal 1/3 malam terakhir)
+            const dhuhaHourAngle = getHourAngle((90 - 4.5) * Math.PI / 180);
+            const subuhRaw = (subuhHourAngle === null) ? null : meridian - subuhHourAngle;
+            const maghribRaw = (sunsetHourAngle === null) ? null : meridian + sunsetHourAngle;
+            let tahajudRaw = null;
+            if (subuhRaw !== null && maghribRaw !== null) {
+                const malam = (subuhRaw + 24) - maghribRaw;
+                tahajudRaw = subuhRaw - malam / 3;
+            }
+            const minus2 = (h) => (h === null ? null : h - 2 / 60);   // batalkan ihtiyati +2 menit pada formatTime
+
             return {
+                tahajud: formatTime(minus2(tahajudRaw)),
+                terbit: formatTime(sunsetHourAngle === null ? null : meridian - sunsetHourAngle - 2 / 60),
+                dhuha: formatTime(dhuhaHourAngle === null ? null : meridian - dhuhaHourAngle),
                 shubuh: formatTime(meridian - subuhHourAngle),
                 dzuhur: formatTime(meridian),
                 ashar: formatTime(meridian + asharHourAngle),
@@ -3163,6 +3182,9 @@
             document.getElementById('ashar').innerText = calculated.ashar;
             document.getElementById('maghrib').innerText = calculated.maghrib;
             document.getElementById('isya').innerText = calculated.isya;
+            [['tahajud','tahajud'],['terbit','terbit'],['dhuha','dhuha']].forEach(function(x) {
+                var el = document.getElementById(x[0]); if (el) el.innerText = calculated[x[1]];
+            });
 
             try { setIslamicCalendar(); } catch(e) {}
 
