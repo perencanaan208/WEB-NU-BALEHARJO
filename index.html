@@ -761,8 +761,8 @@
 
         <!-- Navigasi tab khusus HP -->
         <div id="mobTabBar" class="lg:hidden self-center w-full max-w-xs flex gap-1 p-1 bg-emerald-950/70 border border-white/10 rounded-full backdrop-blur-sm">
-            <button type="button" data-mtab-btn="beranda" onclick="setMobTab('beranda')" class="flex-1 py-2 rounded-full text-xs font-bold transition bg-nuGold-500 text-nuGreen-950"><i class="fas fa-home mr-1.5"></i>Beranda</button>
-            <button type="button" data-mtab-btn="info" onclick="setMobTab('info')" class="flex-1 py-2 rounded-full text-xs font-bold transition text-white/70"><i class="fas fa-circle-info mr-1.5"></i>Info</button>
+            <button type="button" data-mtab-btn="beranda" onclick="setMobTab('beranda')" class="flex-1 py-2 rounded-full text-xs font-bold transition border bg-nuGold-500 text-nuGreen-950 border-transparent"><i class="fas fa-home mr-1.5"></i>Beranda</button>
+            <button type="button" data-mtab-btn="info" onclick="setMobTab('info')" class="flex-1 py-2 rounded-full text-xs font-bold transition border bg-nuGold-500/15 text-nuGold-300 border-nuGold-400/30"><i class="fas fa-circle-info mr-1.5"></i>Info</button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
@@ -5024,7 +5024,10 @@
                 var on = b.getAttribute('data-mtab-btn') === tab;
                 b.classList.toggle('bg-nuGold-500', on);
                 b.classList.toggle('text-nuGreen-950', on);
-                b.classList.toggle('text-white/70', !on);
+                b.classList.toggle('border-transparent', on);
+                b.classList.toggle('bg-nuGold-500/15', !on);
+                b.classList.toggle('text-nuGold-300', !on);
+                b.classList.toggle('border-nuGold-400/30', !on);
             });
             try { sessionStorage.setItem('prnu_mtab', tab); } catch(e) {}
             if (tab === 'info') {   // viewport agenda baru terukur setelah tampil
