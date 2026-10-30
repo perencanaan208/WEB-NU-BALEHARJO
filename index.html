@@ -3882,7 +3882,8 @@
         // ═══════════════════════════════════════════════
         // BERANDA SLIDER: Berita + Galeri Tab + Auto-slide
         // ═══════════════════════════════════════════════
-        var _bsState = { berita: { idx: 0, total: 0, timer: null }, galeri: { page: 0 } };
+        var _bsState = { berita: { idx: 0, total: 0, timer: null, lock: false }, galeri: { page: 0 } };
+        var _bsSig = '';
 
         window.switchBerandaTab = function(tab, btn) {
             document.querySelectorAll('.bs-tab-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -3897,29 +3898,57 @@
 
         window.bsMove = function(type, dir) {
             if (type === 'berita') {
-                var s = _bsState.berita;
-                s.idx = (s.idx + dir + s.total) % s.total;
-                bsApplyBerita(s.idx);
+                if (dir < 0) bsPrevBerita(); else bsNextBerita();
                 bsResetTimer();
             }
         };
 
-        function bsApplyBerita(idx) {
-            var perView = 1;
+        // Track berisi N slide + 1 klon slide pertama di ujung → putaran selalu maju, tanpa slide kosong
+        function bsApplyBerita(idx, instant) {
             var track = document.getElementById('beritaTrack');
-            if (track) track.style.transform = 'translateX(-' + (idx * 100) + '%)';
-            document.querySelectorAll('#beritaDots .bs-dot').forEach(function(d,i){
-                d.classList.toggle('active');
+            var s = _bsState.berita;
+            if (track) {
+                if (instant) track.style.transition = 'none';
+                track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                if (instant) { void track.offsetHeight; track.style.transition = ''; }
+            }
+            var cur = s.total ? idx % s.total : 0;
+            document.querySelectorAll('#beritaDots .bs-dot').forEach(function(d, i) {
+                d.classList.toggle('active', i === cur);
             });
-            _bsState.berita.idx = idx;
+            s.idx = idx;
+        }
+
+        function bsNextBerita() {
+            var s = _bsState.berita;
+            if (s.total < 2 || s.lock) return;
+            var next = s.idx + 1;
+            bsApplyBerita(next);
+            if (next >= s.total) {                 // sampai klon → lompat ke slide asli pertama tanpa animasi
+                s.lock = true;
+                setTimeout(function() { bsApplyBerita(0, true); s.lock = false; }, 480);
+            }
+        }
+
+        function bsPrevBerita() {
+            var s = _bsState.berita;
+            if (s.total < 2 || s.lock) return;
+            if (s.idx <= 0) {                      // dari slide pertama mundur → mulai dari klon (sama persis) lalu geser mundur
+                bsApplyBerita(s.total, true);
+                s.lock = true;
+                requestAnimationFrame(function() { requestAnimationFrame(function() {
+                    bsApplyBerita(s.total - 1);
+                    setTimeout(function() { s.lock = false; }, 480);
+                }); });
+            } else {
+                bsApplyBerita(s.idx - 1);
+            }
         }
 
         function bsResetTimer() {
             if (_bsState.berita.timer) clearInterval(_bsState.berita.timer);
-            _bsState.berita.timer = setInterval(function(){
-                var s = _bsState.berita;
-                bsApplyBerita((s.idx + 1) % s.total);
-            }, 5000);
+            if (_bsState.berita.total < 2) return;
+            _bsState.berita.timer = setInterval(bsNextBerita, 5000);
         }
 
         window.renderBerandaBerita = function() {
@@ -3929,6 +3958,7 @@
 
             var items = (AppState.news || []).slice(0, 6);
             if (items.length === 0) {
+                _bsSig = '';
                 track.innerHTML = '<div class="bs-slide"><p class="text-slate-400 dark:text-slate-500 text-sm italic text-center py-6">Belum ada berita.</p></div>';
                 return;
             }
@@ -3939,15 +3969,24 @@
                 sosial:   'bg-blue-100 text-blue-800',
             };
 
-            track.innerHTML = items.map(function(item) {
+            // Data sama persis → jangan bangun ulang (mencegah slide berkedip/kosong & reset posisi)
+            var sig = items.map(function(it) { return [it.id, it.title, it.img, it.category, it.summary, kmtCountOf(it.id)].join('|'); }).join('||');
+            if (sig === _bsSig && track.children.length) return;
+            _bsSig = sig;
+            var keepIdx = _bsState.berita.idx % Math.max(1, items.length);
+
+            // Muat semua gambar lebih dulu supaya slide tidak muncul kosong
+            items.forEach(function(it) { if (it.img) { var pre = new Image(); pre.src = it.img; } });
+
+            var slidesHtml = items.map(function(item) {
                 var cat = catColor[item.category] || 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300';
                 var img = item.img || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400';
                 var dateStr = '';
                 try { var d = new Date(item.date); if(!isNaN(d)) dateStr = d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); } catch(e){}
                 return '<div class="bs-slide-hero">' +
                     '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 h-full flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
-                        '<div class="relative overflow-hidden" style="aspect-ratio:16/7">' +
-                            '<img src="' + img + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">' +
+                        '<div class="relative overflow-hidden bg-emerald-900/50" style="aspect-ratio:16/7">' +
+                            '<img src="' + img + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" decoding="async" onerror="this.style.visibility=\'hidden\'">' +
                             (item.category ? '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-nuGold-400 text-nuGreen-950">' + item.category + '</span>' : '') +
                         '</div>' +
                         '<div class="p-2.5 flex flex-col flex-1">' +
@@ -3958,17 +3997,19 @@
                         '</div>' +
                     '</div>' +
                 '</div>';
-            }).join('');
+            });
+            track.innerHTML = slidesHtml.join('') + (items.length > 1 ? slidesHtml[0] : '');
 
             // Dots
             _bsState.berita.total = items.length;
+            _bsState.berita.lock = false;
             if (dots) {
                 dots.innerHTML = items.map(function(_,i){
                     return '<span class="bs-dot' + (i===0?' active':'') + '" onclick="bsApplyBerita('+i+');bsResetTimer();"></span>';
                 }).join('');
             }
 
-            bsApplyBerita(0);
+            bsApplyBerita(keepIdx, true);
             bsResetTimer();
         };
 
