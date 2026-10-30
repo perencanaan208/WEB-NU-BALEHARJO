@@ -145,6 +145,8 @@
         })();
     </script>
     <style>
+        /* ── Perpindahan slide halus (berita, pengurus, agenda) ── */
+        #beritaTrack, #pengurusSliderTrack { transition: transform .9s cubic-bezier(.45,.05,.2,1); will-change: transform; backface-visibility:hidden; }
         /* ── Beranda HP: 2 tab (Beranda | Info) agar tidak scroll panjang ── */
         @media (max-width:1023.98px){
             #beranda[data-mtab="beranda"] [data-mtab-item="info"]{display:none!important}
@@ -888,7 +890,7 @@
                         <span id="agendaCount" class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full hidden"></span>
                     </div>
                     <div id="agendaViewport" class="relative overflow-hidden flex-1" style="min-height:190px">
-                        <div id="agendaTrack" class="absolute left-0 right-0 top-0" style="transition:transform .6s cubic-bezier(.22,1,.36,1);">
+                        <div id="agendaTrack" class="absolute left-0 right-0 top-0" style="transition:transform .9s cubic-bezier(.45,.05,.2,1);will-change:transform;">
                             <div class="ag-slide flex items-center"><div class="animate-pulse bg-white/10 rounded-xl w-full h-24"></div></div>
                         </div>
                     </div>
@@ -3926,7 +3928,7 @@
             bsApplyBerita(next);
             if (next >= s.total) {                 // sampai klon → lompat ke slide asli pertama tanpa animasi
                 s.lock = true;
-                setTimeout(function() { bsApplyBerita(0, true); s.lock = false; }, 480);
+                setTimeout(function() { bsApplyBerita(0, true); s.lock = false; }, 950);
             }
         }
 
@@ -3938,7 +3940,7 @@
                 s.lock = true;
                 requestAnimationFrame(function() { requestAnimationFrame(function() {
                     bsApplyBerita(s.total - 1);
-                    setTimeout(function() { s.lock = false; }, 480);
+                    setTimeout(function() { s.lock = false; }, 950);
                 }); });
             } else {
                 bsApplyBerita(s.idx - 1);
@@ -3948,7 +3950,7 @@
         function bsResetTimer() {
             if (_bsState.berita.timer) clearInterval(_bsState.berita.timer);
             if (_bsState.berita.total < 2) return;
-            _bsState.berita.timer = setInterval(bsNextBerita, 5000);
+            _bsState.berita.timer = setInterval(bsNextBerita, 5500);
         }
 
         window.renderBerandaBerita = function() {
@@ -3956,7 +3958,7 @@
             var dots  = document.getElementById('beritaDots');
             if (!track) return;
 
-            var items = (AppState.news || []).slice(0, 6);
+            var items = (AppState.news || []).slice(0);   // semua berita tampil di slide
             if (items.length === 0) {
                 _bsSig = '';
                 track.innerHTML = '<div class="bs-slide"><p class="text-slate-400 dark:text-slate-500 text-sm italic text-center py-6">Belum ada berita.</p></div>';
@@ -3978,6 +3980,7 @@
             // Muat semua gambar lebih dulu supaya slide tidak muncul kosong
             items.forEach(function(it) { if (it.img) { var pre = new Image(); pre.src = it.img; } });
 
+            var plain = function(t) { var d = document.createElement('div'); d.innerHTML = String(t == null ? '' : t); return agEsc((d.textContent || '').replace(/\s+/g, ' ').trim()); };
             var slidesHtml = items.map(function(item) {
                 var cat = catColor[item.category] || 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300';
                 var img = item.img || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400';
@@ -3986,13 +3989,13 @@
                 return '<div class="bs-slide-hero">' +
                     '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-white/5 h-full flex flex-col" onclick="showNewsDetail(' + item.id + ')">' +
                         '<div class="relative overflow-hidden bg-emerald-900/50" style="aspect-ratio:16/7">' +
-                            '<img src="' + img + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" decoding="async" onerror="this.style.visibility=\'hidden\'">' +
-                            (item.category ? '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-nuGold-400 text-nuGreen-950">' + item.category + '</span>' : '') +
+                            '<img src="' + agEsc(img) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" decoding="async" onerror="this.style.visibility=\'hidden\'">' +
+                            (item.category ? '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-nuGold-400 text-nuGreen-950">' + plain(item.category) + '</span>' : '') +
                         '</div>' +
                         '<div class="p-2.5 flex flex-col flex-1">' +
                             '<p class="text-[9px] text-white/50 mb-1">' + (dateStr||item.date) + kmtBadgeHero(item.id) + '</p>' +
-                            '<h3 class="font-bold text-white text-[11px] leading-snug mb-1 line-clamp-2 group-hover:text-nuGold-300">' + item.title + '</h3>' +
-                            '<p class="text-[10px] text-white/60 line-clamp-2 flex-1">' + item.summary + '</p>' +
+                            '<h3 class="font-bold text-white text-[11px] leading-snug mb-1 line-clamp-2 group-hover:text-nuGold-300">' + plain(item.title) + '</h3>' +
+                            '<p class="text-[10px] text-white/60 line-clamp-2 flex-1">' + plain(item.summary) + '</p>' +
                             '<span class="mt-1.5 text-[9px] font-semibold text-nuGold-400 flex items-center gap-1">Baca <i class="fas fa-arrow-right text-[8px]"></i></span>' +
                         '</div>' +
                     '</div>' +
@@ -4971,7 +4974,7 @@
             tr.style.transition = 'none';
             tr.style.transform = 'translateY(-' + (_agSlider.idx * h) + 'px)';
             void tr.offsetHeight;
-            tr.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+            tr.style.transition = 'transform .9s cubic-bezier(.45,.05,.2,1)';
         }
         function agDots() {
             var dots = document.getElementById('agendaDots'); if (!dots) return;
@@ -4994,13 +4997,13 @@
                     tr.style.transition = 'none';
                     tr.style.transform = 'translateY(0)';
                     void tr.offsetHeight;
-                    tr.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
-                }, 650);
+                    tr.style.transition = 'transform .9s cubic-bezier(.45,.05,.2,1)';
+                }, 950);
             }
         }
         function agStart() {
             clearInterval(_agSlider.timer);
-            if (_agSlider.n > 1) _agSlider.timer = setInterval(agNext, 4500);
+            if (_agSlider.n > 1) _agSlider.timer = setInterval(agNext, 5000);
         }
 
         window.renderAgendaCard = function() {
@@ -5946,22 +5949,50 @@
         }
 
         // ══ Slider Pengurus ══
-        var _pSlider = { idx:0, total:0, timer:null };
-        function bsApplyPengurus(idx) {
+        var _pSlider = { idx:0, total:0, timer:null, lock:false, sig:'' };
+        function bsApplyPengurus(idx, instant) {
             var track = document.getElementById('pengurusSliderTrack');
             if (!track || !_pSlider.total) return;
-            _pSlider.idx = ((idx%_pSlider.total)+_pSlider.total)%_pSlider.total;
-            track.style.transform = 'translateX(-'+(_pSlider.idx*100)+'%)';
+            if (instant) track.style.transition = 'none';
+            track.style.transform = 'translateX(-'+(idx*100)+'%)';
+            if (instant) { void track.offsetHeight; track.style.transition = ''; }
+            var cur = idx % _pSlider.total;
             document.querySelectorAll('#pengurusDots .p-dot').forEach(function(d,i){
-                d.style.background = i===_pSlider.idx?'rgba(255,200,50,0.9)':'rgba(255,255,255,0.3)';
-                d.style.width      = i===_pSlider.idx?'16px':'6px';
+                d.style.background = i===cur?'rgba(255,200,50,0.9)':'rgba(255,255,255,0.3)';
+                d.style.width      = i===cur?'16px':'6px';
             });
+            _pSlider.idx = idx;
+        }
+        function bsNextPengurus() {         // track = N slide + 1 klon slide pertama → putaran maju terus, mulus
+            var s = _pSlider;
+            if (s.total < 2 || s.lock) return;
+            var next = s.idx + 1;
+            bsApplyPengurus(next);
+            if (next >= s.total) {
+                s.lock = true;
+                setTimeout(function() { bsApplyPengurus(0, true); s.lock = false; }, 950);
+            }
+        }
+        function bsPrevPengurus() {
+            var s = _pSlider;
+            if (s.total < 2 || s.lock) return;
+            if (s.idx <= 0) {
+                bsApplyPengurus(s.total, true);
+                s.lock = true;
+                requestAnimationFrame(function() { requestAnimationFrame(function() {
+                    bsApplyPengurus(s.total - 1);
+                    setTimeout(function() { s.lock = false; }, 950);
+                }); });
+            } else {
+                bsApplyPengurus(s.idx - 1);
+            }
         }
         function bsResetPengurus() {
             if (_pSlider.timer) clearInterval(_pSlider.timer);
-            _pSlider.timer = setInterval(function(){ bsApplyPengurus(_pSlider.idx+1); }, 4000);
+            if (_pSlider.total < 2) return;
+            _pSlider.timer = setInterval(bsNextPengurus, 4500);
         }
-        window.bsMovePengurus = function(dir){ bsApplyPengurus(_pSlider.idx+dir); bsResetPengurus(); };
+        window.bsMovePengurus = function(dir){ if (dir < 0) bsPrevPengurus(); else bsNextPengurus(); bsResetPengurus(); };
         window.renderBerandaPengurus = function() {
             var track = document.getElementById('pengurusSliderTrack');
             var dots  = document.getElementById('pengurusDots');
@@ -5972,14 +6003,19 @@
                 return;
             }
             var gc = {'Pengurus NU':'bg-nuGold-500 text-nuGreen-950','Muslimat':'bg-emerald-400 text-emerald-950','Fatayat':'bg-teal-400 text-teal-950','Ansor':'bg-amber-400 text-amber-950','IPNU':'bg-blue-400 text-blue-950','IPPNU':'bg-pink-400 text-pink-950','UPZISNU':'bg-lime-400 text-lime-950','KOKAM':'bg-red-400 text-red-950','Pagar Nusa':'bg-orange-400 text-orange-950'};
+            var pSig = list.map(function(p) { return [p.name, p.role, p.group, p.photo].join('|'); }).join('||');
+            if (pSig === _pSlider.sig && track.children.length) return;   // data sama → jangan bangun ulang
+            _pSlider.sig = pSig;
+            var pKeep = _pSlider.idx % list.length;
+            list.forEach(function(p) { if (p.photo) { var pre = new Image(); pre.src = p.photo; } });
             _pSlider.total = list.length;
-            _pSlider.idx   = 0;
-            track.innerHTML = list.map(function(p) {
+            _pSlider.lock = false;
+            var pHtml = list.map(function(p) {
                 var badge = gc[p.group]||'bg-white/20 text-white';
                 var foto  = p.photo||('https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0]));
                 return '<div class="bs-slide-hero shrink-0 w-full" style="height:260px">' +
                     '<div class="group cursor-pointer rounded-lg overflow-hidden border border-white/20 hover:border-nuGold-400/50 transition bg-nuGreen-900 relative h-full" onclick="showPage(\'pengurus\')">' +
-                        '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" loading="lazy" ' +
+                        '<img src="'+foto+'" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500" decoding="async" ' +
                             'onerror="this.src=\'https://placehold.co/400x500/14532d/d4a831?text='+encodeURIComponent((p.name||'?')[0])+'\'">' +
                         '<span class="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full '+badge+'">'+( p.group||'')+'</span>' +
                         '<div class="absolute bottom-0 left-0 right-0 px-3 py-2" style="background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,rgba(0,0,0,0.45) 60%,transparent 100%)">' +
@@ -5988,13 +6024,14 @@
                         '</div>' +
                     '</div>' +
                 '</div>';
-            }).join('');
+            });
+            track.innerHTML = pHtml.join('') + (list.length > 1 ? pHtml[0] : '');
             if (dots) {
                 dots.innerHTML = list.map(function(_,i){
                     return '<span class="p-dot cursor-pointer rounded-full transition-all duration-300" style="height:6px;background:rgba(255,255,255,0.3);width:6px" onclick="bsApplyPengurus('+i+');bsResetPengurus();"></span>';
                 }).join('');
             }
-            bsApplyPengurus(0);
+            bsApplyPengurus(pKeep, true);
             bsResetPengurus();
         };
 
