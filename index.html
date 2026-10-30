@@ -4887,7 +4887,7 @@
             var d = agParse(str); if (!d) return null;
             return Math.round((d.getTime() - agToday().getTime()) / 86400000);
         }
-        function agLabel(diff) { return diff === 0 ? 'Hari Ini' : 'H-' + diff; }
+        function agLabel(diff) { return diff === 0 ? 'Sedang Berjalan' : 'H-' + diff; }
         function getActiveAgenda() {
             return (AppState.agenda || []).filter(function(a) {
                 var d = agDiff(a.tanggal); return d !== null && d >= 0;
