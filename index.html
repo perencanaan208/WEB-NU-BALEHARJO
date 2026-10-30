@@ -3805,6 +3805,7 @@
                     var fresh = parseData(raw);
                     if (!fresh || fresh.error) {
                         failed = true; refreshBadge();
+                        try { prnuRestoreAdminSession(); } catch(e) {}
                         BOOT.startMedia();      // tetap coba foto (mungkin dari cache/jalur lain)
                         return;
                     }
@@ -3816,6 +3817,7 @@
                     // Jangan menimpa tampilan bila admin sedang login & mengedit
                     if (!AppState.isAdminLoggedIn && (!dataShown || changed)) showData(fresh);
                     dataShown = true;
+                    try { prnuRestoreAdminSession(); } catch(e) {}   // pulihkan sesi admin setelah data terbaru siap
                     setBadge(null);
                     maybeHide();
                     // Core sudah beres → baru muat foto (tidak berebut sinyal dengan core)
@@ -3833,6 +3835,7 @@
             if (!GAS) {
                 // Tidak ada GAS (preview lokal)
                 renderAllPublicComponents();
+                try { prnuRestoreAdminSession(); } catch(e) {}
                 setTimeout(hideSplash, 800);
             } else {
                 // 1) Data terakhir dari cache (bila ada) — teks + foto
@@ -6271,6 +6274,81 @@
             if (tagEl) tagEl.textContent = (ps[tagKey] && ps[tagKey].trim()) || ps.tag || "Struktur Kepengurusan";
         };
 
+        // ── Sesi admin: bertahan saat REFRESH, hilang saat tab ditutup / halaman dibuka ulang ──
+        function prnuSessPatch(obj) {
+            try {
+                var raw = sessionStorage.getItem('prnu_admin_sess'); if (!raw) return;
+                var o = JSON.parse(raw); Object.keys(obj).forEach(function(k) { o[k] = obj[k]; });
+                sessionStorage.setItem('prnu_admin_sess', JSON.stringify(o));
+            } catch(e) {}
+        }
+        var _prnuSessDone = false;
+        window.prnuRestoreAdminSession = function() {
+            if (_prnuSessDone) return; _prnuSessDone = true;
+            var sess = null;
+            try { sess = JSON.parse(sessionStorage.getItem('prnu_admin_sess') || 'null'); } catch(e) {}
+            if (!sess) return;
+            // Hanya pertahankan bila halaman dimuat ulang (refresh). Masuk/kembali ke halaman lagi → logout otomatis.
+            var navType = '';
+            try { var nav = performance.getEntriesByType('navigation')[0]; navType = nav ? nav.type : ''; } catch(e) {}
+            var fresh = (Date.now() - (sess.ts || 0)) < 5.5 * 3600 * 1000;   // token server berlaku 6 jam
+            if (navType !== 'reload' || !fresh) { try { sessionStorage.removeItem('prnu_admin_sess'); } catch(e) {} return; }
+
+            window.PRNU_ADMIN_TOKEN = sess.token || '';
+            AppState.isAdminLoggedIn = true;
+            AppState.adminRole = sess.role === 'kontributor' ? 'kontributor' : 'superadmin';
+            AppState.adminUsername = sess.username || '';
+            AppState.adminNama = sess.nama || sess.username || '';
+
+            try {
+                document.getElementById('adminBtnText').innerText = "Panel Admin";
+                document.getElementById('mobileAdminBtnText').innerText = "Panel Admin";
+                var loginBtn = document.getElementById('adminLoginBtn');
+                if (loginBtn) loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 text-sm";
+                var icon = document.getElementById('adminLockIcon');
+                if (icon) icon.className = "fas fa-desktop text-nuGreen-800";
+            } catch(e) {}
+
+            try {
+                document.getElementById('editHeroTitle').value = AppState.homepageSettings.heroTitle;
+                document.getElementById('editHeroSubtitle').value = AppState.homepageSettings.heroSubtitle;
+                document.getElementById('editSelayangPandang').value = AppState.profileSettings.selayangPandang;
+                document.getElementById('editPesanQuote').value = AppState.profileSettings.pesanQuote;
+                document.getElementById('editPesanAuthor').value = AppState.profileSettings.pesanAuthor;
+                document.getElementById('editPesanAuthorTitle').value = AppState.profileSettings.pesanAuthorTitle;
+            } catch(e) {}
+            try { loadLayananToForm(); } catch(e) {}
+            try { loadBanomToForm(); } catch(e) {}
+            try { applyAdminRoleUI(AppState.adminRole); } catch(e) {}
+            try { loadAdminNewsList(); } catch(e) {}
+            try { if (AppState.adminRole === 'superadmin') loadUsersAdmin(); } catch(e) {}
+            try { renderAdminFinanceTable(); renderAdminPengurusTable(); renderInbox(); } catch(e) {}
+            try {
+                google.script.run
+                    .withSuccessHandler(function(r) {
+                        try {
+                            var rows = JSON.parse(r) || [];
+                            AppState.messages = rows.map(function(x) {
+                                return { id: Number(x.ID), sender: x.NAMA || '', phone: x.WA || '', category: 'Pesan Masuk', message: x.PESAN || '' };
+                            });
+                            renderInbox();
+                        } catch(e) {}
+                    })
+                    .withFailureHandler(function(){})
+                    .getInbox();
+            } catch(e) {}
+            try { if (sess.role !== 'kontributor') window.loadKomentarAdmin(true); } catch(e) {}
+
+            if (sess.open) {      // panel admin sedang terbuka saat refresh → buka lagi di tab yang sama
+                setTimeout(function() {
+                    try {
+                        openAdminPanelModal();
+                        switchAdminTab(sess.tab || (AppState.adminRole === 'kontributor' ? 'berita-manage' : 'beranda-settings'));
+                    } catch(e) {}
+                }, 150);
+            }
+        };
+
         window.handleAdminBtnClick = function() {
             if (AppState.isAdminLoggedIn) {
                 window.openAdminPanelModal();
@@ -6334,6 +6412,10 @@
             const successAuth = (authInfo) => {
                 authInfo = authInfo || {};
                 window.PRNU_ADMIN_TOKEN = authInfo.token || '';
+                try { sessionStorage.setItem('prnu_admin_sess', JSON.stringify({
+                    token: authInfo.token || '', role: authInfo.role || 'superadmin',
+                    username: authInfo.username || user, nama: authInfo.nama || user, ts: Date.now(), open: false, tab: ''
+                })); } catch(e) {}
                 AppState.isAdminLoggedIn = true;
                 AppState.adminRole = authInfo.role === 'kontributor' ? 'kontributor' : 'superadmin';
                 AppState.adminUsername = authInfo.username || user;
@@ -6426,7 +6508,6 @@
 
         // Tampilkan modal konfirmasi logout
         window.handleLogout = function() {
-            window.PRNU_ADMIN_TOKEN = '';
             const modal = document.getElementById('logoutConfirmModal');
             const dialog = document.getElementById('logoutDialog');
             if (!modal || !dialog) { doLogout(); return; }
@@ -6470,6 +6551,8 @@
 
         // Proses logout yang sebenarnya
         function doLogout() {
+            window.PRNU_ADMIN_TOKEN = '';
+            try { sessionStorage.removeItem('prnu_admin_sess'); } catch(e) {}
             AppState.isAdminLoggedIn = false;
             document.getElementById('adminBtnText').innerText = "Login Admin";
             document.getElementById('mobileAdminBtnText').innerText = "Login Admin";
@@ -6490,6 +6573,7 @@
             modal.style.display = 'flex';
             modal.style.flexDirection = 'column';
             document.body.style.overflow = 'hidden';
+            prnuSessPatch({ open: true });
             try { populateSiteSettingsForm(); } catch(e) {}
             try { renderAdminPengurusTable(); } catch(e) {}
             try { renderAdminGaleriGrid(); } catch(e) {}
@@ -6501,6 +6585,7 @@
             if (!modal) return;
             modal.style.display = 'none';
             document.body.style.overflow = '';
+            prnuSessPatch({ open: false });
         };
 
         // Label tab untuk ditampilkan di tombol hamburger mobile
@@ -6539,6 +6624,7 @@
         }
 
         window.switchAdminTab = function(tabName) {
+            prnuSessPatch({ tab: tabName });
             // Pengaman: Kontributor hanya boleh mengakses tab Kelola Berita,
             // walau mencoba memanggil switchAdminTab lain secara manual.
             if (AppState.adminRole === 'kontributor' && tabName !== 'berita-manage') {
