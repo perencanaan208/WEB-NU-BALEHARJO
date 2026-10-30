@@ -2892,6 +2892,7 @@
             adminUsername: '',
             adminNama: '',
             newsAdmin: [],       // daftar berita LENGKAP (semua status) khusus panel admin
+            kmtCounts: {},       // jumlah komentar tampil per berita: { newsId: n }
             agenda: [],          // daftar agenda terdekat: {id, tanggal:'YYYY-MM-DD', waktu, judul, lokasi}
             homepageSettings: {
                 heroTitle: "Merawat Jagat <br><span class=\"text-transparent bg-clip-text bg-gradient-to-r from-nuGold-400 to-amber-300 text-glow\">Membangun Peradaban</span> <br>di Bumi Baleharjo",
@@ -3946,7 +3947,7 @@
                             (item.category ? '<span class="absolute top-2 left-2 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-nuGold-400 text-nuGreen-950">' + item.category + '</span>' : '') +
                         '</div>' +
                         '<div class="p-2.5 flex flex-col flex-1">' +
-                            '<p class="text-[9px] text-white/50 mb-1">' + (dateStr||item.date) + '</p>' +
+                            '<p class="text-[9px] text-white/50 mb-1">' + (dateStr||item.date) + kmtBadgeHero(item.id) + '</p>' +
                             '<h3 class="font-bold text-white text-[11px] leading-snug mb-1 line-clamp-2 group-hover:text-nuGold-300">' + item.title + '</h3>' +
                             '<p class="text-[10px] text-white/60 line-clamp-2 flex-1">' + item.summary + '</p>' +
                             '<span class="mt-1.5 text-[9px] font-semibold text-nuGold-400 flex items-center gap-1">Baca <i class="fas fa-arrow-right text-[8px]"></i></span>' +
@@ -4682,6 +4683,7 @@
         });
 
         function renderAllPublicComponents() {
+            if (!window._kmtCountsRequested) { window._kmtCountsRequested = true; setTimeout(function() { try { loadKomentarCounts(); } catch(e) {} }, 600); }
             try { renderSiteSettings(); } catch(e) {}
             try { renderBerandaBerita(); } catch(e) {}
             try { renderBerandaPengurus(); } catch(e) {}
@@ -5119,6 +5121,28 @@
             if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
         })();
 
+        // ── Jumlah komentar per berita ──
+        function kmtCountOf(id) { return Number((AppState.kmtCounts || {})[String(id)]) || 0; }
+        function kmtBadgeList(id) {
+            var n = kmtCountOf(id); if (!n) return '';
+            return '<span>•</span><span class="text-nuGreen-800 dark:text-nuGreen-500 font-semibold"><i class="far fa-comment-dots mr-1"></i>' + n + ' komentar</span>';
+        }
+        function kmtBadgeHero(id) {
+            var n = kmtCountOf(id); if (!n) return '';
+            return '<span class="text-[9px] text-nuGold-300 ml-2"><i class="far fa-comment-dots mr-0.5"></i>' + n + ' komentar</span>';
+        }
+        window.loadKomentarCounts = function() {
+            if (typeof GAS === 'undefined' || !GAS) return;
+            google.script.run
+                .withSuccessHandler(function(raw) {
+                    try { var o = JSON.parse(raw); AppState.kmtCounts = (o && typeof o === 'object') ? o : {}; } catch(e) { return; }
+                    try { renderBerandaBerita(); } catch(e) {}
+                    try { renderNewsList(); } catch(e) {}
+                })
+                .withFailureHandler(function() {})
+                .getKomentarCounts();
+        };
+
         function renderHomepageContent() {
             document.getElementById('pubHeroTitle').innerHTML = AppState.homepageSettings.heroTitle;
             document.getElementById('pubHeroSubtitle').innerText = AppState.homepageSettings.heroSubtitle;
@@ -5256,6 +5280,7 @@
                                     <span><i class="far fa-calendar-alt mr-1"></i>${fmtNewsDate(item.date)}</span>
                                     <span>•</span>
                                     <span><i class="far fa-user mr-1"></i>${item.author}</span>
+                                    ${kmtBadgeList(item.id)}
                                 </div>
                                 <h3 class="font-bold text-slate-900 dark:text-slate-100 line-clamp-2 hover:text-nuGreen-800 transition cursor-pointer font-serif" onclick="window.openNewsDetail(${item.id})">${item.title}</h3>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">${item.summary}</p>
@@ -5371,6 +5396,7 @@
                     if (reqId !== _kmt.newsId) return;                 // pengunjung sudah pindah berita
                     try { _kmt.list = JSON.parse(raw) || []; } catch (e) { _kmt.list = []; }
                     _kmt.shown = 10;
+                    AppState.kmtCounts[String(reqId)] = _kmt.list.length;   // jumlah akurat saat detail dibuka
                     kmtRender();
                 })
                 .withFailureHandler(function() {
@@ -5424,6 +5450,7 @@
                         if (newsId === _kmt.newsId) {
                             if (r === 'success') {
                                 _kmt.list.unshift({ id: komentarId, nama: nama, komentar: teks, ts: Date.now(), balasan: '', balasanTs: 0 });
+                                AppState.kmtCounts[String(newsId)] = _kmt.list.length;
                                 kmtRender();
                             }
                             var f = document.getElementById('newsCommentForm'); if (f) f.reset();
