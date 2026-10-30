@@ -2635,6 +2635,10 @@
                             <i class="fas fa-eye text-nuGreen-700"></i>
                             <span class="font-medium">...</span>
                         </span>
+                        <span id="newsModalKmt" class="hidden items-center gap-3 text-slate-400 dark:text-slate-500">
+                            <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                            <span class="flex items-center gap-1.5"><i class="fas fa-comment-dots text-nuGreen-700"></i><span class="font-medium"></span></span>
+                        </span>
                     </div>
                 </div>
 
@@ -5131,6 +5135,13 @@
             var n = kmtCountOf(id); if (!n) return '';
             return '<span class="text-[9px] text-nuGold-300 ml-2"><i class="far fa-comment-dots mr-0.5"></i>' + n + ' komentar</span>';
         }
+        window.setNewsModalKmt = function(n) {
+            var el = document.getElementById('newsModalKmt'); if (!el) return;
+            n = Number(n) || 0;
+            if (!n) { el.classList.add('hidden'); el.classList.remove('flex'); return; }
+            el.querySelector('span span.font-medium').textContent = n + ' komentar';
+            el.classList.remove('hidden'); el.classList.add('flex');
+        };
         window.loadKomentarCounts = function() {
             if (typeof GAS === 'undefined' || !GAS) return;
             google.script.run
@@ -5370,6 +5381,7 @@
             if (!list) return;
             var cnt = document.getElementById('newsCommentCount');
             if (cnt) cnt.textContent = _kmt.list.length ? '(' + _kmt.list.length + ')' : '';
+            try { setNewsModalKmt(_kmt.list.length); } catch(e) {}
             list.innerHTML = '';
             if (!_kmt.list.length) {
                 list.appendChild(kmtEl('p', 'text-sm text-slate-400 dark:text-slate-500 italic py-3', 'Belum ada komentar. Jadilah yang pertama berkomentar.'));
@@ -5773,6 +5785,7 @@
                         : '0 kali dibaca';
                 }
             }
+            try { setNewsModalKmt(kmtCountOf(id)); } catch(e) {}
             // Increment view di background (tidak tunggu hasil)
             if (window.google && google.script) {
                 google.script.run
