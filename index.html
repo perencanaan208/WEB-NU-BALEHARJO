@@ -2873,6 +2873,12 @@
 
         // Ubah satu baris data News dari backend (GAS) menjadi bentuk yang dipakai frontend.
         // Dipakai baik untuk daftar berita publik (getNews) maupun tabel admin (getNewsAdmin).
+        // Foto default lama (buah / placehold.co) yang mungkin sudah tersimpan di spreadsheet dianggap "tidak ada foto"
+        function prnuCleanImg(u) {
+            u = String(u == null ? '' : u);
+            return /photo-1542838132|placehold\.co/.test(u) ? '' : u;
+        }
+
         function mapNewsRow(r) {
             return {
                 id: Number(r.ID),
@@ -2885,16 +2891,16 @@
                 status: r.STATUS || 'Published',
                 submittedBy: r.SUBMITTEDBY || '',
                 rejectReason: r.ALASAN_TOLAK || '',
-                img: r.IMG || '',
+                img: prnuCleanImg(r.IMG),
                 imgs: (function() {
                     // IMGS dari backend sudah diparsing oleh getNews()/getNewsAdmin() di GAS
-                    if (r.IMGS && Array.isArray(r.IMGS) && r.IMGS.length > 0) return r.IMGS;
+                    if (r.IMGS && Array.isArray(r.IMGS) && r.IMGS.length > 0) { var _c = r.IMGS.map(prnuCleanImg).filter(Boolean); if (_c.length) return _c; }
                     // Fallback: parse string JSON jika belum diparsing
                     if (r.IMGS && typeof r.IMGS === 'string') {
-                        try { var a = JSON.parse(r.IMGS); if (Array.isArray(a) && a.length > 0) return a; } catch(e) {}
+                        try { var a = JSON.parse(r.IMGS); if (Array.isArray(a)) { a = a.map(prnuCleanImg).filter(Boolean); if (a.length > 0) return a; } } catch(e) {}
                     }
                     // Fallback ke IMG tunggal
-                    return r.IMG ? [r.IMG] : [];
+                    return prnuCleanImg(r.IMG) ? [prnuCleanImg(r.IMG)] : [];
                 })()
             };
         }
@@ -3639,7 +3645,7 @@
                         name: r.NAMA || '',
                         role: r.JABATAN || '',
                         group: r.KATEGORI || 'Pengurus NU',
-                        photo: r.FOTO || ''
+                        photo: prnuCleanImg(r.FOTO)
                     };
                 });
             }
@@ -3750,13 +3756,13 @@
                     d.forEach(function(m) {
                         var it = AppState.news.find(function(n) { return n.id === Number(m.ID); });
                         if (!it) return;
-                        if (m.IMG) it.img = m.IMG;
-                        if (m.IMGS && m.IMGS.length) it.imgs = m.IMGS;
+                        if (prnuCleanImg(m.IMG)) it.img = prnuCleanImg(m.IMG);
+                        if (m.IMGS && m.IMGS.length) { var _ci = m.IMGS.map(prnuCleanImg).filter(Boolean); if (_ci.length) it.imgs = _ci; }
                     });
                 } else if (part === 'pengurus' && Array.isArray(d)) {
                     d.forEach(function(m) {
                         var it = AppState.pengurus.find(function(x) { return x.id === Number(m.ID); });
-                        if (it && m.FOTO) it.photo = m.FOTO;
+                        if (it && prnuCleanImg(m.FOTO)) it.photo = prnuCleanImg(m.FOTO);
                     });
                 } else if (part === 'galeri') {
                     applySpreadsheetData({ galeri: d });
@@ -7173,7 +7179,7 @@
             const summary = content.replace(/\n+/g, ' ').substring(0, 150) + (content.length > 150 ? '…' : '');
 
             const saveNews = (imgList) => {
-                const finalImgs = imgList.length > 0 ? imgList : ['https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600'];
+                const finalImgs = imgList.length > 0 ? imgList : [];
                 
                 const _savingNewsId = editingNewsId;
                 const isKontributor = AppState.adminRole === 'kontributor';
@@ -7960,9 +7966,9 @@
             } else {
                 if (editingPengurusId !== null) {
                     const currentItem = AppState.pengurus.find(x => x.id === editingPengurusId);
-                    savePengurus(currentItem ? currentItem.photo : `https://placehold.co/300x300/14532d/ffffff?text=${encodeURIComponent(name)}`);
+                    savePengurus(currentItem ? currentItem.photo : '');
                 } else {
-                    savePengurus(`https://placehold.co/300x300/14532d/ffffff?text=${encodeURIComponent(name)}`);
+                    savePengurus('');
                 }
             }
         }
@@ -8043,7 +8049,7 @@
                         </td>
                         <td class="p-3">
                             <div class="w-11 h-11 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900">
-                                <img src="${item.photo}" onerror="this.src='https://placehold.co/500x500/14532d/ffffff?text=PRNU'" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">
+                                ${item.photo ? `<img src="${item.photo}" onerror="this.style.visibility='hidden'" alt="${item.name}" class="w-full h-full object-cover" loading="lazy">` : `<div class="w-full h-full flex items-center justify-center text-slate-400"><i class="fas fa-user"></i></div>`}
                             </div>
                         </td>
                         <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${item.name}</td>
@@ -9192,7 +9198,7 @@
                 img.src = item.img || item;
                 img.className = 'w-full h-full object-cover transition duration-300 group-hover:scale-105';
                 img.loading = 'lazy';
-                img.onerror = function() { this.src = 'https://placehold.co/300x300/e2e8f0/94a3b8?text=Foto'; };
+                img.onerror = function() { this.style.visibility = 'hidden'; };
 
                 var ov = document.createElement('div');
                 ov.className = 'absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end p-2';
