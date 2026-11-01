@@ -145,6 +145,8 @@
         })();
     </script>
     <style>
+        /* Slide agenda: tiap slide = 100% tinggi viewport (tanpa ukuran px) → selalu 1 agenda per tampilan */
+        #agendaTrack .ag-slide { flex: 0 0 100%; height: 100%; min-height: 0; overflow: hidden; }
         /* ── Perpindahan slide halus (berita, pengurus, agenda) ── */
         #beritaTrack, #pengurusSliderTrack { transition: transform .9s cubic-bezier(.45,.05,.2,1); will-change: transform; backface-visibility:hidden; }
         /* ── Beranda HP: 2 tab (Beranda | Info) agar tidak scroll panjang ── */
@@ -896,7 +898,7 @@
                         <span id="agendaCount" class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full hidden"></span>
                     </div>
                     <div id="agendaViewport" class="relative overflow-hidden flex-1" style="min-height:190px">
-                        <div id="agendaTrack" class="absolute left-0 right-0 top-0" style="transition:transform .9s cubic-bezier(.45,.05,.2,1);will-change:transform;">
+                        <div id="agendaTrack" class="absolute inset-0 flex flex-col" style="transition:transform .9s cubic-bezier(.45,.05,.2,1);will-change:transform;">
                             <div class="ag-slide flex items-center"><div class="animate-pulse bg-white/10 rounded-xl w-full h-24"></div></div>
                         </div>
                     </div>
@@ -4944,7 +4946,7 @@
         var AG_BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
         var AG_BULAN_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         var AG_HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        var _agSlider = { idx: 0, n: 0, h: 0, timer: null, bound: false, dayKey: '' };
+        var _agSlider = { idx: 0, n: 0, h: 0, timer: null, bound: false, dayKey: '', sig: '' };
 
         function agEsc(t) {
             return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) {
@@ -4990,13 +4992,11 @@
         }
 
         function agSize() {
-            var vp = document.getElementById('agendaViewport'), tr = document.getElementById('agendaTrack');
-            if (!vp || !tr) return;
-            var h = vp.clientHeight; if (!h) return;
-            _agSlider.h = h;
-            tr.querySelectorAll('.ag-slide').forEach(function(el) { el.style.height = h + 'px'; });
+            var tr = document.getElementById('agendaTrack');
+            if (!tr) return;
+            _agSlider.h = 1;   // penanda sudah siap; ukuran memakai persen, bukan px
             tr.style.transition = 'none';
-            tr.style.transform = 'translateY(-' + (_agSlider.idx * h) + 'px)';
+            tr.style.transform = 'translateY(-' + (_agSlider.idx * 100) + '%)';
             void tr.offsetHeight;
             tr.style.transition = 'transform .9s cubic-bezier(.45,.05,.2,1)';
         }
@@ -5012,8 +5012,9 @@
         function agNext() {
             var tr = document.getElementById('agendaTrack');
             if (!tr || _agSlider.n < 2 || !_agSlider.h) return;
+            if (_agSlider.idx >= _agSlider.n) return;      // masih menunggu lompat dari klon → jangan geser lagi
             _agSlider.idx++;
-            tr.style.transform = 'translateY(-' + (_agSlider.idx * _agSlider.h) + 'px)';
+            tr.style.transform = 'translateY(-' + (_agSlider.idx * 100) + '%)';
             agDots();
             if (_agSlider.idx >= _agSlider.n) {         // sudah di klon agenda pertama → lompat balik tanpa animasi
                 setTimeout(function() {
@@ -5033,8 +5034,12 @@
         window.renderAgendaCard = function() {
             var tr = document.getElementById('agendaTrack');
             if (!tr) return;
-            clearInterval(_agSlider.timer);
             var list = getActiveAgenda();
+            // Data agenda sama persis → jangan bangun ulang (mencegah slide melompat/berkedip saat data dimuat bertahap)
+            var agSig = agToday().getTime() + '#' + list.map(function(a) { return [a.id, a.tanggal, a.waktu, a.judul, a.lokasi].join('|'); }).join('||');
+            if (agSig === _agSlider.sig && tr.children.length) return;
+            _agSlider.sig = agSig;
+            clearInterval(_agSlider.timer);
             _agSlider.idx = 0; _agSlider.n = list.length; _agSlider.dayKey = agToday().getTime();
             var cnt = document.getElementById('agendaCount');
             if (!list.length) {
