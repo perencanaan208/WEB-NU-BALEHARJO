@@ -802,7 +802,7 @@
                 <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/10 shadow-xl p-4 flex flex-col gap-3 h-full justify-between">
                     <h3 class="text-sm font-bold text-nuGold-400 border-b border-white/10 pb-2 flex items-center justify-between">
                         <span><i class="fas fa-clock mr-1.5"></i>Waktu Shalat</span>
-                        <span class="text-[9px] text-white/50 bg-emerald-900/50 px-1.5 py-0.5 rounded-full"><i class="fas fa-magic mr-0.5"></i>Sragen</span>
+                        <button type="button" id="prayerCityBtn" onclick="openPrayerCityPicker()" title="Pilih wilayah" class="text-[9px] text-white/70 bg-emerald-900/50 hover:bg-emerald-800/80 border border-white/10 px-2 py-0.5 rounded-full transition cursor-pointer"><i class="fas fa-pen mr-1"></i><span id="prayerCityName">Sragen</span></button>
                     </h3>
                     <div class="grid grid-cols-5 gap-1.5 text-center text-[9px] font-semibold">
                         <div class="bg-emerald-900/40 p-1.5 rounded-lg border border-emerald-800/50"><span class="block text-white/60 mb-0.5">Subuh</span><span class="block font-bold text-white text-[11px]" id="shubuh">--:--</span></div>
@@ -3137,10 +3137,198 @@
             reader.readAsDataURL(file);
         }
 
-        function calculateAutomaticPrayerTimes(date) {
-            const lat = -7.3195; // Sukodono, Sragen Latitude
-            const lng = 110.9995; // Sukodono, Sragen Longitude
-            const timezone = 7; // WIB
+        // ── WILAYAH JADWAL SHALAT (default Sragen, pengunjung bisa memilih kota lain) ──
+        var PRAYER_CITIES_RAW = [
+            ["Banda Aceh", "Aceh", 5.5483, 95.3238, 7],
+            ["Lhokseumawe", "Aceh", 5.18, 97.15, 7],
+            ["Medan", "Sumatera Utara", 3.5952, 98.6722, 7],
+            ["Pematangsiantar", "Sumatera Utara", 2.9595, 99.0687, 7],
+            ["Sibolga", "Sumatera Utara", 1.7427, 98.7792, 7],
+            ["Padangsidimpuan", "Sumatera Utara", 1.3789, 99.2733, 7],
+            ["Padang", "Sumatera Barat", -0.9471, 100.4172, 7],
+            ["Bukittinggi", "Sumatera Barat", -0.3055, 100.3692, 7],
+            ["Pekanbaru", "Riau", 0.5071, 101.4478, 7],
+            ["Dumai", "Riau", 1.6666, 101.4, 7],
+            ["Batam", "Kepulauan Riau", 1.1301, 104.0529, 7],
+            ["Tanjungpinang", "Kepulauan Riau", 0.9186, 104.4666, 7],
+            ["Jambi", "Jambi", -1.6101, 103.6131, 7],
+            ["Palembang", "Sumatera Selatan", -2.9761, 104.7754, 7],
+            ["Lubuklinggau", "Sumatera Selatan", -3.2999, 102.8618, 7],
+            ["Bengkulu", "Bengkulu", -3.8004, 102.2655, 7],
+            ["Pangkalpinang", "Bangka Belitung", -2.1291, 106.1138, 7],
+            ["Bandar Lampung", "Lampung", -5.3971, 105.2668, 7],
+            ["Metro", "Lampung", -5.113, 105.3068, 7],
+            ["Serang", "Banten", -6.1104, 106.164, 7],
+            ["Tangerang", "Banten", -6.1783, 106.6319, 7],
+            ["Tangerang Selatan", "Banten", -6.2886, 106.7179, 7],
+            ["Cilegon", "Banten", -6.0025, 106.0111, 7],
+            ["Jakarta", "DKI Jakarta", -6.2088, 106.8456, 7],
+            ["Bandung", "Jawa Barat", -6.9175, 107.6191, 7],
+            ["Bekasi", "Jawa Barat", -6.2383, 106.9756, 7],
+            ["Bogor", "Jawa Barat", -6.5971, 106.806, 7],
+            ["Depok", "Jawa Barat", -6.4025, 106.7942, 7],
+            ["Cirebon", "Jawa Barat", -6.732, 108.5523, 7],
+            ["Sukabumi", "Jawa Barat", -6.9277, 106.93, 7],
+            ["Tasikmalaya", "Jawa Barat", -7.3274, 108.2207, 7],
+            ["Semarang", "Jawa Tengah", -6.9667, 110.4167, 7],
+            ["Surakarta (Solo)", "Jawa Tengah", -7.5666, 110.8283, 7],
+            ["Sragen", "Jawa Tengah", -7.3195, 110.9995, 7],
+            ["Karanganyar", "Jawa Tengah", -7.6, 110.95, 7],
+            ["Sukoharjo", "Jawa Tengah", -7.682, 110.842, 7],
+            ["Wonogiri", "Jawa Tengah", -7.813, 110.924, 7],
+            ["Klaten", "Jawa Tengah", -7.7059, 110.6064, 7],
+            ["Boyolali", "Jawa Tengah", -7.5306, 110.5961, 7],
+            ["Grobogan (Purwodadi)", "Jawa Tengah", -7.09, 110.917, 7],
+            ["Blora", "Jawa Tengah", -6.969, 111.419, 7],
+            ["Rembang", "Jawa Tengah", -6.706, 111.342, 7],
+            ["Pati", "Jawa Tengah", -6.7559, 111.038, 7],
+            ["Kudus", "Jawa Tengah", -6.8048, 110.8405, 7],
+            ["Jepara", "Jawa Tengah", -6.589, 110.668, 7],
+            ["Demak", "Jawa Tengah", -6.894, 110.638, 7],
+            ["Kendal", "Jawa Tengah", -6.921, 110.203, 7],
+            ["Salatiga", "Jawa Tengah", -7.3305, 110.5084, 7],
+            ["Magelang", "Jawa Tengah", -7.4797, 110.2177, 7],
+            ["Temanggung", "Jawa Tengah", -7.316, 110.175, 7],
+            ["Wonosobo", "Jawa Tengah", -7.3632, 109.9, 7],
+            ["Purwokerto", "Jawa Tengah", -7.4214, 109.2343, 7],
+            ["Cilacap", "Jawa Tengah", -7.7266, 109.015, 7],
+            ["Kebumen", "Jawa Tengah", -7.668, 109.65, 7],
+            ["Pekalongan", "Jawa Tengah", -6.8886, 109.6753, 7],
+            ["Tegal", "Jawa Tengah", -6.8694, 109.1402, 7],
+            ["Yogyakarta", "DI Yogyakarta", -7.7956, 110.3695, 7],
+            ["Surabaya", "Jawa Timur", -7.2575, 112.7521, 7],
+            ["Malang", "Jawa Timur", -7.9666, 112.6326, 7],
+            ["Kediri", "Jawa Timur", -7.848, 112.0178, 7],
+            ["Madiun", "Jawa Timur", -7.6298, 111.5239, 7],
+            ["Ngawi", "Jawa Timur", -7.4043, 111.446, 7],
+            ["Ponorogo", "Jawa Timur", -7.8651, 111.462, 7],
+            ["Pacitan", "Jawa Timur", -8.1955, 111.104, 7],
+            ["Jember", "Jawa Timur", -8.1845, 113.6681, 7],
+            ["Banyuwangi", "Jawa Timur", -8.2192, 114.3691, 7],
+            ["Probolinggo", "Jawa Timur", -7.7543, 113.2159, 7],
+            ["Pasuruan", "Jawa Timur", -7.6453, 112.9075, 7],
+            ["Mojokerto", "Jawa Timur", -7.4726, 112.4338, 7],
+            ["Sidoarjo", "Jawa Timur", -7.4478, 112.7183, 7],
+            ["Gresik", "Jawa Timur", -7.1539, 112.6561, 7],
+            ["Lamongan", "Jawa Timur", -7.1167, 112.4167, 7],
+            ["Bojonegoro", "Jawa Timur", -7.1502, 111.8817, 7],
+            ["Tuban", "Jawa Timur", -6.8976, 112.0644, 7],
+            ["Blitar", "Jawa Timur", -8.0954, 112.1609, 7],
+            ["Tulungagung", "Jawa Timur", -8.0654, 111.9025, 7],
+            ["Pamekasan", "Jawa Timur", -7.1568, 113.4747, 7],
+            ["Denpasar", "Bali", -8.6705, 115.2126, 8],
+            ["Singaraja", "Bali", -8.112, 115.0882, 8],
+            ["Mataram", "Nusa Tenggara Barat", -8.5833, 116.1167, 8],
+            ["Bima", "Nusa Tenggara Barat", -8.46, 118.727, 8],
+            ["Kupang", "Nusa Tenggara Timur", -10.1772, 123.607, 8],
+            ["Ende", "Nusa Tenggara Timur", -8.8432, 121.662, 8],
+            ["Maumere", "Nusa Tenggara Timur", -8.62, 122.215, 8],
+            ["Pontianak", "Kalimantan Barat", -0.0263, 109.3425, 7],
+            ["Singkawang", "Kalimantan Barat", 0.9078, 108.9894, 7],
+            ["Palangkaraya", "Kalimantan Tengah", -2.2161, 113.9135, 7],
+            ["Banjarmasin", "Kalimantan Selatan", -3.3194, 114.5906, 8],
+            ["Samarinda", "Kalimantan Timur", -0.5022, 117.1536, 8],
+            ["Balikpapan", "Kalimantan Timur", -1.2379, 116.8529, 8],
+            ["Tarakan", "Kalimantan Utara", 3.3, 117.6333, 8],
+            ["Manado", "Sulawesi Utara", 1.4748, 124.8421, 8],
+            ["Gorontalo", "Gorontalo", 0.5435, 123.0568, 8],
+            ["Palu", "Sulawesi Tengah", -0.8917, 119.8707, 8],
+            ["Makassar", "Sulawesi Selatan", -5.1477, 119.4327, 8],
+            ["Parepare", "Sulawesi Selatan", -4.0135, 119.6255, 8],
+            ["Palopo", "Sulawesi Selatan", -2.9925, 120.1969, 8],
+            ["Kendari", "Sulawesi Tenggara", -3.9985, 122.512, 8],
+            ["Mamuju", "Sulawesi Barat", -2.674, 118.8885, 8],
+            ["Ambon", "Maluku", -3.6954, 128.1814, 9],
+            ["Ternate", "Maluku Utara", 0.7833, 127.3667, 9],
+            ["Jayapura", "Papua", -2.5337, 140.7181, 9],
+            ["Merauke", "Papua Selatan", -8.4932, 140.4018, 9],
+            ["Timika", "Papua Tengah", -4.5465, 136.887, 9],
+            ["Manokwari", "Papua Barat", -0.8615, 134.062, 9],
+            ["Sorong", "Papua Barat Daya", -0.8762, 131.2558, 9]
+        ];
+        var PRAYER_CITIES = PRAYER_CITIES_RAW.map(function(c) { return { name: c[0], prov: c[1], lat: c[2], lng: c[3], tz: c[4] }; });
+        var PRAYER_DEFAULT = PRAYER_CITIES.filter(function(c) { return c.name === 'Sragen'; })[0];
+        window.prayerCity = (function() {
+            try {
+                var saved = localStorage.getItem('prnu_prayer_city');
+                var f = PRAYER_CITIES.filter(function(c) { return c.name === saved; })[0];
+                if (f) return f;
+            } catch(e) {}
+            return PRAYER_DEFAULT;
+        })();
+        function prayerTzLabel(tz) { return tz === 9 ? 'WIT' : (tz === 8 ? 'WITA' : 'WIB'); }
+        // Waktu "sekarang" (ms sejak 00:00) menurut zona waktu kota terpilih
+        function prayerNowMs() {
+            var tz = (window.prayerCity || PRAYER_DEFAULT).tz;
+            return (((Date.now() + tz * 3600000) % 86400000) + 86400000) % 86400000;
+        }
+        // Tanggal menurut zona waktu kota terpilih (field lokal = waktu kota)
+        function prayerCityToday() {
+            var tz = (window.prayerCity || PRAYER_DEFAULT).tz;
+            return new Date(Date.now() + (tz * 60 + new Date().getTimezoneOffset()) * 60000);
+        }
+        function prayerUpdateChip() {
+            var el = document.getElementById('prayerCityName');
+            if (el) el.textContent = window.prayerCity.name;
+        }
+        window.setPrayerCity = function(name) {
+            var f = PRAYER_CITIES.filter(function(c) { return c.name === name; })[0];
+            if (!f) return;
+            window.prayerCity = f;
+            try { localStorage.setItem('prnu_prayer_city', f.name); } catch(e) {}
+            prayerUpdateChip();
+            try { renderPrayerTimes(); } catch(e) {}
+            closePrayerCityPicker();
+        };
+        window.openPrayerCityPicker = function() {
+            var m = document.getElementById('prayerCityModal');
+            if (!m) {
+                m = document.createElement('div');
+                m.id = 'prayerCityModal';
+                m.style.cssText = 'position:fixed;inset:0;z-index:9400;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,24,14,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);';
+                m.innerHTML =
+                    '<div style="width:100%;max-width:380px;max-height:80vh;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;color:#fff;background:linear-gradient(160deg,#14532d,#052e16);border:1px solid rgba(251,191,36,.45);box-shadow:0 20px 60px rgba(0,0,0,.5);">' +
+                        '<div style="padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;">' +
+                            '<div style="font-weight:700;color:#fbbf24;font-size:15px;"><i class="fas fa-location-dot" style="margin-right:6px;"></i>Pilih Wilayah Jadwal Shalat</div>' +
+                            '<button type="button" id="prayerCityClose" aria-label="Tutup" style="font-size:22px;line-height:1;color:rgba(255,255,255,.65);background:none;border:0;cursor:pointer;">&times;</button>' +
+                        '</div>' +
+                        '<div style="padding:0 16px 10px;"><input id="prayerCitySearch" type="text" placeholder="Cari kota / kabupaten..." autocomplete="off" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:13px;outline:none;"></div>' +
+                        '<div id="prayerCityList" style="overflow-y:auto;padding:0 10px 12px;flex:1;"></div>' +
+                    '</div>';
+                document.body.appendChild(m);
+                m.addEventListener('click', function(e) { if (e.target === m) closePrayerCityPicker(); });
+                m.querySelector('#prayerCityClose').addEventListener('click', closePrayerCityPicker);
+                m.querySelector('#prayerCitySearch').addEventListener('input', function() { renderPrayerCityList(this.value); });
+            }
+            m.style.display = 'flex';
+            var si = m.querySelector('#prayerCitySearch'); si.value = '';
+            renderPrayerCityList('');
+        };
+        window.closePrayerCityPicker = function() {
+            var m = document.getElementById('prayerCityModal'); if (m) m.style.display = 'none';
+        };
+        function renderPrayerCityList(q) {
+            var box = document.getElementById('prayerCityList'); if (!box) return;
+            q = String(q || '').toLowerCase().trim();
+            var list = PRAYER_CITIES.filter(function(c) { return !q || (c.name + ' ' + c.prov).toLowerCase().indexOf(q) >= 0; })
+                .sort(function(a, b) { return a.name.localeCompare(b.name, 'id'); });
+            if (!list.length) { box.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.6);font-size:12px;padding:24px 0;">Wilayah tidak ditemukan</div>'; return; }
+            box.innerHTML = list.map(function(c) {
+                var on = c.name === window.prayerCity.name;
+                return '<button type="button" data-city="' + c.name.replace(/"/g, '&quot;') + '" style="display:flex;width:100%;align-items:center;justify-content:space-between;text-align:left;padding:9px 12px;margin-bottom:4px;border-radius:10px;border:1px solid ' + (on ? 'rgba(251,191,36,.7)' : 'rgba(255,255,255,.08)') + ';background:' + (on ? 'rgba(251,191,36,.15)' : 'rgba(255,255,255,.05)') + ';color:#fff;cursor:pointer;">' +
+                    '<span><span style="display:block;font-size:13px;font-weight:600;">' + c.name + (c.name === 'Sragen' ? ' <span style="font-size:9px;color:#fbbf24;">(bawaan)</span>' : '') + '</span><span style="display:block;font-size:10.5px;color:rgba(255,255,255,.6);">' + c.prov + '</span></span>' +
+                    '<span style="font-size:10px;font-weight:700;color:' + (on ? '#fbbf24' : 'rgba(255,255,255,.5)') + ';">' + (on ? '<i class="fas fa-check" style="margin-right:4px;"></i>' : '') + prayerTzLabel(c.tz) + '</span></button>';
+            }).join('');
+            box.querySelectorAll('button[data-city]').forEach(function(b) {
+                b.addEventListener('click', function() { setPrayerCity(b.getAttribute('data-city')); });
+            });
+        }
+
+        function calculateAutomaticPrayerTimes(date, city) {
+            const _c = city || window.prayerCity || PRAYER_DEFAULT;
+            const lat = _c.lat;
+            const lng = _c.lng;
+            const timezone = _c.tz;
 
             const start = new Date(date.getFullYear(), 0, 0);
             const diff = date - start;
@@ -3203,8 +3391,10 @@
         }
 
         function renderPrayerTimes() {
-            const today = new Date();
+            const today = prayerCityToday();
             const calculated = calculateAutomaticPrayerTimes(today);
+            const calculatedAdmin = calculateAutomaticPrayerTimes(today, PRAYER_DEFAULT);   // panel admin selalu jadwal Sragen
+            prayerUpdateChip();
             
             document.getElementById('shubuh').innerText = calculated.shubuh;
             document.getElementById('dzuhur').innerText = calculated.dzuhur;
@@ -3223,11 +3413,11 @@
             // Update in Admin Panel Shalat tab if exists
             const admSubuh = document.getElementById('adm-shubuh');
             if (admSubuh) {
-                admSubuh.innerText = calculated.shubuh;
-                document.getElementById('adm-dzuhur').innerText = calculated.dzuhur;
-                document.getElementById('adm-ashar').innerText = calculated.ashar;
-                document.getElementById('adm-maghrib').innerText = calculated.maghrib;
-                document.getElementById('adm-isya').innerText = calculated.isya;
+                admSubuh.innerText = calculatedAdmin.shubuh;
+                document.getElementById('adm-dzuhur').innerText = calculatedAdmin.dzuhur;
+                document.getElementById('adm-ashar').innerText = calculatedAdmin.ashar;
+                document.getElementById('adm-maghrib').innerText = calculatedAdmin.maghrib;
+                document.getElementById('adm-isya').innerText = calculatedAdmin.isya;
             }
         }
 
@@ -3289,10 +3479,10 @@
             var nama = names[active];
             if (delta < 0) {
                 el.querySelector('#prayerAlertTitle').textContent = 'Sebentar lagi masuk waktu ' + nama;
-                el.querySelector('#prayerAlertSub').textContent = Math.max(1, Math.ceil(-delta / 1000)) + ' detik lagi';
+                el.querySelector('#prayerAlertSub').textContent = Math.max(1, Math.ceil(-delta / 1000)) + ' detik lagi • Wilayah ' + window.prayerCity.name + ' dan sekitarnya';
             } else {
                 el.querySelector('#prayerAlertTitle').textContent = 'Telah masuk waktu ' + nama;
-                el.querySelector('#prayerAlertSub').textContent = 'Menurut jadwal wilayah Baleharjo dan sekitarnya';
+                el.querySelector('#prayerAlertSub').textContent = 'Wilayah ' + window.prayerCity.name + ' dan sekitarnya';
             }
             if (el.style.display !== 'flex') el.style.display = 'flex';
         }
@@ -3308,8 +3498,7 @@
                 return el ? el.innerText.trim() : '--:--';
             });
 
-            var now   = new Date();
-            var nowMs = now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000;
+            var nowMs = prayerNowMs();
             try { prayerAlertCheck(names, times, nowMs); } catch(e) {}
 
             // Cari sholat berikutnya
