@@ -145,6 +145,8 @@
         })();
     </script>
     <style>
+        @keyframes vsBump { 0%{transform:scale(1)} 35%{transform:scale(1.18);filter:brightness(1.35)} 100%{transform:scale(1)} }
+        .vs-bump { display:inline-block; animation: vsBump .7s ease-out; }
         /* Slide agenda: tiap slide = 100% tinggi viewport (tanpa ukuran px) → selalu 1 agenda per tampilan */
         #agendaTrack .ag-slide { flex: 0 0 100%; height: 100%; min-height: 0; overflow: hidden; }
         /* ── Perpindahan slide halus (berita, pengurus, agenda) ── */
@@ -6146,24 +6148,59 @@
 
 
         // ══ Visitor Stats ══
+        var _vsShown = { today: null, yesterday: null, total: null };
+        function vsAnimate(el, from, to) {
+            if (!el) return;
+            if (from === null || from === to) { el.textContent = Number(to).toLocaleString('id-ID'); return; }
+            var t0 = performance.now(), dur = 700;
+            el.classList.remove('vs-bump'); void el.offsetWidth; el.classList.add('vs-bump');
+            (function step(now) {
+                var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+                el.textContent = Math.round(from + (to - from) * e).toLocaleString('id-ID');
+                if (k < 1) requestAnimationFrame(step);
+            })(t0);
+        }
         function renderVisitorStats(stats) {
             var grid = document.getElementById('visitorStatsGrid');
-            if (!grid) return;
+            if (!grid || !stats) return;
             var cards = [
-                { label:'Hari Ini', icon:'fa-sun',          color:'gold',   val: stats.today||0 },
-                { label:'Kemarin',  icon:'fa-calendar-day', color:'blue',   val: stats.yesterday||0 },
-                { label:'Total',    icon:'fa-users',        color:'purple', val: stats.total||0 }
+                { key:'today',     label:'Hari Ini', icon:'fa-sun',          color:'gold' },
+                { key:'yesterday', label:'Kemarin',  icon:'fa-calendar-day', color:'blue' },
+                { key:'total',     label:'Total',    icon:'fa-users',        color:'purple' }
             ];
             var ic = { gold:'text-nuGold-400', blue:'text-blue-300', green:'text-emerald-400', purple:'text-purple-300' };
             var nc = { gold:'text-nuGold-300', blue:'text-blue-200', green:'text-emerald-300', purple:'text-purple-200' };
-            var html = cards.map(function(c) {
-                return '<div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-900/60 transition">' +
-                    '<i class="fas ' + c.icon + ' ' + ic[c.color] + ' text-sm"></i>' +
-                    '<span class="text-xl font-bold ' + nc[c.color] + ' tabular-nums">' + Number(c.val).toLocaleString('id-ID') + '</span>' +
-                    '<span class="text-[9px] font-semibold text-white/50 text-center">' + c.label + '</span>' +
-                '</div>';
-            }).join('');
-            if (grid) grid.innerHTML = html;
+            if (!grid.querySelector('[data-vs]')) {          // bangun kerangka sekali saja
+                grid.innerHTML = cards.map(function(c) {
+                    return '<div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-emerald-900/60 transition">' +
+                        '<i class="fas ' + c.icon + ' ' + ic[c.color] + ' text-sm"></i>' +
+                        '<span data-vs="' + c.key + '" class="text-xl font-bold ' + nc[c.color] + ' tabular-nums">0</span>' +
+                        '<span class="text-[9px] font-semibold text-white/50 text-center">' + c.label + '</span>' +
+                    '</div>';
+                }).join('');
+                _vsShown = { today: null, yesterday: null, total: null };
+            }
+            cards.forEach(function(c) {
+                var val = Number(stats[c.key]) || 0;
+                vsAnimate(grid.querySelector('[data-vs="' + c.key + '"]'), _vsShown[c.key], val);
+                _vsShown[c.key] = val;
+            });
+        }
+        // Perbarui otomatis tiap 20 dtk (hanya saat tab terlihat) tanpa perlu refresh halaman
+        var _vsTimer = null;
+        function vsPoll() {
+            if (document.hidden || !window.google || !google.script) return;
+            try {
+                google.script.run
+                    .withSuccessHandler(function(r) { try { renderVisitorStats(JSON.parse(r)); } catch(e) {} })
+                    .withFailureHandler(function() {})
+                    .getVisitorStats();
+            } catch(e) {}
+        }
+        function vsStartPolling() {
+            if (_vsTimer) return;
+            _vsTimer = setInterval(vsPoll, 20000);
+            document.addEventListener('visibilitychange', function() { if (!document.hidden) vsPoll(); });
         }
         function trackAndLoadVisitorStats() {
             if (!window.google || !google.script) return;
@@ -6193,6 +6230,7 @@
                 } catch(e) {
                     console.info('[Visitor] Stats tidak tersedia:', e);
                 }
+                vsStartPolling();
             }, 1500);
         }
 
