@@ -4202,7 +4202,7 @@
             var dots  = document.getElementById('beritaDots');
             if (!track) return;
 
-            var items = (AppState.news || []).slice(0);   // semua berita tampil di slide
+            var items = (AppState.news || []).slice(0, 3);   // slide beranda hanya 3 berita terbaru; selebihnya lewat "Lihat Semua"
             if (items.length === 0) {
                 _bsSig = '';
                 track.innerHTML = '<div class="bs-slide"><p class="text-slate-400 dark:text-slate-500 text-sm italic text-center py-6">Belum ada berita.</p></div>';
