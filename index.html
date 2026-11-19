@@ -608,7 +608,7 @@
     </div>
 
     <div class="bg-nuGreen-950 text-nuGold-400 text-xs py-2 px-4 border-b border-nuGreen-900">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="w-full max-w-none mx-auto sm:px-2 lg:px-6 flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4">
                 <span id="pubTopbarAlamat"><i class="fas fa-map-marker-alt mr-1.5"></i> Baleharjo, Sukodono, Sragen, Jawa Tengah</span>
                 <span class="hidden md:inline">|</span>
@@ -626,7 +626,7 @@
     </div>
 
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-800 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center gap-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10 py-2 flex justify-between items-center gap-4">
 
             <!-- LOGO -->
             <a href="#" onclick="showPage('beranda'); return false;" class="flex items-center gap-2.5 shrink-0">
@@ -672,13 +672,13 @@
                     <i id="darkModeSunIcon" class="fas fa-sun text-nuGold-500 text-sm"></i>
                     <i id="darkModeMoonIcon" class="fas fa-moon text-slate-300 text-sm hidden"></i>
                 </button>
-                <button id="adminLoginBtn" class="border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-nuGreen-800 font-semibold px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1.5 text-xs">
-                    <i class="fas fa-lock text-nuGreen-800 text-xs" id="adminLockIcon"></i>
-                    <span id="adminBtnText">Login Admin</span>
-                </button>
                 <button id="openDonationBtn" class="bg-gradient-to-r from-nuGold-500 to-amber-600 text-white font-semibold px-3 py-2 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-1.5 text-xs">
                     <i class="fas fa-heart text-xs"></i>
                     <span>Koin NU</span>
+                </button>
+                <button id="adminLoginBtn" class="border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-nuGreen-800 font-semibold w-9 h-9 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center text-xs shrink-0" title="Login Admin" aria-label="Login Admin">
+                    <i class="fas fa-lock text-nuGreen-800 text-xs" id="adminLockIcon"></i>
+                    <span id="adminBtnText" class="hidden">Login Admin</span>
                 </button>
             </div>
 
@@ -768,7 +768,7 @@
             </svg>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 py-5 flex flex-col gap-4 z-10 w-full">
+        <div class="relative max-w-none mx-auto px-4 sm:px-6 lg:px-10 py-5 flex flex-col gap-4 z-10 w-full">
 
         <!-- Navigasi tab khusus HP -->
         <div id="mobTabBar" class="lg:hidden self-center w-full max-w-xs flex gap-1 p-1 bg-emerald-950/70 border border-white/10 rounded-full backdrop-blur-sm">
@@ -919,7 +919,7 @@
 
 
     <section id="profil" class="page-section py-20 bg-white dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Profil Ranting</span>
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-2">Selayang Pandang</h2>
@@ -982,7 +982,7 @@
     </section>
 
     <section id="pengurus" class="page-section py-20 bg-slate-50 dark:bg-slate-950">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="text-center max-w-2xl mx-auto mb-12">
                 <span id="pubPengurusTag" class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase bg-emerald-50 px-3 py-1.5 rounded-full">Struktur Kepengurusan</span>
                 <h2 id="pubPengurusJudul" class="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-3">Pimpinan Ranting & Badan Otonom</h2>
@@ -1008,7 +1008,7 @@
     </section>
 
     <section id="layanan" class="page-section py-20 bg-slate-100 dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Program Kerja</span>
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-2">Layanan & Kemaslahatan</h2>
@@ -1059,7 +1059,7 @@
     </section>
 
     <section id="banom" class="page-section py-20 bg-white dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Keluarga Besar</span>
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-2">Banom & Lembaga NU</h2>
@@ -1083,7 +1083,7 @@
     </section>
 
     <section id="berita" class="page-section py-20 bg-slate-100 dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
                 <div>
                     <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Kabar Kegiatan</span>
@@ -1104,7 +1104,7 @@
     </section>
 
     <section id="galeri" class="page-section py-20 bg-white dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <span class="text-nuGreen-800 font-bold tracking-widest text-sm uppercase">Dokumentasi</span>
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-2">Galeri Kehidupan Jam'iyyah</h2>
@@ -1117,7 +1117,7 @@
     </section>
 
     <section id="kontak" class="page-section py-20 bg-slate-100 dark:bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/60 shadow-lg">
                     <h3 id="pubKontakJudulForm" class="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100 mb-2">Hubungi Kami</h3>
@@ -1188,7 +1188,7 @@
     </section>
 
     <footer class="bg-nuGreen-950 text-white/80 py-12 border-t border-nuGreen-900">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+        <div class="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10 text-center space-y-4">
             <span class="block font-bold text-white text-lg tracking-wider">OFFICIAL PORTAL PRNU BALEHARJO</span>
             <p class="text-xs text-slate-400 dark:text-slate-500">© 2026 Pengurus Ranting Nahdlatul Ulama Baleharjo, Sukodono, Sragen. Hak Cipta Dilindungi.</p>
         </div>
@@ -6578,7 +6578,7 @@
                 document.getElementById('adminBtnText').innerText = "Panel Admin";
                 document.getElementById('mobileAdminBtnText').innerText = "Panel Admin";
                 var loginBtn = document.getElementById('adminLoginBtn');
-                if (loginBtn) loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 text-sm";
+                if (loginBtn) loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 w-9 h-9 rounded-xl transition flex items-center justify-center text-sm shrink-0"; loginBtn.title = "Panel Admin"; loginBtn.setAttribute("aria-label","Panel Admin");
                 var icon = document.getElementById('adminLockIcon');
                 if (icon) icon.className = "fas fa-desktop text-nuGreen-800";
             } catch(e) {}
@@ -6699,7 +6699,7 @@
                 document.getElementById('mobileAdminBtnText').innerText = "Panel Admin";
                 
                 const loginBtn = document.getElementById('adminLoginBtn');
-                loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 text-sm";
+                loginBtn.className = "border border-nuGreen-800 text-nuGreen-800 bg-nuGreen-50 hover:bg-nuGreen-100 w-9 h-9 rounded-xl transition flex items-center justify-center text-sm shrink-0"; loginBtn.title = "Panel Admin"; loginBtn.setAttribute("aria-label","Panel Admin");
                 
                 const icon = document.getElementById('adminLockIcon');
                 if (icon) icon.className = "fas fa-desktop text-nuGreen-800";
@@ -6832,7 +6832,7 @@
             document.getElementById('mobileAdminBtnText').innerText = "Login Admin";
 
             const loginBtn = document.getElementById('adminLoginBtn');
-            if (loginBtn) loginBtn.className = "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-nuGreen-800 font-semibold px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1.5 text-xs";
+            if (loginBtn) loginBtn.className = "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-nuGreen-800 w-9 h-9 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center text-xs shrink-0"; if (loginBtn) { loginBtn.title = "Login Admin"; loginBtn.setAttribute("aria-label","Login Admin"); }
 
             const icon = document.getElementById('adminLockIcon');
             if (icon) icon.className = "fas fa-lock text-nuGreen-800 text-xs";
