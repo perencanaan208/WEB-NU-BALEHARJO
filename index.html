@@ -2092,6 +2092,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div id="adminNewsMoreWrap" class="hidden text-center">
+                            <button type="button" id="adminNewsToggleBtn" onclick="toggleAdminNewsAll()" class="text-xs font-semibold text-nuGreen-800 dark:text-nuGold-400 bg-nuGreen-50 dark:bg-slate-800 hover:bg-nuGreen-100 dark:hover:bg-slate-700 border border-nuGreen-800/20 px-5 py-2 rounded-xl transition"></button>
+                        </div>
                         <p id="beritaKontributorNote" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
                             <i class="fas fa-circle-info mr-1"></i>
                             Berita yang Anda kirim akan berstatus <b>Menunggu Verifikasi</b> dan baru tayang di website setelah disetujui Admin Utama.
@@ -7666,6 +7669,12 @@
             'Rejected':  '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">DITOLAK</span>'
         };
 
+        window._adminNewsShowAll = false;
+        window.toggleAdminNewsAll = function() {
+            window._adminNewsShowAll = !window._adminNewsShowAll;
+            renderAdminNewsTable();
+        };
+
         function renderAdminNewsTable() {
             const tbody = document.getElementById('adminNewsTableBody');
             if (!tbody) return;
@@ -7681,7 +7690,21 @@
             const note = document.getElementById('beritaKontributorNote');
             if (note) note.classList.toggle('hidden', isSuperadmin);
 
-            list.forEach(item => {
+            // Terbaru di atas; default hanya 5 berita terakhir (berita "Menunggu Verifikasi" selalu ikut tampil agar tidak terlewat)
+            list = prnuSortNews(list);
+            const _total = list.length;
+            const _showAll = !!window._adminNewsShowAll;
+            const _visible = _showAll ? list : list.filter((it, i) => i < 5 || (it.status === 'Pending' && isSuperadmin));
+            const _moreWrap = document.getElementById('adminNewsMoreWrap');
+            const _moreBtn = document.getElementById('adminNewsToggleBtn');
+            if (_moreWrap && _moreBtn) {
+                _moreWrap.classList.toggle('hidden', _total <= 5);
+                _moreBtn.innerHTML = _showAll
+                    ? '<i class="fas fa-chevron-up mr-1.5 text-[10px]"></i>Tampilkan 5 Terbaru'
+                    : '<i class="fas fa-chevron-down mr-1.5 text-[10px]"></i>Tampilkan Semua (' + _total + ' berita)';
+            }
+
+            _visible.forEach(item => {
                 const status = item.status || 'Published';
                 const badge = STATUS_BADGE[status] || STATUS_BADGE['Published'];
                 const isOwnItem = !item.submittedBy || item.submittedBy === AppState.adminUsername;
