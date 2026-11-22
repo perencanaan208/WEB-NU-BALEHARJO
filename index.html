@@ -164,7 +164,9 @@
             body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
             #toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; }
         }
-        #mobileDrawer { bottom: calc(56px + env(safe-area-inset-bottom, 0px)); max-height: calc(80vh - 56px); max-height: calc(80dvh - 56px); }
+        #mobileBottomNav { bottom: var(--vv-off, 0px); left: var(--vv-left, 0px); right: auto; width: var(--vv-w, 100%); transform: translateZ(0); -webkit-transform: translateZ(0); will-change: transform; }
+        #mobileSheetBackdrop { top: 0; bottom: var(--vv-off, 0px); left: var(--vv-left, 0px); right: auto; width: var(--vv-w, 100%); }
+        #mobileDrawer { bottom: calc(56px + env(safe-area-inset-bottom, 0px) + var(--vv-off, 0px)); left: var(--vv-left, 0px); right: auto; width: var(--vv-w, 100%); max-height: calc(80vh - 56px); max-height: calc(var(--vv-h, 100dvh) * .8 - 56px); overscroll-behavior: contain; }
         #mobileDrawer:not(.hidden) { animation: sheetUp .32s cubic-bezier(.22,1,.36,1) both; }
         #mobileDrawer.sheet-closing { animation: sheetDown .24s ease-in both; }
         @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -785,7 +787,7 @@
                 </div>
             </div>
         </div>
-    <nav id="mobileBottomNav" class="xl:hidden fixed bottom-0 left-0 right-0 z-[68] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex shadow-[0_-4px_16px_rgba(0,0,0,.06)]" style="padding-bottom:env(safe-area-inset-bottom,0px);" aria-label="Navigasi utama">
+    <nav id="mobileBottomNav" class="xl:hidden fixed bottom-0 left-0 right-0 z-[68] bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex shadow-[0_-4px_16px_rgba(0,0,0,.06)]" style="padding-bottom:env(safe-area-inset-bottom,0px);" aria-label="Navigasi utama">
         <button type="button" id="bnHome" class="bn-btn bn-active" onclick="showPage('beranda')"><i class="fas fa-house"></i><span>Beranda</span></button>
         <button type="button" id="bnMenu" class="bn-btn" aria-expanded="false" aria-controls="mobileDrawer"><i class="fas fa-bars" id="bnMenuIcon"></i><span id="bnMenuLabel">Menu</span></button>
     </nav>
@@ -8616,6 +8618,24 @@
         // SPA PAGE NAVIGATION SYSTEM
         // ============================================================
         const PAGE_SECTIONS = ['beranda','profil','pengurus','layanan','banom','berita','galeri','kontak'];
+
+        // ── Pin navigasi bawah ke viewport yang benar-benar terlihat (toolbar browser HP naik-turun saat scroll) ──
+        (function() {
+            var root = document.documentElement;
+            function sync() {
+                var vv = window.visualViewport; if (!vv) return;
+                var off = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+                root.style.setProperty('--vv-off', off + 'px');
+                root.style.setProperty('--vv-left', Math.round(vv.offsetLeft) + 'px');
+                root.style.setProperty('--vv-w', Math.round(vv.width) + 'px');
+                root.style.setProperty('--vv-h', Math.round(vv.height) + 'px');
+            }
+            sync();
+            if (window.visualViewport) { visualViewport.addEventListener('resize', sync); visualViewport.addEventListener('scroll', sync); }
+            window.addEventListener('scroll', sync, { passive: true });
+            window.addEventListener('resize', sync);
+            window.addEventListener('orientationchange', function() { setTimeout(sync, 250); });
+        })();
 
         // ── Navigasi bawah HP + menu geser dari bawah ──
         (function() {
