@@ -145,6 +145,37 @@
         })();
     </script>
     <style>
+        /* ── DESKTOP: menu melayang, menciut saat halaman digulir, terbuka lagi saat kursor mendekat ── */
+        @media (min-width:1280px){
+            header.sticky { transition: margin .35s ease, border-radius .35s ease, box-shadow .35s ease, background-color .35s ease, top .35s ease; }
+            header.sticky .nav-shrink-logo { transition: height .3s ease; }
+            header.sticky #runningTextBar { max-height: 80px; transition: max-height .35s ease, opacity .25s ease; }
+            header.sticky .nav-subtext { max-height: 20px; overflow: hidden; transition: max-height .3s ease, opacity .25s ease; }
+            header.sticky.nav-compact { top: 8px; margin-left: 2.5vw; margin-right: 2.5vw; border-radius: 18px; box-shadow: 0 10px 30px rgba(2,24,14,.18); border: 1px solid rgba(20,83,45,.12); background-color: rgba(255,255,255,.88); }
+            header.sticky.nav-compact #runningTextBar { max-height: 0; opacity: 0; border-top-width: 0; }
+            header.sticky.nav-compact .nav-subtext { max-height: 0; opacity: 0; }
+            header.sticky.nav-compact .nav-shrink-logo { height: 1.75rem; }
+            header.sticky.nav-compact > div:first-child { padding-top: .2rem; padding-bottom: .2rem; }
+            header.sticky.nav-compact .nav-link-item { font-size: .76rem; padding: .22rem .55rem; }
+            header.sticky .nav-dd-menu { z-index: 60; }
+        }
+        /* ── HP: navigasi bawah (Beranda | Menu) + menu geser dari bawah ── */
+        @media (max-width:1279.98px){
+            body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+            #toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; }
+        }
+        #mobileDrawer { max-height: 80vh; max-height: 80dvh; }
+        #mobileDrawer:not(.hidden) { animation: sheetUp .32s cubic-bezier(.22,1,.36,1) both; }
+        #mobileDrawer.sheet-closing { animation: sheetDown .24s ease-in both; }
+        @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes sheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+        #mobileSheetBackdrop { opacity: 0; transition: opacity .25s ease; }
+        #mobileSheetBackdrop.show { opacity: 1; }
+        .bn-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 0 7px; font-size: 11px; font-weight: 600; color: #64748b; transition: color .2s ease; }
+        .bn-btn i { font-size: 18px; }
+        .bn-btn.bn-active { color: #166534; }
+        .dark .bn-btn { color: #94a3b8; }
+        .dark .bn-btn.bn-active { color: #fbbf24; }
         @keyframes vsBump { 0%{transform:scale(1)} 35%{transform:scale(1.18);filter:brightness(1.35)} 100%{transform:scale(1)} }
         .vs-bump { display:inline-block; animation: vsBump .7s ease-out; }
         /* Slide agenda: tiap slide = 100% tinggi viewport (tanpa ukuran px) → selalu 1 agenda per tampilan */
@@ -389,7 +420,7 @@
             font-weight: 700;
         }
         /* ── Menu HP: menu dengan submenu (ketuk → submenu terbuka dulu, lalu pilih) ── */
-        .mobile-drawer-scroll { max-height: calc(100vh - 70px); max-height: calc(100dvh - 70px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .mobile-drawer-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .mobile-nav-link.mobile-nav-parent { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; cursor: pointer; }
         .mobile-acc-caret { font-size: 10px; opacity: .75; transition: transform .2s ease; }
         .mobile-nav-parent[aria-expanded="true"] .mobile-acc-caret { transform: rotate(180deg); }
@@ -630,7 +661,7 @@
 
             <!-- LOGO -->
             <a href="#" onclick="showPage('beranda'); return false;" class="flex items-center gap-2.5 shrink-0">
-                <div id="navLogoImgWrap" class="h-10 flex items-center justify-center shrink-0">
+                <div id="navLogoImgWrap" class="h-10 nav-shrink-logo flex items-center justify-center shrink-0">
                     <img id="navLogoImg" src="/icons/apple-touch-icon.png" alt="Logo PRNU" class="h-full w-auto object-contain">
                     <script>(function(){ try { var c = localStorage.getItem("prnu_site_logo"); if (c && c.length > 10) document.getElementById("navLogoImg").src = c; } catch(e) {} })();</script>
                     <svg id="navLogoSvg" class="w-9 h-9 text-nuGold-400 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -641,7 +672,7 @@
                 </div>
                 <div class="leading-none">
                     <span id="navLogoText" class="block font-extrabold text-nuGreen-900 text-base tracking-tight leading-tight">NU BALEHARJO</span>
-                    <span id="navLogoSubText" class="block text-[10px] font-semibold text-nuGold-600 uppercase tracking-widest leading-tight">Sukodono · Sragen</span>
+                    <span id="navLogoSubText" class="nav-subtext block text-[10px] font-semibold text-nuGold-600 uppercase tracking-widest leading-tight">Sukodono · Sragen</span>
                 </div>
             </a>
 
@@ -688,14 +719,40 @@
                     <i id="darkModeSunIconMobile" class="fas fa-sun text-nuGold-500 text-sm"></i>
                     <i id="darkModeMoonIconMobile" class="fas fa-moon text-slate-300 text-sm hidden"></i>
                 </button>
-                <button id="mobileMenuBtn" class="xl:hidden text-nuGreen-900 text-2xl focus:outline-none p-1.5" aria-label="Toggle Menu">
-                <i class="fas fa-bars"></i>
-            </button>
             </div>
         </div>
 
-        <div id="mobileDrawer" class="mobile-drawer-scroll hidden xl:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 absolute top-full left-0 w-full shadow-xl transition-all duration-300">
-            <div class="p-4 font-sans">
+        <!-- RUNNING TEXT BAR - sticky bersama header -->
+        <div id="runningTextBar" class="bg-nuGreen-800 text-white overflow-hidden border-t border-nuGreen-700/40">
+            <div class="flex items-center">
+                <!-- Label INFO -->
+                <div class="shrink-0 bg-nuGold-500 text-nuGreen-950 text-xs font-extrabold px-3 py-2 flex items-center gap-1.5 uppercase tracking-wide">
+                    <i class="fas fa-bullhorn text-xs"></i>
+                    <span>Info</span>
+                </div>
+                <!-- Panah dekoratif -->
+                <div class="w-0 h-0 border-t-[26px] border-t-transparent border-b-[26px] border-b-transparent border-l-[9px] border-l-nuGold-500 shrink-0"></div>
+                <!-- Track -->
+                <div class="marquee-track flex-1 py-1.5">
+                    <span id="runningTextContent" class="marquee-content speed-normal text-sm text-white/90">
+                        Selamat datang di website resmi PRNU Baleharjo &nbsp;&nbsp;❖&nbsp;&nbsp; Lailatul Ijtima' setiap malam Jumat &nbsp;&nbsp;❖&nbsp;&nbsp; Hubungi kami: +62 812-3456-7890 &nbsp;&nbsp;❖&nbsp;&nbsp; Koin NU menerima donasi setiap saat
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGASI BAWAH (HP/tablet): kiri Beranda, kanan Menu -->
+    <div id="mobileSheetBackdrop" class="hidden xl:hidden fixed inset-0 z-[65] bg-black/45"></div>
+    <div id="mobileDrawer" class="mobile-drawer-scroll hidden xl:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 fixed bottom-0 left-0 right-0 z-[70] rounded-t-3xl shadow-2xl">
+            <div class="sticky top-0 z-10 bg-white dark:bg-slate-900 rounded-t-3xl px-4 pt-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="mx-auto w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mb-2"></div>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-nuGreen-900 dark:text-slate-100 text-base">Menu</span>
+                    <button type="button" id="mobileSheetClose" aria-label="Tutup menu" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fas fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="p-4 font-sans" style="padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px));">
                 <div class="flex flex-col gap-1.5">
                 <a href="#" onclick="showPage('beranda'); return false;" data-page="beranda" class="mobile-nav-link text-slate-600 dark:text-slate-400">Beranda</a>
                 <a href="#" onclick="showPage('profil'); return false;" data-page="profil" class="mobile-nav-link text-slate-600 dark:text-slate-400">Profil</a>
@@ -729,26 +786,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- RUNNING TEXT BAR - sticky bersama header -->
-        <div id="runningTextBar" class="bg-nuGreen-800 text-white overflow-hidden border-t border-nuGreen-700/40">
-            <div class="flex items-center">
-                <!-- Label INFO -->
-                <div class="shrink-0 bg-nuGold-500 text-nuGreen-950 text-xs font-extrabold px-3 py-2 flex items-center gap-1.5 uppercase tracking-wide">
-                    <i class="fas fa-bullhorn text-xs"></i>
-                    <span>Info</span>
-                </div>
-                <!-- Panah dekoratif -->
-                <div class="w-0 h-0 border-t-[26px] border-t-transparent border-b-[26px] border-b-transparent border-l-[9px] border-l-nuGold-500 shrink-0"></div>
-                <!-- Track -->
-                <div class="marquee-track flex-1 py-1.5">
-                    <span id="runningTextContent" class="marquee-content speed-normal text-sm text-white/90">
-                        Selamat datang di website resmi PRNU Baleharjo &nbsp;&nbsp;❖&nbsp;&nbsp; Lailatul Ijtima' setiap malam Jumat &nbsp;&nbsp;❖&nbsp;&nbsp; Hubungi kami: +62 812-3456-7890 &nbsp;&nbsp;❖&nbsp;&nbsp; Koin NU menerima donasi setiap saat
-                    </span>
-                </div>
-            </div>
-        </div>
-    </header>
+    <nav id="mobileBottomNav" class="xl:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex shadow-[0_-4px_16px_rgba(0,0,0,.06)]" style="padding-bottom:env(safe-area-inset-bottom,0px);" aria-label="Navigasi utama">
+        <button type="button" id="bnHome" class="bn-btn bn-active" onclick="showPage('beranda')"><i class="fas fa-house"></i><span>Beranda</span></button>
+        <button type="button" id="bnMenu" class="bn-btn" aria-expanded="false" aria-controls="mobileDrawer"><i class="fas fa-bars" id="bnMenuIcon"></i><span id="bnMenuLabel">Menu</span></button>
+    </nav>
 
     <section id="beranda" data-mtab="beranda" class="page-section relative bg-nuGreen-950 text-white overflow-hidden flex items-center">
         <div class="absolute inset-0 islamic-pattern opacity-[0.13]"></div>
@@ -8577,6 +8618,75 @@
         // ============================================================
         const PAGE_SECTIONS = ['beranda','profil','pengurus','layanan','banom','berita','galeri','kontak'];
 
+        // ── Navigasi bawah HP + menu geser dari bawah ──
+        (function() {
+            function drawer() { return document.getElementById('mobileDrawer'); }
+            function setMenuState(open) {
+                var bd = document.getElementById('mobileSheetBackdrop');
+                var icon = document.getElementById('bnMenuIcon'), lab = document.getElementById('bnMenuLabel'), btn = document.getElementById('bnMenu');
+                if (icon) icon.className = open ? 'fas fa-xmark' : 'fas fa-bars';
+                if (lab) lab.textContent = open ? 'Tutup' : 'Menu';
+                if (btn) { btn.classList.toggle('bn-active', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+                if (bd) {
+                    if (open) { bd.classList.remove('hidden'); requestAnimationFrame(function() { bd.classList.add('show'); }); }
+                    else { bd.classList.remove('show'); setTimeout(function() { if (!drawer() || drawer().classList.contains('hidden')) bd.classList.add('hidden'); }, 260); }
+                }
+                document.body.style.overflow = open ? 'hidden' : '';
+            }
+            window.openMobileSheet = function() {
+                var d = drawer(); if (!d) return;
+                d.classList.remove('sheet-closing', 'hidden');
+            };
+            window.closeMobileSheet = function() {
+                var d = drawer(); if (!d || d.classList.contains('hidden')) return;
+                d.classList.add('sheet-closing');
+                setTimeout(function() { d.classList.add('hidden'); d.classList.remove('sheet-closing'); if (window.closeMobileSubs) window.closeMobileSubs(); }, 230);
+            };
+            // Sinkron UI dengan status drawer (drawer bisa ditutup juga oleh showPage / tombol lain)
+            var d0 = drawer();
+            if (d0 && window.MutationObserver) {
+                new MutationObserver(function() { setMenuState(!d0.classList.contains('hidden')); }).observe(d0, { attributes: true, attributeFilter: ['class'] });
+            }
+            document.addEventListener('click', function(e) {
+                var t = e.target;
+                if (t.closest && t.closest('#bnMenu')) {
+                    var d = drawer(); if (!d) return;
+                    if (d.classList.contains('hidden')) openMobileSheet(); else closeMobileSheet();
+                } else if (t.closest && (t.closest('#mobileSheetClose') || t.id === 'mobileSheetBackdrop')) {
+                    closeMobileSheet();
+                }
+            });
+            document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileSheet(); });
+            // Lebar layar berubah ke desktop → tutup sheet
+            window.addEventListener('resize', function() { if (window.innerWidth >= 1280) { var d = drawer(); if (d && !d.classList.contains('hidden')) { d.classList.add('hidden'); } } });
+        })();
+
+        // ── Desktop: menu melayang; menciut saat digulir, terbuka lagi saat kursor mendekat ──
+        (function() {
+            var hdr = null, hover = false, near = false, tmr = null;
+            function isDesktop() { return window.innerWidth >= 1280; }
+            function apply() {
+                if (!hdr) hdr = document.querySelector('header.sticky');
+                if (!hdr) return;
+                var compact = isDesktop() && window.scrollY > 90 && !hover && !near;
+                hdr.classList.toggle('nav-compact', compact);
+            }
+            function schedule() { clearTimeout(tmr); tmr = setTimeout(apply, 220); }   // jeda kecil agar tidak berkedip
+            window.addEventListener('scroll', function() {
+                if (window.scrollY <= 90) { clearTimeout(tmr); apply(); } else schedule();
+            }, { passive: true });
+            window.addEventListener('mousemove', function(e) {
+                var n = e.clientY < 90;
+                if (n !== near) { near = n; if (n) { clearTimeout(tmr); apply(); } else schedule(); }
+            }, { passive: true });
+            document.addEventListener('mouseleave', function() { near = false; schedule(); });
+            document.addEventListener('mouseover', function(e) {
+                var h = !!(e.target.closest && e.target.closest('header.sticky'));
+                if (h !== hover) { hover = h; if (h) { clearTimeout(tmr); apply(); } else schedule(); }
+            });
+            window.addEventListener('resize', apply);
+        })();
+
         window.showPage = function(pageId) {
             if (window.closeNavDropdowns) window.closeNavDropdowns();
             if (window.closeMobileSubs) window.closeMobileSubs();
@@ -8616,6 +8726,7 @@
             // Tutup mobile drawer
             const drawer = document.getElementById('mobileDrawer');
             if (drawer) drawer.classList.add('hidden');
+            var _bnh = document.getElementById('bnHome'); if (_bnh) _bnh.classList.toggle('bn-active', pageId === 'beranda');
 
             // Re-render komponen
             if (pageId === 'beranda')  { try { renderPrayerTimes(); } catch(e) {} }
@@ -9807,11 +9918,6 @@
             safeBind('btn-cat-kegiatan', 'click', () => filterNews('kegiatan'));
             safeBind('btn-cat-dakwah', 'click', () => filterNews('dakwah'));
 
-            safeBind('mobileMenuBtn', 'click', () => {
-                const _dr = document.getElementById('mobileDrawer');
-                _dr.classList.toggle('hidden');
-                if (_dr.classList.contains('hidden') && window.closeMobileSubs) window.closeMobileSubs();
-            });
 
             document.querySelectorAll('.mobile-nav-link').forEach(link => {
                 link.addEventListener('click', () => {
